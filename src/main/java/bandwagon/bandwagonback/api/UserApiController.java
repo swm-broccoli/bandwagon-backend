@@ -17,6 +17,12 @@ public class UserApiController {
 
     private final UserService userService;
 
+    //for Auth testing
+    @GetMapping("/")
+    public String user() {
+        return ("<h1>Welcome User</h1>");
+    }
+
     @PostMapping("/api/login")
     public LoginResponse login(@RequestBody LoginForm form) {
         User user = userService.findOneByEmail(form.getEmail());
