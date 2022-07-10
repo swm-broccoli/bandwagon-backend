@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     /**
      * 회원가입
      */
@@ -26,6 +29,8 @@ public class UserService {
             throw new Exception("비밀번호가 일치하지 않습니다.");
         }
         validateDuplicateUser(request.getEmail());
+        //password Encrypt
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
         User user = new User(request);
         userRepository.save(user);
         return user.getId();
@@ -34,7 +39,7 @@ public class UserService {
     // 이메일로 회원 중복 검사
     private void validateDuplicateUser(String email) throws Exception {
         Optional<User> foundUser = userRepository.findByEmail(email);
-        if (!foundUser.isEmpty()) {
+        if (foundUser.isPresent()) {
             throw new Exception("이미 존재하는 회원입니다");
         }
     }

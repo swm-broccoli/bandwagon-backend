@@ -2,6 +2,8 @@ package bandwagon.bandwagonback.domain;
 
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Date;
