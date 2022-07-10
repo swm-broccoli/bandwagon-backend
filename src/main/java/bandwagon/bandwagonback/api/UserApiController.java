@@ -5,9 +5,13 @@ import bandwagon.bandwagonback.dto.LoginForm;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
 import bandwagon.bandwagonback.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Tag(name = "UserApiController")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -30,11 +38,13 @@ public class UserApiController {
     private final JwtUtil jwtTokenUtil;
 
     //for Auth testing
+    @Operation(description = "로그인 확인용 Mock api")
     @GetMapping("/")
     public String user() {
         return ("<h1>Welcome User</h1>");
     }
 
+    @Operation(description = "로그인")
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody LoginForm form) throws Exception {
         try {

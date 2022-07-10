@@ -55,4 +55,5 @@ public class SecurityConfiguration {
                 "/swagger-ui/**",
                 "/webjars/**");
     }
+    // swagger 접속 `http://localhost:8080/swagger-ui/index.html`로
 }
