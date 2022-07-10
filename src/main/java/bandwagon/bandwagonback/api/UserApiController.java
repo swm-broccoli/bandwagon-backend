@@ -50,15 +50,19 @@ public class UserApiController {
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new LoginResponse(jwt));
+        final User user = userService.findOneByEmail(form.getEmail());
+
+        return ResponseEntity.ok(new LoginResponse(jwt, user.getNickname()));
     }
 
     @Data
     static class LoginResponse {
         private String jwt;
+        private String nickname;
 
-        public LoginResponse(String jwt) {
+        public LoginResponse(String jwt, String nickname) {
             this.jwt = jwt;
+            this.nickname = nickname;
         }
     }
 }
