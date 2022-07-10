@@ -1,6 +1,9 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,4 +23,15 @@ public class User {
     private String password;
     private Boolean gender; // 0 == Male, 1 == Female
     private Date birthday;
+
+    public User() {
+    }
+    public User(SignUpRequest request) {
+        this.name = request.getName();
+        this.nickname = request.getNickname();
+        this.email = request.getEmail();
+        this.password = request.getPassword();
+        this.gender = request.getGender();
+        this.birthday = request.getBirthday();
+    }
 }

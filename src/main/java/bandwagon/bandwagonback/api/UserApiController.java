@@ -2,6 +2,8 @@ package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.LoginForm;
+import bandwagon.bandwagonback.dto.SignUpRequest;
+import bandwagon.bandwagonback.dto.SignUpResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
 import bandwagon.bandwagonback.service.UserService;
@@ -63,6 +65,13 @@ public class UserApiController {
         final User user = userService.findOneByEmail(form.getEmail());
 
         return ResponseEntity.ok(new LoginResponse(jwt, user.getNickname()));
+    }
+
+    @Operation(description = "회원가입")
+    @PostMapping("/api/signup")
+    public SignUpResponse signup(@RequestBody SignUpRequest request) throws Exception {
+        Long id = userService.join(request);
+        return new SignUpResponse(id);
     }
 
     @Data
