@@ -1,13 +1,12 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.dto.LoginForm;
 import bandwagon.bandwagonback.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController

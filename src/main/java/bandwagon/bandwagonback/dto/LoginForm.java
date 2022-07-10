@@ -1,4 +1,4 @@
-package bandwagon.bandwagonback.api;
+package bandwagon.bandwagonback.dto;
 
 import lombok.Data;
 
