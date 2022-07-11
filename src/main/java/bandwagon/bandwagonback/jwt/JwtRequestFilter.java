@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.jwt;
 
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -26,7 +28,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        
+        log.info("Authorizing JWT Token");
         // Request의 header에서 'Authorization' 헤더 가져옴
         final String authorizationHeader = request.getHeader("Authorization");
 
@@ -35,8 +37,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // Authorization header value에서 앞에 'Bearer ' 제거한 부분 추출.
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
+            log.info("Extracting JWT Token from header ...");
             jwt = authorizationHeader.substring(7);
+            log.info("Extracted JWT Token: {}", jwt);
+            log.info("Extracting email from Token ...");
             username = jwtUtil.extractUsername(jwt);
+            log.info("Extracted email from Token: {}", username);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

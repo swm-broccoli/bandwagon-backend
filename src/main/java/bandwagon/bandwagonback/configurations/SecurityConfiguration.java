@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.configurations;
 
+import bandwagon.bandwagonback.jwt.JwtExceptionFilter;
 import bandwagon.bandwagonback.jwt.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,9 @@ public class SecurityConfiguration {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private JwtExceptionFilter jwtExceptionFilter;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -40,12 +44,15 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests().antMatchers("/api/login", "/api/signup").permitAll()
+        http.cors().configurationSource(corsConfigurationSource())
+                .and()
+                .csrf().disable()
+                .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtExceptionFilter, JwtRequestFilter.class);
         return http.build();
     }
 
@@ -67,7 +74,7 @@ public class SecurityConfiguration {
         configuration.addAllowedOrigin("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
+//        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

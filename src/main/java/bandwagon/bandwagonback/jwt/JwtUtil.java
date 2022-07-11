@@ -41,16 +41,27 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public Map<String, String> generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", createToken(claims, userDetails.getUsername()));
+        tokens.put("refreshToken", createRefreshToken(userDetails.getUsername()));
+        return tokens;
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-
+        // access Token expires after 10 mins
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .signWith(key, SignatureAlgorithm.HS256).compact();
+    }
+
+    private String createRefreshToken(String subject) {
+        Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        // refresh Token expires after 3 days
+        return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
