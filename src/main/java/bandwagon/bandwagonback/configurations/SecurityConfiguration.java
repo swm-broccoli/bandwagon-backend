@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.configurations;
 
+import bandwagon.bandwagonback.jwt.JwtExceptionFilter;
 import bandwagon.bandwagonback.jwt.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,9 @@ public class SecurityConfiguration {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private JwtExceptionFilter jwtExceptionFilter;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -48,6 +52,7 @@ public class SecurityConfiguration {
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtExceptionFilter, JwtRequestFilter.class);
         return http.build();
     }
 
