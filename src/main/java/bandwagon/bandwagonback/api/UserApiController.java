@@ -50,21 +50,34 @@ public class UserApiController {
     public ResponseEntity<?> login(@RequestBody LoginForm form) {
         try {
             // User 없을 시 UsernameNotFoundException
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(form.getEmail());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(form.getEmail());
             // 로그인 authentication 통과 못할 시 BadCredentialsException
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
 
-            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            Map<String, String> tokens = jwtTokenUtil.generateToken(userDetails);
 
-            final User user = userService.findOneByEmail(form.getEmail());
+            User user = userService.findOneByEmail(form.getEmail());
 
-            return ResponseEntity.ok(new LoginResponse(jwt, user.getNickname()));
+            return ResponseEntity.ok(new LoginResponse(tokens.get("accessToken"), tokens.get("refreshToken"), user.getNickname(), jwtTokenUtil.extractExpiration(tokens.get("accessToken"))));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("이메일이나 비밀번호가 올바르지 않습니다!"));
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
         }
+    }
+
+    @PostMapping("/api/refresh")
+    public ResponseEntity<?> refresh(@RequestBody HashMap<String, String> bodyJson) {
+        String refreshToken = bodyJson.get("refreshToken");
+        String username = jwtTokenUtil.extractUsername(refreshToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if(jwtTokenUtil.validateToken(refreshToken, userDetails)) {
+            Map<String, String> tokens = jwtTokenUtil.generateToken(userDetails);
+            User user = userService.findOneByEmail(username);
+            return ResponseEntity.ok(new LoginResponse(tokens.get("accessToken"), tokens.get("refreshToken"), user.getNickname(), jwtTokenUtil.extractExpiration(tokens.get("accessToken"))));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Refresh Token 만료! 로그인 필요"));
     }
 
     @Operation(description = "회원가입")

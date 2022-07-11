@@ -43,7 +43,7 @@ public class SecurityConfiguration {
         http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/api/login", "/api/signup").permitAll()
+                .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
