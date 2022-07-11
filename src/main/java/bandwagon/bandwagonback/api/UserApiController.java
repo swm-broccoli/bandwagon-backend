@@ -67,6 +67,7 @@ public class UserApiController {
         }
     }
 
+    @Operation(description = "Refresh Token으로 token 재발급")
     @PostMapping("/api/refresh")
     public ResponseEntity<?> refresh(@RequestBody HashMap<String, String> bodyJson) {
         String refreshToken = bodyJson.get("refreshToken");
