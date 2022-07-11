@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.LoginForm;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import bandwagon.bandwagonback.dto.SignUpResponse;
@@ -19,6 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -48,23 +50,24 @@ public class UserApiController {
 
     @Operation(description = "로그인")
     @PostMapping("/api/login")
-    public ResponseEntity<?> login(@RequestBody LoginForm form) throws Exception {
+    public ResponseEntity<?> login(@RequestBody LoginForm form) {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword())
-            );
+            // User 없을 시 UsernameNotFoundException
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(form.getEmail());
+            // 로그인 authentication 통과 못할 시 BadCredentialsException
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
+
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+
+            final User user = userService.findOneByEmail(form.getEmail());
+
+            return ResponseEntity.ok(new LoginResponse(jwt, user.getNickname()));
+
         } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("이메일이나 비밀번호가 올바르지 않습니다!"));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
         }
-
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(form.getEmail());
-
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-
-        final User user = userService.findOneByEmail(form.getEmail());
-
-        return ResponseEntity.ok(new LoginResponse(jwt, user.getNickname()));
     }
 
     @Operation(description = "회원가입")
