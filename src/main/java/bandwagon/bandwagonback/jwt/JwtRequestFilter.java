@@ -37,6 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // Authorization header value에서 앞에 'Bearer ' 제거한 부분 추출.
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
+            log.info("JWT Token Exists in Header");
             log.info("Extracting JWT Token from header ...");
             jwt = authorizationHeader.substring(7);
             log.info("Extracted JWT Token: {}", jwt);
@@ -46,15 +47,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            log.info("Username extracted from JWT Token and is not yet Authenticated");
             // Username (email) 로 유저 추출
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             // Jwt token 유효한지 검사 후 user authenticate
             if (jwtUtil.validateToken(jwt, userDetails)) {
+                log.info("JWT Token is Valid");
+                log.info("Authenticating user: {} ...", username);
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                log.info("Authenticated user: {}", username);
             }
         }
         filterChain.doFilter(request, response);

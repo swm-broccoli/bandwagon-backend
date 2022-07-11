@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class UserService {
     @Transactional
     public Long join(SignUpRequest request) throws Exception {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
+            log.error("Password mismatch: Input1 = {}, Input2 = {}", request.getPassword(), request.getPasswordCheck());
             throw new Exception("비밀번호가 일치하지 않습니다.");
         }
         validateDuplicateUser(request.getEmail());
@@ -40,6 +43,7 @@ public class UserService {
     private void validateDuplicateUser(String email) throws Exception {
         Optional<User> foundUser = userRepository.findByEmail(email);
         if (foundUser.isPresent()) {
+            log.error("Existing user: User = {}", email);
             throw new Exception("이미 존재하는 회원입니다");
         }
     }

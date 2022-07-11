@@ -49,6 +49,7 @@ public class UserApiController {
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody LoginForm form) {
         try {
+            log.info("Login init...");
             // User 없을 시 UsernameNotFoundException
             UserDetails userDetails = userDetailsService.loadUserByUsername(form.getEmail());
             // 로그인 authentication 통과 못할 시 BadCredentialsException
@@ -58,11 +59,15 @@ public class UserApiController {
 
             User user = userService.findOneByEmail(form.getEmail());
 
+            log.info("Logging in User: {}", user.getEmail());
+
             return ResponseEntity.ok(new LoginResponse(tokens.get("accessToken"), tokens.get("refreshToken"), user.getNickname(), jwtTokenUtil.extractExpiration(tokens.get("accessToken"))));
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("이메일이나 비밀번호가 올바르지 않습니다!"));
+            log.error("Wrong Password");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
         } catch (UsernameNotFoundException e) {
+            log.error("User not in DB");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
         }
     }
@@ -85,7 +90,9 @@ public class UserApiController {
     @PostMapping("/api/signup")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest request) {
         try {
+            log.info("Signup init...");
             Long id = userService.join(request);
+            log.info("Signup complete: User_id = {}", id);
             return ResponseEntity.ok(new SignUpResponse(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
