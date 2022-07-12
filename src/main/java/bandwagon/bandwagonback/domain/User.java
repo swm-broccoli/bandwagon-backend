@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,10 @@ public class User {
         this.password = request.getPassword();
         this.gender = request.getGender();
         this.birthday = request.getBirthday();
+    }
+
+    public User(OAuthAttributes attributes) {
+        this.name = attributes.getName();
+        this.email = attributes.getEmail();
     }
 }

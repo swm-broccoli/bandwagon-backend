@@ -2,6 +2,8 @@ package bandwagon.bandwagonback.configurations;
 
 import bandwagon.bandwagonback.jwt.JwtExceptionFilter;
 import bandwagon.bandwagonback.jwt.JwtRequestFilter;
+import bandwagon.bandwagonback.jwt.OAuth2AuthenticationSuccessHandler;
+import bandwagon.bandwagonback.service.UserOAuth2Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +34,13 @@ public class SecurityConfiguration {
     @Autowired
     private JwtExceptionFilter jwtExceptionFilter;
 
+    @Autowired
+    private UserOAuth2Service userOAuth2Service;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -50,7 +59,10 @@ public class SecurityConfiguration {
                 .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh", "/api/duplicate").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .oauth2Login().defaultSuccessUrl("/login-success").successHandler(oAuth2AuthenticationSuccessHandler)
+                .userInfoEndpoint().userService(userOAuth2Service);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtExceptionFilter, JwtRequestFilter.class);
         return http.build();
