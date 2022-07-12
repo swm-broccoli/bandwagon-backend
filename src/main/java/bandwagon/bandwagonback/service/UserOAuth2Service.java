@@ -27,10 +27,12 @@ public class UserOAuth2Service extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("Loading OAuth user");
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 //        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getAttributes());
+        log.info("OAuth2User: {}", oAuth2User.toString());
         saveOrUpdate(attributes);
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 attributes.getAttributes(), attributes.getNameAttributeKey());
@@ -40,5 +42,6 @@ public class UserOAuth2Service extends DefaultOAuth2UserService {
         User user = userRepository.findByEmail(attributes.getEmail())
                 .orElse(attributes.toEntity());
         userRepository.save(user);
+        log.info("Saving/Updating user from OAuth = {}", attributes.getEmail());
     }
 }

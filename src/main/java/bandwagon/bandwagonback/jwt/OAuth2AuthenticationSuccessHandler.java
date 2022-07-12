@@ -28,11 +28,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        log.info("OAuth authentication Success!!");
         if (response.isCommitted()) {
             log.info("응답이 이미 커밋된 상태입니다. 리다이렉트하도록 바꿀 수 없습니다.");
             return;
         }
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        log.info("From principal: {}", oAuth2User.toString());
         String email = (String) oAuth2User.getAttributes().get("email");
         // User 찾아서 AuthUserDetails 만드려 UserSerivce, Repo 부르면 loop 형성.. 따로 OAuth 위해 email만 받는 constructor 사용
         Map<String, String> tokens = jwtUtil.generateToken(new AuthUserDetails(email));
