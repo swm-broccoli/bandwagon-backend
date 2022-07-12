@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.jwt;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,11 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_XML_VALUE);
+            mapper.writeValue(response.getWriter(), new ErrorResponse(e.getMessage()));
+            log.error("JWT Token Error: {}", e.getMessage());
         } catch (JwtException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setContentType(MediaType.APPLICATION_XML_VALUE);
