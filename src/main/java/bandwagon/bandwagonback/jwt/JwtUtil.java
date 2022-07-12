@@ -51,17 +51,17 @@ public class JwtUtil {
 
     private String createToken(Map<String, Object> claims, String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        // access Token expires after 30 mins
+        // access Token expires after 30 mins -> cur 1 min for testing
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
     private String createRefreshToken(String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        // refresh Token expires after 3 days
+        // refresh Token expires after 3 days -> cur 5 min for testing
         return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
