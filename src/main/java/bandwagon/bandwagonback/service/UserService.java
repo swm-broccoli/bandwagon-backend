@@ -40,7 +40,7 @@ public class UserService {
     }
 
     // 이메일로 회원 중복 검사
-    private void validateDuplicateUser(String email) throws Exception {
+    public void validateDuplicateUser(String email) throws Exception {
         Optional<User> foundUser = userRepository.findByEmail(email);
         if (foundUser.isPresent()) {
             log.error("Existing user: User = {}", email);
