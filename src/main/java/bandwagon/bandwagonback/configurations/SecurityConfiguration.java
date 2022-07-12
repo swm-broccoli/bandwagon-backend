@@ -47,7 +47,7 @@ public class SecurityConfiguration {
         http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh").permitAll()
+                .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh", "/api/duplicate").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

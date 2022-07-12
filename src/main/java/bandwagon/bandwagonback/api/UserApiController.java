@@ -93,7 +93,18 @@ public class UserApiController {
             log.info("Signup init...");
             Long id = userService.join(request);
             log.info("Signup complete: User_id = {}", id);
-            return ResponseEntity.ok(new SignUpResponse(id));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new SignUpResponse(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "이메일 중복 확인")
+    @PostMapping("/api/duplicate")
+    public ResponseEntity<?> duplicate(@RequestBody DuplicateRequest request) {
+        try {
+            userService.validateDuplicateUser(request.getEmail());
+            return ResponseEntity.ok(new DuplicateResponse(request.getEmail()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
