@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
 import bandwagon.bandwagonback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -74,8 +75,8 @@ public class UserApiController {
 
     @Operation(description = "Refresh Token으로 token 재발급")
     @PostMapping("/api/refresh")
-    public ResponseEntity<?> refresh(@RequestBody HashMap<String, String> bodyJson) {
-        String refreshToken = bodyJson.get("refreshToken");
+    public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
+        String refreshToken = request.getRefreshToken();
         String username = jwtTokenUtil.extractUsername(refreshToken);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if(jwtTokenUtil.validateToken(refreshToken, userDetails)) {
