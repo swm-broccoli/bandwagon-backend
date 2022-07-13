@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.jwt;
 
+import bandwagon.bandwagonback.dto.UserTokenDto;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // Username (email) 로 유저 추출
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             // Jwt token 유효한지 검사 후 user authenticate
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (jwtUtil.validateToken(jwt, new UserTokenDto(userDetails.getUsername()))) {
                 log.info("JWT Token is Valid");
                 log.info("Authenticating user: {} ...", username);
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
