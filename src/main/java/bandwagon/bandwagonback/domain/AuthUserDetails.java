@@ -19,12 +19,6 @@ public class AuthUserDetails implements UserDetails {
         this.authorities = new ArrayList<>();
     }
 
-    public AuthUserDetails(String email){
-        this.username = email;
-        this.password = "";
-        this.authorities = new ArrayList<>();
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

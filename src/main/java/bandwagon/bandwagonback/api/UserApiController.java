@@ -51,14 +51,15 @@ public class UserApiController {
     public ResponseEntity<?> login(@RequestBody LoginForm form) {
         try {
             log.info("Login init...");
-            // User 없을 시 UsernameNotFoundException
-            UserDetails userDetails = userDetailsService.loadUserByUsername(form.getEmail());
+            User user = userService.findOneByEmail(form.getEmail());
+            if(user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
+            }
             // 로그인 authentication 통과 못할 시 BadCredentialsException
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
 
-            Map<String, String> tokens = jwtTokenUtil.generateToken(userDetails);
+            Map<String, String> tokens = jwtTokenUtil.generateToken(new UserTokenDto(user.getEmail()));
 
-            User user = userService.findOneByEmail(form.getEmail());
 
             log.info("Logging in User: {}", user.getEmail());
 
@@ -78,9 +79,9 @@ public class UserApiController {
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
         String refreshToken = request.getRefreshToken();
         String username = jwtTokenUtil.extractUsername(refreshToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if(jwtTokenUtil.validateToken(refreshToken, userDetails)) {
-            Map<String, String> tokens = jwtTokenUtil.generateToken(userDetails);
+        UserTokenDto userTokenDto = new UserTokenDto(username);
+        if(jwtTokenUtil.validateToken(refreshToken, userTokenDto)) {
+            Map<String, String> tokens = jwtTokenUtil.generateToken(userTokenDto);
             User user = userService.findOneByEmail(username);
             return ResponseEntity.ok(new LoginResponse(tokens.get("accessToken"), tokens.get("refreshToken"), user.getNickname(), jwtTokenUtil.extractExpiration(tokens.get("accessToken"))));
         }

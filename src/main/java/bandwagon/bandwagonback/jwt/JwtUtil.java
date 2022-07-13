@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.jwt;
 
+import bandwagon.bandwagonback.dto.UserTokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,32 +42,32 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public Map<String, String> generateToken(UserDetails userDetails) {
+    public Map<String, String> generateToken(UserTokenDto userTokenDto) {
         Map<String, Object> claims = new HashMap<>();
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", createToken(claims, userDetails.getUsername()));
-        tokens.put("refreshToken", createRefreshToken(userDetails.getUsername()));
+        tokens.put("accessToken", createToken(claims, userTokenDto.getEmail()));
+        tokens.put("refreshToken", createRefreshToken(userTokenDto.getEmail()));
         return tokens;
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        // access Token expires after 30 mins -> cur 1 min for testing
+        // access Token expires after 30 mins -> cur 30 secs for testing
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 30))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
     private String createRefreshToken(String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        // refresh Token expires after 3 days -> cur 5 min for testing
+        // refresh Token expires after 3 days -> cur 1 min for testing
         return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserTokenDto userTokenDto) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(userTokenDto.getEmail()) && !isTokenExpired(token));
     }
 }

@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.jwt;
 import bandwagon.bandwagonback.domain.AuthUserDetails;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
+import bandwagon.bandwagonback.dto.UserTokenDto;
 import bandwagon.bandwagonback.repository.UserRepository;
 import bandwagon.bandwagonback.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("From principal: {}", oAuth2User.toString());
         String email = (String) oAuth2User.getAttributes().get("email");
         // User 찾아서 AuthUserDetails 만드려 UserSerivce, Repo 부르면 loop 형성.. 따로 OAuth 위해 email만 받는 constructor 사용
-        Map<String, String> tokens = jwtUtil.generateToken(new AuthUserDetails(email));
+        Map<String, String> tokens = jwtUtil.generateToken(new UserTokenDto(email));
         String url = makeRedirectUrl(tokens.get("accessToken"), tokens.get("refreshToken"));
         getRedirectStrategy().sendRedirect(request, response, url);
     }
