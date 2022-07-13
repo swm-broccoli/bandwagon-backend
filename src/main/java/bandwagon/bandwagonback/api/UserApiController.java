@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class UserApiController {
             log.info("Login init...");
             User user = userService.findOneByEmail(form.getEmail());
             if(user == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
             }
             // 로그인 authentication 통과 못할 시 BadCredentialsException
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
@@ -68,9 +69,6 @@ public class UserApiController {
         } catch (BadCredentialsException e) {
             log.error("Wrong Password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
-        } catch (UsernameNotFoundException e) {
-            log.error("User not in DB");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
         }
     }
 
@@ -110,5 +108,17 @@ public class UserApiController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
+    }
+
+    @GetMapping("/api/users/edit/{email}")
+    public ResponseEntity<?> getUserEditInfo(@PathVariable("email") String email, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String jwt = authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+        User user = userService.findOneByEmail(email);
+        return ResponseEntity.ok(new UserEditDto(user));
     }
 }
