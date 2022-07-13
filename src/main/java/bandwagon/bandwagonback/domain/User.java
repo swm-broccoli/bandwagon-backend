@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.domain;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "users")
-@Getter
+@Getter @Setter
 public class User {
 
     @Id @GeneratedValue
