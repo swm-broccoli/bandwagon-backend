@@ -56,6 +56,7 @@ public class SecurityConfiguration {
         http.cors().configurationSource(corsConfigurationSource())
                 .and()
                 .csrf().disable()
+                .httpBasic().disable()
                 .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh", "/api/duplicate").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement()
