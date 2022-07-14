@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
 import bandwagon.bandwagonback.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -13,6 +14,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +56,7 @@ public class UserApiController {
             log.info("Login init...");
             User user = userService.findOneByEmail(form.getEmail());
             if(user == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
             }
             // 로그인 authentication 통과 못할 시 BadCredentialsException
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
@@ -68,9 +71,6 @@ public class UserApiController {
         } catch (BadCredentialsException e) {
             log.error("Wrong Password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
-        } catch (UsernameNotFoundException e) {
-            log.error("User not in DB");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
         }
     }
 
@@ -110,5 +110,56 @@ public class UserApiController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
+    }
+
+    @Operation(description = "유저 기본정보 요청")
+    @GetMapping("/api/users/edit/{email}")
+    public ResponseEntity<?> getUserEditInfo(@PathVariable("email") String email, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String jwt = authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+        User user = userService.findOneByEmail(email);
+        return ResponseEntity.ok(new UserEditDto(user));
+    }
+
+    @Operation(description = "유저 기본정보 수정")
+    @PostMapping("/api/users/edit/{email}")
+    public ResponseEntity<?> postUserEditInfo(@PathVariable("email") String email, @RequestBody UserEditRequest userRequest, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String jwt = authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try{
+            UserEditDto userEditDto = userService.editUser(userRequest);
+            return ResponseEntity.ok(userEditDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/users/password/{email}")
+    public ResponseEntity<?> postUserPassInfo(@PathVariable("email") String email, @RequestBody PasswordEditRequest passRequest, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String jwt = authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            userService.editPassword(email, passRequest);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+
+        return ResponseEntity.ok().body(null);
     }
 }

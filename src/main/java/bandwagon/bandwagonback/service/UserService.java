@@ -1,7 +1,10 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.dto.PasswordEditRequest;
 import bandwagon.bandwagonback.dto.SignUpRequest;
+import bandwagon.bandwagonback.dto.UserEditDto;
+import bandwagon.bandwagonback.dto.UserEditRequest;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,39 @@ public class UserService {
         User user = new User(request);
         userRepository.save(user);
         return user.getId();
+    }
+
+    @Transactional
+    public UserEditDto editUser(UserEditRequest request) throws Exception {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new Exception("비밀번호가 올바르지 않습니다!");
+        }
+        user.setName(request.getName());
+        user.setNickname(request.getNickname());
+        user.setBirthday(request.getBirthday());
+        user.setGender(request.getGender());
+        return new UserEditDto(user);
+    }
+
+    @Transactional
+    public void editPassword(String email, PasswordEditRequest request) throws Exception {
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new Exception("비밀번호가 올바르지 않습니다!");
+        }
+        if (!request.getNewPassword().equals(request.getNewPasswordCheck())) {
+            throw new Exception("신규 비밀번호를 동일하게 입력해주세요.");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
     // 이메일로 회원 중복 검사
