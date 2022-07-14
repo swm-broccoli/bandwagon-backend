@@ -38,6 +38,7 @@ public class UserInfo {
     @Column(columnDefinition="TEXT")
     private String avatar_url;
 
-    @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 }

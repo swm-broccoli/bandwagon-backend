@@ -26,8 +26,7 @@ public class User {
     private Boolean gender; // 0 == Male, 1 == Female
     private Date birthday;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_info_id")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
