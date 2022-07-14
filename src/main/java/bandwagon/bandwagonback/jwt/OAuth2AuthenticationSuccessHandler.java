@@ -38,8 +38,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private String makeRedirectUrl(String email, String accessToken, String refreshToken) {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect/?email=" + email + "?accessToken="+accessToken+
-                        "?refreshToken=" + refreshToken)
+        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect/?email=" + email + "&accessToken="+accessToken+
+                        "&refreshToken=" + refreshToken)
                 .build().toUriString();
     }
 }
