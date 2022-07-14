@@ -30,7 +30,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         log.info("From principal: {}", oAuth2User.toString());
-        String email = (String) oAuth2User.getAttributes().get("email");
+        // SuccessHandler에서 registrationId를 못 얻어 kakao인지 naver인지 구분하기 위해 아래 방식으로 처리..
+        // 더 좋은 방법있으면 Refactor
+        String email;
+        if(oAuth2User.getAttributes().get("kakao_account") != null) {
+            // Kakao 로그인이면
+            Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+            email = (String) kakaoAccount.get("email");
+        } else {
+            //Naver 로그인이면
+            email = (String) oAuth2User.getAttributes().get("email");
+        }
         // User 찾아서 AuthUserDetails 만드려 UserSerivce, Repo 부르면 loop 형성.. 따로 OAuth 위해 email만 받는 constructor 사용
         Map<String, String> tokens = jwtUtil.generateToken(new UserTokenDto(email));
         String url = makeRedirectUrl(email, tokens.get("accessToken"), tokens.get("refreshToken"));
