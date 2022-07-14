@@ -4,11 +4,11 @@ import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +25,12 @@ public class User {
     private String password;
     private Boolean gender; // 0 == Male, 1 == Female
     private Date birthday;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    private UserInfo userInfo;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserPerformance> userPerformance = new ArrayList<>();
 
     public User() {
     }
