@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +29,9 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_info_id")
     private UserInfo userInfo;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserPerformance> userPerformance = new ArrayList<>();
 
     public User() {
     }
