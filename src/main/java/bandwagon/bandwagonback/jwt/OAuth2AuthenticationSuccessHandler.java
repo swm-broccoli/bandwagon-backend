@@ -1,11 +1,6 @@
 package bandwagon.bandwagonback.jwt;
 
-import bandwagon.bandwagonback.domain.AuthUserDetails;
-import bandwagon.bandwagonback.domain.User;
-import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.UserTokenDto;
-import bandwagon.bandwagonback.repository.UserRepository;
-import bandwagon.bandwagonback.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -39,12 +33,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String email = (String) oAuth2User.getAttributes().get("email");
         // User 찾아서 AuthUserDetails 만드려 UserSerivce, Repo 부르면 loop 형성.. 따로 OAuth 위해 email만 받는 constructor 사용
         Map<String, String> tokens = jwtUtil.generateToken(new UserTokenDto(email));
-        String url = makeRedirectUrl(tokens.get("accessToken"), tokens.get("refreshToken"));
+        String url = makeRedirectUrl(email, tokens.get("accessToken"), tokens.get("refreshToken"));
         getRedirectStrategy().sendRedirect(request, response, url);
     }
 
-    private String makeRedirectUrl(String accessToken, String refreshToken) {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect/?accessToken="+accessToken+
+    private String makeRedirectUrl(String email, String accessToken, String refreshToken) {
+        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect/?email=" + email + "?accessToken="+accessToken+
                         "?refreshToken=" + refreshToken)
                 .build().toUriString();
     }
