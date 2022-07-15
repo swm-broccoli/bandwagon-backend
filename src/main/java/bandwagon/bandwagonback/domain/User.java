@@ -15,7 +15,7 @@ import java.util.List;
 @Getter @Setter
 public class User {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
@@ -34,6 +34,8 @@ public class User {
 
     public User() {
     }
+    
+    // 일반 로그인
     public User(SignUpRequest request) {
         this.name = request.getName();
         this.nickname = request.getNickname();
@@ -43,8 +45,13 @@ public class User {
         this.birthday = request.getBirthday();
     }
 
+    //OAuth 로그인
     public User(OAuthAttributes attributes) {
         this.name = attributes.getName();
         this.email = attributes.getEmail();
+
+        this.nickname = "TempUser";
+        this.gender = false;
+        this.birthday = new Date();
     }
 }

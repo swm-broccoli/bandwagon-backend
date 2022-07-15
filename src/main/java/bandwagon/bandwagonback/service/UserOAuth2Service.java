@@ -1,7 +1,9 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
+import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,8 @@ public class UserOAuth2Service extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    private final UserInfoRepository userInfoRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.info("Loading OAuth user");
@@ -40,8 +44,18 @@ public class UserOAuth2Service extends DefaultOAuth2UserService {
 
     private void saveOrUpdate(OAuthAttributes attributes) {
         User user = userRepository.findByEmail(attributes.getEmail())
-                .orElse(attributes.toEntity());
-        userRepository.save(user);
-        log.info("Saving/Updating user from OAuth = {}", attributes.getEmail());
+                .orElse(null);
+        if (user == null) {
+            user = attributes.toEntity();
+            userRepository.save(user);
+            log.info("User Saved");
+            UserInfo userInfo = new UserInfo();
+            log.info("UserInfo created");
+            userInfo.setUser(user);
+            log.info("UserInfo's user set");
+            userInfoRepository.save(userInfo);
+            log.info("UserInfo saved");
+        }
+        log.info("Saved user from OAuth = {}", attributes.getEmail());
     }
 }
