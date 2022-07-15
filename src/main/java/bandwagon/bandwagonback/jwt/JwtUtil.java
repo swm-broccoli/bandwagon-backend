@@ -25,15 +25,24 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public Boolean extractIsRefresh(String token) {
+        return (Boolean) extractAllClaims(token).get("isRefresh");
+    }
+
+    public Boolean extractIsSocial(String token) {
+        return (Boolean) extractAllClaims(token).get("isSocial");
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    public Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
@@ -44,6 +53,7 @@ public class JwtUtil {
 
     public Map<String, String> generateToken(UserTokenDto userTokenDto) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("isSocial", userTokenDto.getIsSocial());
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", createToken(claims, userTokenDto.getEmail()));
         tokens.put("refreshToken", createRefreshToken(claims, userTokenDto.getEmail()));
@@ -68,8 +78,8 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
-    public Boolean validateToken(String token, UserTokenDto userTokenDto) {
+    public Boolean validateToken(String token, String email) {
         final String username = extractUsername(token);
-        return (username.equals(userTokenDto.getEmail()) && !isTokenExpired(token));
+        return (username.equals(email) && !isTokenExpired(token));
     }
 }

@@ -61,7 +61,7 @@ public class UserApiController {
             // 로그인 authentication 통과 못할 시 BadCredentialsException
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
 
-            Map<String, String> tokens = jwtTokenUtil.generateToken(new UserTokenDto(user.getEmail()));
+            Map<String, String> tokens = jwtTokenUtil.generateToken(new UserTokenDto(user.getEmail(), false));
 
 
             log.info("Logging in User: {}", user.getEmail());
@@ -78,9 +78,14 @@ public class UserApiController {
     @PostMapping("/api/refresh")
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
         String refreshToken = request.getRefreshToken();
+        // 여기 뭔가 모순이 있는듯, 토큰에서 추출한 이메일로 토큰 validation 검사를 함
         String username = jwtTokenUtil.extractUsername(refreshToken);
-        UserTokenDto userTokenDto = new UserTokenDto(username);
-        if(jwtTokenUtil.validateToken(refreshToken, userTokenDto)) {
+        Boolean isSocial = jwtTokenUtil.extractIsSocial(refreshToken);
+        UserTokenDto userTokenDto = new UserTokenDto(username, isSocial);
+        if(jwtTokenUtil.validateToken(refreshToken, username)) {
+            if(!jwtTokenUtil.extractIsRefresh(refreshToken)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Refresh Token이 아닌 AccessToken으로 refresh 시도"));
+            }
             Map<String, String> tokens = jwtTokenUtil.generateToken(userTokenDto);
             User user = userService.findOneByEmail(username);
             return ResponseEntity.ok(new LoginResponse(tokens.get("accessToken"), tokens.get("refreshToken"), user.getNickname(), jwtTokenUtil.extractExpiration(tokens.get("accessToken"))));

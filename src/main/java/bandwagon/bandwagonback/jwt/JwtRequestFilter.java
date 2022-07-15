@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // Username (email) 로 유저 추출
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             // Jwt token 유효한지 검사 후 user authenticate
-            if (jwtUtil.validateToken(jwt, new UserTokenDto(userDetails.getUsername()))) {
+            if (jwtUtil.validateToken(jwt, username)) {
                 log.info("JWT Token is Valid");
                 log.info("Authenticating user: {} ...", username);
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

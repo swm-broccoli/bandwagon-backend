@@ -42,7 +42,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             email = (String) oAuth2User.getAttributes().get("email");
         }
         // User 찾아서 AuthUserDetails 만드려 UserSerivce, Repo 부르면 loop 형성.. 따로 OAuth 위해 email만 받는 constructor 사용
-        Map<String, String> tokens = jwtUtil.generateToken(new UserTokenDto(email));
+        Map<String, String> tokens = jwtUtil.generateToken(new UserTokenDto(email, true));
         String url = makeRedirectUrl(email, tokens.get("accessToken"), tokens.get("refreshToken"));
         getRedirectStrategy().sendRedirect(request, response, url);
     }
