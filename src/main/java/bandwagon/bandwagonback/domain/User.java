@@ -15,7 +15,7 @@ import java.util.List;
 @Getter @Setter
 public class User {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
@@ -30,10 +30,12 @@ public class User {
     private UserInfo userInfo;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserPerformance> userPerformance = new ArrayList<>();
+    private List<UserPerformance> userPerformances = new ArrayList<>();
 
     public User() {
     }
+    
+    // 일반 로그인
     public User(SignUpRequest request) {
         this.name = request.getName();
         this.nickname = request.getNickname();
@@ -43,8 +45,19 @@ public class User {
         this.birthday = request.getBirthday();
     }
 
+    //OAuth 로그인
     public User(OAuthAttributes attributes) {
         this.name = attributes.getName();
         this.email = attributes.getEmail();
+
+        this.nickname = "TempUser";
+        this.gender = false;
+        this.birthday = new Date();
+    }
+
+    // 유저 연주기록 추가
+    public void addUserPerformance(UserPerformance userPerformance) {
+        userPerformances.add(userPerformance);
+        userPerformance.setUser(this);
     }
 }

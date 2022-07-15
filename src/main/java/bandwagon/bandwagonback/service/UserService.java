@@ -1,10 +1,12 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.PasswordEditRequest;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import bandwagon.bandwagonback.dto.UserEditDto;
 import bandwagon.bandwagonback.dto.UserEditRequest;
+import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final UserInfoRepository userInfoRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -39,6 +43,13 @@ public class UserService {
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         User user = new User(request);
         userRepository.save(user);
+        log.info("User Saved");
+        UserInfo userInfo = new UserInfo();
+        log.info("UserInfo created");
+        userInfo.setUser(user);
+        log.info("UserInfo's user set");
+        userInfoRepository.save(userInfo);
+        log.info("UserInfo saved");
         return user.getId();
     }
 
