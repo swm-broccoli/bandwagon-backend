@@ -149,11 +149,17 @@ public class UserApiController {
         }
     }
 
+    @Operation(description = "비밀번호 변경")
     @PostMapping("/api/users/password/{email}")
     public ResponseEntity<?> postUserPassInfo(@PathVariable("email") String email, @RequestBody PasswordEditRequest passRequest, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         String jwt = authorizationHeader.substring(7);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        Boolean isSocial = jwtTokenUtil.extractIsSocial(jwt);
+
+        if(isSocial) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Social 계정은 비밀번호 변경이 불가능 합니다."));
+        }
 
         if (!jwtEmail.equals(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
