@@ -60,9 +60,6 @@ public class UserService {
         if (user == null) {
             throw new Exception("존재하지 않는 유저입니다!");
         }
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new Exception("비밀번호가 올바르지 않습니다!");
-        }
         user.setName(request.getName());
         user.setNickname(request.getNickname());
         user.setBirthday(request.getBirthday());
