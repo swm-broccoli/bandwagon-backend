@@ -33,7 +33,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType(MediaType.APPLICATION_XML_VALUE);
             mapper.writeValue(response.getWriter(), new ErrorResponse(e.getMessage()));
-            log.error("JWT Token Error: {}", e.getMessage());
+            log.error("JWT Token Expired: {}", e.getMessage());
         } catch (JwtException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setContentType(MediaType.APPLICATION_XML_VALUE);
