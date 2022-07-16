@@ -6,7 +6,10 @@ import lombok.Data;
 public class UserTokenDto {
     private String email;
 
-    public UserTokenDto(String email) {
+    private Boolean isSocial;
+
+    public UserTokenDto(String email, Boolean isSocial) {
         this.email = email;
+        this.isSocial = isSocial;
     }
 }

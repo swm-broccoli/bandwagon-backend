@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.configurations;
 
+import bandwagon.bandwagonback.jwt.CustomAuthenticationEntryPoint;
 import bandwagon.bandwagonback.jwt.JwtExceptionFilter;
 import bandwagon.bandwagonback.jwt.JwtRequestFilter;
 import bandwagon.bandwagonback.jwt.OAuth2AuthenticationSuccessHandler;
@@ -14,8 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -40,6 +41,9 @@ public class SecurityConfiguration {
     @Autowired
     private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
+    @Autowired
+    private CustomAuthenticationEntryPoint authenticationEntryPoint;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -59,6 +63,7 @@ public class SecurityConfiguration {
                 .httpBasic().disable()
                 .authorizeRequests().antMatchers("/api/login", "/api/signup", "/api/refresh", "/api/duplicate").permitAll()
                 .anyRequest().authenticated()
+                .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

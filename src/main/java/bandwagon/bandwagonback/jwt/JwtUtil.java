@@ -25,8 +25,17 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public Boolean extractIsRefresh(String token) {
+        return (Boolean) extractAllClaims(token).get("isRefresh");
+    }
+
+    public Boolean extractIsSocial(String token) {
+        return (Boolean) extractAllClaims(token).get("isSocial");
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -44,30 +53,33 @@ public class JwtUtil {
 
     public Map<String, String> generateToken(UserTokenDto userTokenDto) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("isSocial", userTokenDto.getIsSocial());
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", createToken(claims, userTokenDto.getEmail()));
-        tokens.put("refreshToken", createRefreshToken(userTokenDto.getEmail()));
+        tokens.put("refreshToken", createRefreshToken(claims, userTokenDto.getEmail()));
         return tokens;
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        claims.put("isRefresh", false);
         // access Token expires after 30 mins -> cur 30 secs for testing
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
-    private String createRefreshToken(String subject) {
+    private String createRefreshToken(Map<String, Object> claims, String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        claims.put("isRefresh", true);
         // refresh Token expires after 3 days -> cur 10 min for testing
-        return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
-    public Boolean validateToken(String token, UserTokenDto userTokenDto) {
+    public Boolean validateToken(String token, String email) {
         final String username = extractUsername(token);
-        return (username.equals(userTokenDto.getEmail()) && !isTokenExpired(token));
+        return (username.equals(email) && !isTokenExpired(token));
     }
 }

@@ -37,7 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
 
         // Authorization header value에서 앞에 'Bearer ' 제거한 부분 추출.
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer") && authorizationHeader.length() > 7) {
             log.info("JWT Token Exists in Header");
             log.info("Extracting JWT Token from header ...");
             jwt = authorizationHeader.substring(7);
@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // Username (email) 로 유저 추출
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             // Jwt token 유효한지 검사 후 user authenticate
-            if (jwtUtil.validateToken(jwt, new UserTokenDto(userDetails.getUsername()))) {
+            if (jwtUtil.validateToken(jwt, username)) {
                 log.info("JWT Token is Valid");
                 log.info("Authenticating user: {} ...", username);
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
