@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
@@ -50,5 +51,16 @@ public class User {
         this.nickname = "TempUser";
         this.gender = false;
         this.birthday = new Date();
+    }
+
+    // 마이 페이지 변경으로인한 유저 정보 변경
+    public void myPageUpdate(MyPageDto myPageDto) {
+        this.name = myPageDto.getName();
+        this.birthday = myPageDto.getBirthday();
+        this.userInfo.setPosition(myPageDto.getPosition());
+        this.userInfo.setArea(myPageDto.getArea());
+        this.userInfo.setGenre(myPageDto.getGenre());
+        this.userInfo.setDescription(myPageDto.getDescription());
+        this.userInfo.setUserPerformances(myPageDto.getUserPerformances());
     }
 }

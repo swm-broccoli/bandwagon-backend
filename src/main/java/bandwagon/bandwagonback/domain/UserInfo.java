@@ -25,8 +25,6 @@ public class UserInfo {
     @Column(name = "user_info_id")
     private Long Id;
 
-    private int age;
-
     @Type(type = "list-array")
     @Column(columnDefinition = "text[]")
     private List<String> position;

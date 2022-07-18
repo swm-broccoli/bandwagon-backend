@@ -24,6 +24,7 @@ public class MyPageDto {
         this.birthday = user.getBirthday();
         this.position = user.getUserInfo().getPosition();
         this.area = user.getUserInfo().getArea();
+        this.genre = user.getUserInfo().getGenre();
         this.description = user.getUserInfo().getDescription();
         this.userPerformances = user.getUserInfo().getUserPerformances();
     }
