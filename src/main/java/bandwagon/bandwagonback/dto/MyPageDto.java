@@ -25,6 +25,6 @@ public class MyPageDto {
         this.position = user.getUserInfo().getPosition();
         this.area = user.getUserInfo().getArea();
         this.description = user.getUserInfo().getDescription();
-        this.userPerformances = user.getUserPerformances();
+        this.userPerformances = user.getUserInfo().getUserPerformances();
     }
 }

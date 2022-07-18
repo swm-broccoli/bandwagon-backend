@@ -1,21 +1,24 @@
 package bandwagon.bandwagonback.domain;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "user_infos")
 @Getter @Setter
-@TypeDef(
-        name = "list-array",
-        typeClass = ListArrayType.class
-)
+@TypeDefs({
+        @TypeDef(name = "list-array", typeClass = ListArrayType.class),
+        @TypeDef(name = "json", typeClass = JsonType.class)
+})
 public class UserInfo {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,4 +48,8 @@ public class UserInfo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Type(type = "json")
+    @Column(columnDefinition = "jsonb")
+    private List<UserPerformance> userPerformances = new ArrayList<>();
 }

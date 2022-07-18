@@ -29,9 +29,6 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserPerformance> userPerformances = new ArrayList<>();
-
     public User() {
     }
     
@@ -53,11 +50,5 @@ public class User {
         this.nickname = "TempUser";
         this.gender = false;
         this.birthday = new Date();
-    }
-
-    // 유저 연주기록 추가
-    public void addUserPerformance(UserPerformance userPerformance) {
-        userPerformances.add(userPerformance);
-        userPerformance.setUser(this);
     }
 }
