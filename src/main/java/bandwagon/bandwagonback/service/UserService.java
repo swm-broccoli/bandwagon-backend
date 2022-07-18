@@ -2,10 +2,7 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
-import bandwagon.bandwagonback.dto.PasswordEditRequest;
-import bandwagon.bandwagonback.dto.SignUpRequest;
-import bandwagon.bandwagonback.dto.UserEditDto;
-import bandwagon.bandwagonback.dto.UserEditRequest;
+import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +80,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
+    //마이페이지 수정 사항 디비에 업데이트
+    @Transactional
+    public void updateMyPage(String email, MyPageDto myPageDto) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        user.myPageUpdate(myPageDto);
+    }
+
     // 이메일로 회원 중복 검사
     public void validateDuplicateUser(String email) throws Exception {
         Optional<User> foundUser = userRepository.findByEmail(email);
@@ -106,6 +113,4 @@ public class UserService {
     public User findOneByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
-
-
 }

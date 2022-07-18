@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
@@ -29,9 +30,6 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserPerformance> userPerformances = new ArrayList<>();
-
     public User() {
     }
     
@@ -55,9 +53,14 @@ public class User {
         this.birthday = new Date();
     }
 
-    // 유저 연주기록 추가
-    public void addUserPerformance(UserPerformance userPerformance) {
-        userPerformances.add(userPerformance);
-        userPerformance.setUser(this);
+    // 마이 페이지 변경으로인한 유저 정보 변경
+    public void myPageUpdate(MyPageDto myPageDto) {
+        this.name = myPageDto.getName();
+        this.birthday = myPageDto.getBirthday();
+        this.userInfo.setPosition(myPageDto.getPosition());
+        this.userInfo.setArea(myPageDto.getArea());
+        this.userInfo.setGenre(myPageDto.getGenre());
+        this.userInfo.setDescription(myPageDto.getDescription());
+        this.userInfo.setUserPerformances(myPageDto.getUserPerformances());
     }
 }
