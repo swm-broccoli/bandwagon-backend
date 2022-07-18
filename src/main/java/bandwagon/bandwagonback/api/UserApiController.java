@@ -189,7 +189,7 @@ public class UserApiController {
     }
 
     @PostMapping("/api/users/mypage/{email}")
-    public ResponseEntity<?> postMyPage(@PathVariable("email") String email, @RequestBody MyPageDto myPageRequest, HttpServletRequest request) {
+    public ResponseEntity<?> postMyPage(@PathVariable("email") String email, @RequestBody MyPageRequest myPageRequest, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         String jwt = authorizationHeader.substring(7);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
