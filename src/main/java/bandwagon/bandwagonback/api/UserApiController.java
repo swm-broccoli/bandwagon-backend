@@ -173,4 +173,17 @@ public class UserApiController {
 
         return ResponseEntity.ok().body(null);
     }
+
+    @GetMapping("/api/users/mypage/{email}")
+    public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String jwt = authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+        User user = userService.findOneByEmail(email);
+        return ResponseEntity.ok().body(new MyPageDto(user));
+    }
 }
