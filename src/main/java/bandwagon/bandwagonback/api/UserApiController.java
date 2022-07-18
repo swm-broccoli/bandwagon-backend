@@ -188,6 +188,7 @@ public class UserApiController {
         return ResponseEntity.ok().body(new MyPageDto(user));
     }
 
+    @Operation(description = "마이 페이지 정보 수정")
     @PostMapping("/api/users/mypage/{email}")
     public ResponseEntity<?> postMyPage(@PathVariable("email") String email, @RequestBody MyPageRequest myPageRequest, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
