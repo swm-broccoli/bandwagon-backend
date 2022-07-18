@@ -2,10 +2,7 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
-import bandwagon.bandwagonback.dto.PasswordEditRequest;
-import bandwagon.bandwagonback.dto.SignUpRequest;
-import bandwagon.bandwagonback.dto.UserEditDto;
-import bandwagon.bandwagonback.dto.UserEditRequest;
+import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +78,14 @@ public class UserService {
             throw new Exception("신규 비밀번호를 동일하게 입력해주세요.");
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
+    public void updateMyPage(String email, MyPageDto myPageDto) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+
     }
 
     // 이메일로 회원 중복 검사

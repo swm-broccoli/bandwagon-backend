@@ -17,6 +17,8 @@ public class MyPageDto {
     private String description;
     private List<UserPerformance> userPerformances;
 
+    public MyPageDto() {}
+
     public MyPageDto(User user) {
         this.name = user.getName();
         this.birthday = user.getBirthday();
