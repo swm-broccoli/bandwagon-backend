@@ -55,7 +55,7 @@ public class UserApiController {
         try {
             log.info("Login init...");
             User user = userService.findOneByEmail(form.getEmail());
-            if(user == null) {
+            if(user == null || user.getIsSocial()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
             }
             // 로그인 authentication 통과 못할 시 BadCredentialsException
