@@ -41,7 +41,7 @@ public class UserInfo {
     private String description;
 
     @Column(columnDefinition="TEXT")
-    private String avatar_url;
+    private String avatarUrl;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

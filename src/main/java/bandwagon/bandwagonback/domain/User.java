@@ -28,6 +28,8 @@ public class User {
     private Boolean gender; // 0 == Male, 1 == Female
     private Date birthday;
 
+    private Boolean isSocial;
+
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
@@ -42,6 +44,7 @@ public class User {
         this.password = request.getPassword();
         this.gender = request.getGender();
         this.birthday = request.getBirthday();
+        this.isSocial = false;
     }
 
     //OAuth 로그인
@@ -52,6 +55,7 @@ public class User {
         this.nickname = "TempUser";
         this.gender = false;
         this.birthday = new Date();
+        this.isSocial = true;
     }
 
     // 마이 페이지 변경으로인한 유저 정보 변경
