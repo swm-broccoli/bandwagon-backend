@@ -1,7 +1,6 @@
 package bandwagon.bandwagonback.dto;
 
 import bandwagon.bandwagonback.domain.User;
-import bandwagon.bandwagonback.domain.UserPerformance;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,7 +12,7 @@ public class MyPageRequest {
     private List<String> area;
     private List<String> genre;
     private String description;
-    private List<UserPerformance> userPerformances;
+//    private List<UserPerformance> userPerformances;
 
     public MyPageRequest() {}
 
@@ -22,6 +21,6 @@ public class MyPageRequest {
         this.area = user.getUserInfo().getArea();
         this.genre = user.getUserInfo().getGenre();
         this.description = user.getUserInfo().getDescription();
-        this.userPerformances = user.getUserInfo().getUserPerformances();
+//        this.userPerformances = user.getUserInfo().getUserPerformances();
     }
 }

@@ -47,7 +47,7 @@ public class UserInfo {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "jsonb")
-    private List<UserPerformance> userPerformances = new ArrayList<>();
+//    @Type(type = "json")
+//    @Column(columnDefinition = "jsonb")
+//    private List<UserPerformance> userPerformances = new ArrayList<>();
 }

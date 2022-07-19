@@ -1,6 +1,5 @@
 package bandwagon.bandwagonback.domain;
 
-import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.MyPageRequest;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class User {
     private Boolean isSocial;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<UserPerformanceAlt> userPerformanceAlts;
+    private List<UserPerformance> userPerformances;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
@@ -67,6 +65,5 @@ public class User {
         this.userInfo.setArea(myPageRequest.getArea());
         this.userInfo.setGenre(myPageRequest.getGenre());
         this.userInfo.setDescription(myPageRequest.getDescription());
-        this.userInfo.setUserPerformances(myPageRequest.getUserPerformances());
     }
 }
