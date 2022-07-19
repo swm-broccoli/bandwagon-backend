@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class User {
     private Boolean isSocial;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<UserPerformance> userPerformances;
+    private List<UserPerformance> userPerformances = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
@@ -57,6 +58,12 @@ public class User {
         this.gender = false;
         this.birthday = new Date();
         this.isSocial = true;
+    }
+
+    // 연주기록 추가
+    public void addUserPerformance(UserPerformance userPerformance) {
+        this.userPerformances.add(userPerformance);
+        userPerformance.setUser(this);
     }
 
     // 마이 페이지 변경으로인한 유저 정보 변경
