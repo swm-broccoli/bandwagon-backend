@@ -30,6 +30,9 @@ public class User {
 
     private Boolean isSocial;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserPerformanceAlt> userPerformanceAlts;
+
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
