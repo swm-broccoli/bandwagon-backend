@@ -175,6 +175,23 @@ public class UserApiController {
         return ResponseEntity.ok().body(null);
     }
 
+    @Operation(description = "자기소개 수정")
+    @PutMapping("/api/users/{email}/description")
+    public ResponseEntity<?> putUserDescription(@PathVariable("email") String email, @RequestBody DescriptionDto descriptionDto, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+        try {
+            userService.editDescription(email, descriptionDto.getDescription());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
     @Operation(description = "신규 연주기록 생성")
     @PostMapping("/api/users/{email}/performance")
     public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
