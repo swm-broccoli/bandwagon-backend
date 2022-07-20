@@ -54,10 +54,17 @@ public class UserPerformanceService {
 
     // 기존 연주기록 업데이트
     @Transactional
-    public void updateUserPerformance(Long userPerformanceId, UserPerformanceDto userPerformanceDto) throws Exception{
+    public void updateUserPerformance(String email, Long userPerformanceId, UserPerformanceDto userPerformanceDto) throws Exception{
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
         UserPerformance userPerformance = userPerformanceRepository.findById(userPerformanceId).orElse(null);
         if(userPerformance == null) {
             throw new Exception("User Performance does not exist!");
+        }
+        if (userPerformance.getUser() != user) {
+            throw new Exception("Owner of performance is not inputted user!");
         }
         userPerformance.update(userPerformanceDto);
     }

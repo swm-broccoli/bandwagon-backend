@@ -191,6 +191,7 @@ public class UserApiController {
         return ResponseEntity.ok().body(null);
     }
 
+    @Operation(description = "연주기록 삭제")
     @DeleteMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> deleteUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -202,6 +203,25 @@ public class UserApiController {
 
         try {
             userPerformanceService.deleteUserPerformance(email, user_performance_id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    @Operation(description = "연주기록 수정")
+    @PutMapping("/api/users/{email}/performance/{user_performance_id}")
+    public ResponseEntity<?> putUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id,
+                                                @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            userPerformanceService.updateUserPerformance(email, user_performance_id, userPerformanceDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
