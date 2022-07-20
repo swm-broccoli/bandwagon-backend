@@ -29,6 +29,10 @@ public class PositionService {
         if (position == null) {
             throw new Exception("Position does not exist!");
         }
+        if (user.getPositions().contains(position)) {
+            log.info("User already has position: {}", position.getPosition());
+            return;
+        }
         user.addPosition(position);
     }
 

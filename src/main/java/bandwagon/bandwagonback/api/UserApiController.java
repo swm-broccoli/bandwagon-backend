@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
+import bandwagon.bandwagonback.service.PositionService;
 import bandwagon.bandwagonback.service.UserPerformanceService;
 import bandwagon.bandwagonback.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -36,8 +37,8 @@ import java.util.Map;
 public class UserApiController {
 
     private final UserService userService;
-
     private final UserPerformanceService userPerformanceService;
+    private final PositionService positionService;
     private final AuthenticationManager authenticationManager;
 
     private final AuthUserDetailsService userDetailsService;
@@ -222,6 +223,23 @@ public class UserApiController {
 
         try {
             userPerformanceService.updateUserPerformance(email, user_performance_id, userPerformanceDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    @PostMapping("/api/users/{email}/positions/{position_id}")
+    public ResponseEntity<?> postPosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            positionService.addPositionToUser(email, position_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
