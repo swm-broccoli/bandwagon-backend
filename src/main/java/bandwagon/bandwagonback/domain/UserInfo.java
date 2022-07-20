@@ -25,17 +25,17 @@ public class UserInfo {
     @Column(name = "user_info_id")
     private Long Id;
 
-    @Type(type = "list-array")
-    @Column(columnDefinition = "text[]")
-    private List<String> position;
-
-    @Type(type = "list-array")
-    @Column(columnDefinition = "text[]")
-    private List<String> area;
-
-    @Type(type = "list-array")
-    @Column(columnDefinition = "text[]")
-    private List<String> genre;
+//    @Type(type = "list-array")
+//    @Column(columnDefinition = "text[]")
+//    private List<String> position;
+//
+//    @Type(type = "list-array")
+//    @Column(columnDefinition = "text[]")
+//    private List<String> area;
+//
+//    @Type(type = "list-array")
+//    @Column(columnDefinition = "text[]")
+//    private List<String> genre;
 
     @Column(columnDefinition="TEXT")
     private String description;

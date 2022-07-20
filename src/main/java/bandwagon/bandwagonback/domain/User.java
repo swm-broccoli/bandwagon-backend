@@ -67,10 +67,10 @@ public class User {
     }
 
     // 마이 페이지 변경으로인한 유저 정보 변경
-    public void myPageUpdate(MyPageRequest myPageRequest) {
-        this.userInfo.setPosition(myPageRequest.getPosition());
-        this.userInfo.setArea(myPageRequest.getArea());
-        this.userInfo.setGenre(myPageRequest.getGenre());
-        this.userInfo.setDescription(myPageRequest.getDescription());
-    }
+//    public void myPageUpdate(MyPageRequest myPageRequest) {
+//        this.userInfo.setPosition(myPageRequest.getPosition());
+//        this.userInfo.setArea(myPageRequest.getArea());
+//        this.userInfo.setGenre(myPageRequest.getGenre());
+//        this.userInfo.setDescription(myPageRequest.getDescription());
+//    }
 }
