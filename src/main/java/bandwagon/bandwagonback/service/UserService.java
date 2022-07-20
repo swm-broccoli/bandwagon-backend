@@ -80,6 +80,17 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
+    @Transactional
+    public void editDescription(String email, String description) throws Exception {
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        UserInfo userInfo = user.getUserInfo();
+        userInfo.setDescription(description);
+    }
+
     //마이페이지 수정 사항 디비에 업데이트
 //    @Transactional
 //    public void updateMyPage(String email, MyPageRequest myPageRequest) throws Exception {
