@@ -35,6 +35,12 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
+    @ManyToMany
+    @JoinTable(name = "user_positions",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "position_id"))
+    private List<Position> positions = new ArrayList<>();
+
     public User() {
     }
     
@@ -64,6 +70,18 @@ public class User {
     public void addUserPerformance(UserPerformance userPerformance) {
         this.userPerformances.add(userPerformance);
         userPerformance.setUser(this);
+    }
+
+    // 포지션 추가
+    public void addPosition(Position position) {
+        this.positions.add(position);
+        position.getUsers().add(this);
+    }
+
+    // 포지션 제거
+    public void removePosition(Position position) {
+        this.positions.remove(position);
+        position.getUsers().remove(this);
     }
 
     // 마이 페이지 변경으로인한 유저 정보 변경
