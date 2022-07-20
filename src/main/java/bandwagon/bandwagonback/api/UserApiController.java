@@ -229,6 +229,7 @@ public class UserApiController {
         return ResponseEntity.ok().body(null);
     }
 
+    @Operation(description = "포지션 추가")
     @PostMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> postPosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -240,6 +241,24 @@ public class UserApiController {
 
         try {
             positionService.addPositionToUser(email, position_id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    @Operation(description = "포지션 삭제")
+    @DeleteMapping("/api/users/{email}/positions/{position_id}")
+    public ResponseEntity<?> deletePosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            positionService.deletePositionFromUser(email, position_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
