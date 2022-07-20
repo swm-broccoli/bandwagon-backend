@@ -41,6 +41,12 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "position_id"))
     private List<Position> positions = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "user_genres",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private List<Genre> genres = new ArrayList<>();
+
     public User() {
     }
     
@@ -82,6 +88,18 @@ public class User {
     public void removePosition(Position position) {
         this.positions.remove(position);
         position.getUsers().remove(this);
+    }
+
+    // 선호 장르 추가
+    public void addGenre(Genre genre) {
+        this.genres.add(genre);
+        genre.getUsers().add(this);
+    }
+
+    // 선호 장르 제거
+    public void removeGenre(Genre genre) {
+        this.genres.remove(genre);
+        genre.getUsers().remove(this);
     }
 
     // 마이 페이지 변경으로인한 유저 정보 변경
