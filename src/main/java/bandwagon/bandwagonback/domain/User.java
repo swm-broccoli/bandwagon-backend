@@ -47,6 +47,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "user_areas",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "area_id"))
+    private List<Area> areas = new ArrayList<>();
+
     public User() {
     }
     
