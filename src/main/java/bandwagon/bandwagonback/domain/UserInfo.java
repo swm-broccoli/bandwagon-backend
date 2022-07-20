@@ -41,13 +41,13 @@ public class UserInfo {
     private String description;
 
     @Column(columnDefinition="TEXT")
-    private String avatar_url;
+    private String avatarUrl;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "jsonb")
-    private List<UserPerformance> userPerformances = new ArrayList<>();
+//    @Type(type = "json")
+//    @Column(columnDefinition = "jsonb")
+//    private List<UserPerformance> userPerformances = new ArrayList<>();
 }

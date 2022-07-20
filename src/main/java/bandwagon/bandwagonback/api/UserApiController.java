@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.AuthUserDetailsService;
+import bandwagon.bandwagonback.service.UserPerformanceService;
 import bandwagon.bandwagonback.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,9 +37,11 @@ public class UserApiController {
 
     private final UserService userService;
 
+    private final UserPerformanceService userPerformanceService;
     private final AuthenticationManager authenticationManager;
 
     private final AuthUserDetailsService userDetailsService;
+
 
     private final JwtUtil jwtTokenUtil;
 
@@ -55,7 +58,7 @@ public class UserApiController {
         try {
             log.info("Login init...");
             User user = userService.findOneByEmail(form.getEmail());
-            if(user == null) {
+            if(user == null || user.getIsSocial()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("가입되지 않은 회원입니다!"));
             }
             // 로그인 authentication 통과 못할 시 BadCredentialsException
@@ -120,8 +123,7 @@ public class UserApiController {
     @Operation(description = "유저 기본정보 요청")
     @GetMapping("/api/users/edit/{email}")
     public ResponseEntity<?> getUserEditInfo(@PathVariable("email") String email, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        String jwt = authorizationHeader.substring(7);
+        String jwt = getJwtFromHeader(request);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
         if (!jwtEmail.equals(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
@@ -133,8 +135,7 @@ public class UserApiController {
     @Operation(description = "유저 기본정보 수정")
     @PostMapping("/api/users/edit/{email}")
     public ResponseEntity<?> postUserEditInfo(@PathVariable("email") String email, @RequestBody UserEditRequest userRequest, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        String jwt = authorizationHeader.substring(7);
+        String jwt = getJwtFromHeader(request);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
 
         if (!jwtEmail.equals(email)) {
@@ -152,8 +153,7 @@ public class UserApiController {
     @Operation(description = "비밀번호 변경")
     @PostMapping("/api/users/password/{email}")
     public ResponseEntity<?> postUserPassInfo(@PathVariable("email") String email, @RequestBody PasswordEditRequest passRequest, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        String jwt = authorizationHeader.substring(7);
+        String jwt = getJwtFromHeader(request);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
         Boolean isSocial = jwtTokenUtil.extractIsSocial(jwt);
 
@@ -174,35 +174,94 @@ public class UserApiController {
         return ResponseEntity.ok().body(null);
     }
 
-    @Operation(description = "마이 페이지 정보 불러오기")
-    @GetMapping("/api/users/mypage/{email}")
-    public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        String jwt = authorizationHeader.substring(7);
+    @Operation(description = "신규 연주기록 생성")
+    @PostMapping("/api/users/{email}/performance")
+    public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
 
         if (!jwtEmail.equals(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
         }
-        User user = userService.findOneByEmail(email);
-        return ResponseEntity.ok().body(new MyPageDto(user));
-    }
-
-    @Operation(description = "마이 페이지 정보 수정")
-    @PostMapping("/api/users/mypage/{email}")
-    public ResponseEntity<?> postMyPage(@PathVariable("email") String email, @RequestBody MyPageRequest myPageRequest, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        String jwt = authorizationHeader.substring(7);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-        try{
-            userService.updateMyPage(email, myPageRequest);
-            return ResponseEntity.ok().body("Good");
+        try {
+            userPerformanceService.saveUserPerformance(email, userPerformanceDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
+        return ResponseEntity.ok().body(null);
     }
+
+    @Operation(description = "연주기록 삭제")
+    @DeleteMapping("/api/users/{email}/performance/{user_performance_id}")
+    public ResponseEntity<?> deleteUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            userPerformanceService.deleteUserPerformance(email, user_performance_id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    @Operation(description = "연주기록 수정")
+    @PutMapping("/api/users/{email}/performance/{user_performance_id}")
+    public ResponseEntity<?> putUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id,
+                                                @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            userPerformanceService.updateUserPerformance(email, user_performance_id, userPerformanceDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    private String getJwtFromHeader(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        return authorizationHeader.substring(7);
+    }
+
+//    @Operation(description = "마이 페이지 정보 불러오기")
+//    @GetMapping("/api/users/mypage/{email}")
+//    public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
+//        String authorizationHeader = request.getHeader("Authorization");
+//        String jwt = authorizationHeader.substring(7);
+//        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+//
+//        if (!jwtEmail.equals(email)) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+//        }
+//        User user = userService.findOneByEmail(email);
+//        return ResponseEntity.ok().body(new MyPageDto(user));
+//    }
+//
+//    @Operation(description = "마이 페이지 정보 수정")
+//    @PostMapping("/api/users/mypage/{email}")
+//    public ResponseEntity<?> postMyPage(@PathVariable("email") String email, @RequestBody MyPageRequest myPageRequest, HttpServletRequest request) {
+//        String authorizationHeader = request.getHeader("Authorization");
+//        String jwt = authorizationHeader.substring(7);
+//        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+//
+//        if (!jwtEmail.equals(email)) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+//        }
+//        try{
+//            userService.updateMyPage(email, myPageRequest);
+//            return ResponseEntity.ok().body("Good");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+//        }
+//    }
 }

@@ -81,14 +81,14 @@ public class UserService {
     }
 
     //마이페이지 수정 사항 디비에 업데이트
-    @Transactional
-    public void updateMyPage(String email, MyPageRequest myPageRequest) throws Exception {
-        User user = userRepository.findByEmail(email).orElse(null);
-        if(user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
-        }
-        user.myPageUpdate(myPageRequest);
-    }
+//    @Transactional
+//    public void updateMyPage(String email, MyPageRequest myPageRequest) throws Exception {
+//        User user = userRepository.findByEmail(email).orElse(null);
+//        if(user == null) {
+//            throw new Exception("존재하지 않는 유저입니다!");
+//        }
+//        user.myPageUpdate(myPageRequest);
+//    }
 
     // 이메일로 회원 중복 검사
     public void validateDuplicateUser(String email) throws Exception {

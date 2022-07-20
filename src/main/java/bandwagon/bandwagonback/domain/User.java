@@ -1,6 +1,5 @@
 package bandwagon.bandwagonback.domain;
 
-import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.MyPageRequest;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
@@ -28,6 +27,11 @@ public class User {
     private Boolean gender; // 0 == Male, 1 == Female
     private Date birthday;
 
+    private Boolean isSocial;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserPerformance> userPerformances = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserInfo userInfo;
 
@@ -42,6 +46,7 @@ public class User {
         this.password = request.getPassword();
         this.gender = request.getGender();
         this.birthday = request.getBirthday();
+        this.isSocial = false;
     }
 
     //OAuth 로그인
@@ -52,6 +57,13 @@ public class User {
         this.nickname = "TempUser";
         this.gender = false;
         this.birthday = new Date();
+        this.isSocial = true;
+    }
+
+    // 연주기록 추가
+    public void addUserPerformance(UserPerformance userPerformance) {
+        this.userPerformances.add(userPerformance);
+        userPerformance.setUser(this);
     }
 
     // 마이 페이지 변경으로인한 유저 정보 변경
@@ -60,6 +72,5 @@ public class User {
         this.userInfo.setArea(myPageRequest.getArea());
         this.userInfo.setGenre(myPageRequest.getGenre());
         this.userInfo.setDescription(myPageRequest.getDescription());
-        this.userInfo.setUserPerformances(myPageRequest.getUserPerformances());
     }
 }
