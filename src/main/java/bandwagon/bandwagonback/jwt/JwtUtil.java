@@ -63,7 +63,7 @@ public class JwtUtil {
     private String createToken(Map<String, Object> claims, String subject) {
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         claims.put("isRefresh", false);
-        // access Token expires after 30 mins -> cur 30 secs for testing
+        // access Token expires after 30 mins -> cur 5 mins for testing
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
