@@ -1,6 +1,5 @@
 package bandwagon.bandwagonback.domain;
 
-import bandwagon.bandwagonback.dto.MyPageRequest;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import lombok.Getter;
@@ -119,12 +118,4 @@ public class User {
         this.areas.remove(area);
         area.getUsers().remove(this);
     }
-
-    // 마이 페이지 변경으로인한 유저 정보 변경
-//    public void myPageUpdate(MyPageRequest myPageRequest) {
-//        this.userInfo.setPosition(myPageRequest.getPosition());
-//        this.userInfo.setArea(myPageRequest.getArea());
-//        this.userInfo.setGenre(myPageRequest.getGenre());
-//        this.userInfo.setDescription(myPageRequest.getDescription());
-//    }
 }
