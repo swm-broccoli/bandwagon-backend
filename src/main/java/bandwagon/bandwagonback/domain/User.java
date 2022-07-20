@@ -108,6 +108,18 @@ public class User {
         genre.getUsers().remove(this);
     }
 
+    // 활동 지역 추가
+    public void addArea(Area area) {
+        this.areas.add(area);
+        area.getUsers().add(this);
+    }
+
+    // 활동 지역 제거
+    public void removeArea(Area area) {
+        this.areas.remove(area);
+        area.getUsers().remove(this);
+    }
+
     // 마이 페이지 변경으로인한 유저 정보 변경
 //    public void myPageUpdate(MyPageRequest myPageRequest) {
 //        this.userInfo.setPosition(myPageRequest.getPosition());
