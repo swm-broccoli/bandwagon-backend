@@ -37,6 +37,7 @@ public class UserApiController {
     private final UserPerformanceService userPerformanceService;
     private final PositionService positionService;
     private final GenreService genreService;
+    private final AreaService areaService;
     private final AuthenticationManager authenticationManager;
 
     private final AuthUserDetailsService userDetailsService;
@@ -310,6 +311,24 @@ public class UserApiController {
 
         try {
             genreService.deleteGenreFromUser(email, genre_id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    @Operation(description = "활동 지역 추가")
+    @PostMapping("/api/users/{email}/areas/{area_id}")
+    public ResponseEntity<?> postArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            areaService.addAreaToUser(email, area_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
