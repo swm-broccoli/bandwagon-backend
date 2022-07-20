@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.dto.UserPerformanceDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,4 +27,20 @@ public class UserPerformance {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public UserPerformance() {}
+
+    public UserPerformance(UserPerformanceDto userPerformanceDto) {
+        this.musicTitle = userPerformanceDto.getMusicTitle();
+        this.performDate = userPerformanceDto.getPerformDate();
+        this.videoUrl = userPerformanceDto.getVideoUrl();
+        this.audioUrl = userPerformanceDto.getAudioUrl();
+    }
+
+    public void update(UserPerformanceDto userPerformanceDto) {
+        this.musicTitle = userPerformanceDto.getMusicTitle();
+        this.performDate = userPerformanceDto.getPerformDate();
+        this.videoUrl = userPerformanceDto.getVideoUrl();
+        this.audioUrl = userPerformanceDto.getAudioUrl();
+    }
 }
