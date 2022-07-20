@@ -3,10 +3,7 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
-import bandwagon.bandwagonback.service.AuthUserDetailsService;
-import bandwagon.bandwagonback.service.PositionService;
-import bandwagon.bandwagonback.service.UserPerformanceService;
-import bandwagon.bandwagonback.service.UserService;
+import bandwagon.bandwagonback.service.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +36,7 @@ public class UserApiController {
     private final UserService userService;
     private final UserPerformanceService userPerformanceService;
     private final PositionService positionService;
+    private final GenreService genreService;
     private final AuthenticationManager authenticationManager;
 
     private final AuthUserDetailsService userDetailsService;
@@ -276,6 +274,24 @@ public class UserApiController {
 
         try {
             positionService.deletePositionFromUser(email, position_id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
+    @Operation(description = "선호 장르 추가")
+    @PostMapping("/api/users/{email}/genres/{genre_id}")
+    public ResponseEntity<?> postGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+
+        try {
+            genreService.addGenreToUser(email, genre_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
