@@ -78,6 +78,12 @@ public class User {
         position.getUsers().add(this);
     }
 
+    // 포지션 제거
+    public void removePosition(Position position) {
+        this.positions.remove(position);
+        position.getUsers().remove(this);
+    }
+
     // 마이 페이지 변경으로인한 유저 정보 변경
 //    public void myPageUpdate(MyPageRequest myPageRequest) {
 //        this.userInfo.setPosition(myPageRequest.getPosition());
