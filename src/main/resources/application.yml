@@ -4,6 +4,10 @@ spring:
     username: ENC(kvZLfziDLicXHT5X+g6/BE5/I1hYxkfM)
     password: ENC(DMYCBIVOHy8W5oZoYF0hmb2QvdnN0BWB)
 
+  sql:
+    init:
+      mode: always
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -11,6 +15,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+    defer-datasource-initialization: true
 
   profiles:
     include: oauth
