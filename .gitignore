@@ -38,6 +38,8 @@ out/
 
 ### OAUTH Properties ###
 application-oauth.yml
+### AWS ###
+application-aws.yml
 
 ### JavaConfig ###
 JavaConfig.java
