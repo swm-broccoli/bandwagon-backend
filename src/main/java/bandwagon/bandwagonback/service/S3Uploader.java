@@ -41,6 +41,7 @@ public class S3Uploader {
 
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile));
+        log.info("Image Uploaded to S3");
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
@@ -48,6 +49,7 @@ public class S3Uploader {
         URI uri = new URI(url);
         String key = uri.getPath().substring(1);
         amazonS3Client.deleteObject(bucket, key);
+        log.info("Image deleted from S3");
     }
 
     private void removeNewFile(File targetFile) {
