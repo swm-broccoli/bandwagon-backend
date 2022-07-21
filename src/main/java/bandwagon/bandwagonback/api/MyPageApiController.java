@@ -1,7 +1,9 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.DescriptionDto;
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.UserPerformanceDto;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
@@ -28,6 +30,21 @@ public class MyPageApiController {
     private final GenreService genreService;
     private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
+
+    @GetMapping("/api/users/{email}/mypage")
+    public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+
+        if (!jwtEmail.equals(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        }
+        User user = userService.findOneByEmail(email);
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User does not exist"));
+        }
+        return ResponseEntity.ok().body(new MyPageDto(user));
+    }
 
     @Operation(description = "자기소개 수정")
     @PutMapping("/api/users/{email}/description")
