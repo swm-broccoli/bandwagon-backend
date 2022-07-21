@@ -148,6 +148,7 @@ public class UserApiController {
         return ResponseEntity.ok().body(null);
     }
 
+    @Operation(description = "유저 아바타 변경")
     @PostMapping("/api/users/{email}/avatar")
     public ResponseEntity<?> postUserAvatar(@PathVariable("email") String email, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
         try {
