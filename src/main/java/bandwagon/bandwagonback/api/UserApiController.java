@@ -107,10 +107,10 @@ public class UserApiController {
     @Operation(description = "유저 기본정보 요청")
     @GetMapping("/api/users/edit/{email}")
     public ResponseEntity<?> getUserEditInfo(@PathVariable("email") String email, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        try {
+            String jwt = getJwtFromHeader(email, request);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         User user = userService.findOneByEmail(email);
         return ResponseEntity.ok(new UserEditDto(user));
@@ -119,14 +119,8 @@ public class UserApiController {
     @Operation(description = "유저 기본정보 수정")
     @PostMapping("/api/users/edit/{email}")
     public ResponseEntity<?> postUserEditInfo(@PathVariable("email") String email, @RequestBody UserEditRequest userRequest, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try{
+            String jwt = getJwtFromHeader(email, request);
             UserEditDto userEditDto = userService.editUser(userRequest);
             return ResponseEntity.ok(userEditDto);
         } catch (Exception e) {
@@ -137,19 +131,13 @@ public class UserApiController {
     @Operation(description = "비밀번호 변경")
     @PostMapping("/api/users/password/{email}")
     public ResponseEntity<?> postUserPassInfo(@PathVariable("email") String email, @RequestBody PasswordEditRequest passRequest, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-        Boolean isSocial = jwtTokenUtil.extractIsSocial(jwt);
-
-        if(isSocial) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Social 계정은 비밀번호 변경이 불가능 합니다."));
-        }
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
 
         try {
+            String jwt = getJwtFromHeader(email, request);
+            Boolean isSocial = jwtTokenUtil.extractIsSocial(jwt);
+            if(isSocial) {
+                throw new Exception("Social 계정은 비밀번호 변경이 불가능 합니다.");
+            }
             userService.editPassword(email, passRequest);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -158,8 +146,13 @@ public class UserApiController {
         return ResponseEntity.ok().body(null);
     }
 
-    private String getJwtFromHeader(HttpServletRequest request) {
+    private String getJwtFromHeader(String email, HttpServletRequest request) throws Exception {
         String authorizationHeader = request.getHeader("Authorization");
-        return authorizationHeader.substring(7);
+        String jwt =  authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        if (!jwtEmail.equals(email)) {
+            throw new Exception("User in token and user in URL is different");
+        }
+        return jwt;
     }
 }

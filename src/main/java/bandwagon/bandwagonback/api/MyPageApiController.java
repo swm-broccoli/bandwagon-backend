@@ -33,11 +33,10 @@ public class MyPageApiController {
 
     @GetMapping("/api/users/{email}/mypage")
     public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
+        try {
+            String jwt = getJwtFromHeader(email, request);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         User user = userService.findOneByEmail(email);
         if(user == null) {
@@ -49,13 +48,8 @@ public class MyPageApiController {
     @Operation(description = "자기소개 수정")
     @PutMapping("/api/users/{email}/description")
     public ResponseEntity<?> putUserDescription(@PathVariable("email") String email, @RequestBody DescriptionDto descriptionDto, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
         try {
+            String jwt = getJwtFromHeader(email, request);
             userService.editDescription(email, descriptionDto.getDescription());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -66,13 +60,8 @@ public class MyPageApiController {
     @Operation(description = "신규 연주기록 생성")
     @PostMapping("/api/users/{email}/performance")
     public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
         try {
+            String jwt = getJwtFromHeader(email, request);
             userPerformanceService.saveUserPerformance(email, userPerformanceDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -83,14 +72,8 @@ public class MyPageApiController {
     @Operation(description = "연주기록 삭제")
     @DeleteMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> deleteUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             userPerformanceService.deleteUserPerformance(email, user_performance_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -102,14 +85,8 @@ public class MyPageApiController {
     @PutMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> putUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id,
                                                 @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             userPerformanceService.updateUserPerformance(email, user_performance_id, userPerformanceDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -120,14 +97,8 @@ public class MyPageApiController {
     @Operation(description = "포지션 추가")
     @PostMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> postPosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             positionService.addPositionToUser(email, position_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -138,14 +109,8 @@ public class MyPageApiController {
     @Operation(description = "포지션 삭제")
     @DeleteMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> deletePosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             positionService.deletePositionFromUser(email, position_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -156,14 +121,8 @@ public class MyPageApiController {
     @Operation(description = "선호 장르 추가")
     @PostMapping("/api/users/{email}/genres/{genre_id}")
     public ResponseEntity<?> postGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             genreService.addGenreToUser(email, genre_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -174,14 +133,8 @@ public class MyPageApiController {
     @Operation(description = "선호 장르 삭제")
     @DeleteMapping("/api/users/{email}/genres/{genre_id}")
     public ResponseEntity<?> deleteGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             genreService.deleteGenreFromUser(email, genre_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -192,14 +145,8 @@ public class MyPageApiController {
     @Operation(description = "활동 지역 추가")
     @PostMapping("/api/users/{email}/areas/{area_id}")
     public ResponseEntity<?> postArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             areaService.addAreaToUser(email, area_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -210,14 +157,8 @@ public class MyPageApiController {
     @Operation(description = "활동 지역 삭제")
     @DeleteMapping("/api/users/{email}/areas/{area_id}")
     public ResponseEntity<?> deleteArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-
-        if (!jwtEmail.equals(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User in token and user in URL is different"));
-        }
-
         try {
+            String jwt = getJwtFromHeader(email, request);
             areaService.deleteAreaFromUser(email, area_id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -225,8 +166,13 @@ public class MyPageApiController {
         return ResponseEntity.ok().body(null);
     }
 
-    private String getJwtFromHeader(HttpServletRequest request) {
+    private String getJwtFromHeader(String email, HttpServletRequest request) throws Exception {
         String authorizationHeader = request.getHeader("Authorization");
-        return authorizationHeader.substring(7);
+        String jwt =  authorizationHeader.substring(7);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        if (!jwtEmail.equals(email)) {
+            throw new Exception("User in token and user in URL is different");
+        }
+        return jwt;
     }
 }
