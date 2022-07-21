@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -71,7 +72,7 @@ public class User {
         this.name = attributes.getName();
         this.email = attributes.getEmail();
 
-        this.nickname = "TempUser";
+        this.nickname = "TempUser" + UUID.randomUUID();
         this.gender = false;
         this.birthday = new Date();
         this.isSocial = true;
