@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @Slf4j
@@ -42,11 +44,17 @@ public class S3Uploader {
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
+    public void deleteFromS3(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String key = uri.getPath().substring(1);
+        amazonS3Client.deleteObject(bucket, key);
+    }
+
     private void removeNewFile(File targetFile) {
         if (targetFile.delete()) {
-            log.info("File Deleted");
+            log.info("Local File Deleted");
         } else {
-            log.info("File wasn't Deleted");
+            log.info("Local File wasn't Deleted");
         }
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,7 +104,7 @@ public class UserService {
         }
         UserInfo userInfo = user.getUserInfo();
         if (userInfo.getAvatarUrl() != null) {
-            //TODO: delete prev img from s3
+            s3Uploader.deleteFromS3(userInfo.getAvatarUrl().replace(File.separatorChar, '/'));
         }
         String imgUrl = s3Uploader.upload(multipartFile, "user/avatar");
         userInfo.setAvatarUrl(imgUrl);
