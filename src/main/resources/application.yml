@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ENC(RSpSPnuhrslL92tC9h8ETU/I5h0IbcHWjw1Z3wDmO6cTRpPjtUOqVM514XeDMOsCwgPfm1hvTZpeW88aGyaLc2U43l3AeB5pb51KpMn7X1mo+pGZ6ibp8P2K+dEnw9LtEWuOTSXGqN0=)
-    username: ENC(kvZLfziDLicXHT5X+g6/BE5/I1hYxkfM)
-    password: ENC(DMYCBIVOHy8W5oZoYF0hmb2QvdnN0BWB)
+    url: ENC(72rBD7/0lMKPfEpv1baR+5HJKNPovLMP0C08lflt9hMGmLTC6D4NgiQg84Tp8Rp5eHMr5cvq8kWTK2A2Vk1JR+qbUSXVwrDBw79mmQMcgJuxuMNPjpnxuro7jcCnkGNBntj13FCoHI0c1+THd3jdgw==) # 개인 AWS DB: ENC(RSpSPnuhrslL92tC9h8ETU/I5h0IbcHWjw1Z3wDmO6cTRpPjtUOqVM514XeDMOsCwgPfm1hvTZpeW88aGyaLc2U43l3AeB5pb51KpMn7X1mo+pGZ6ibp8P2K+dEnw9LtEWuOTSXGqN0=)
+    username: ENC(7xVJo6iKFF3d57jIdnEvbh9xRUjnsXCM) # 개인 AWS DB: ENC(kvZLfziDLicXHT5X+g6/BE5/I1hYxkfM)
+    password: ENC(ODqbfOt5n5ERgjuA4JLZfOUAECe6iMR2) # 개인 AWS DB: ENC(DMYCBIVOHy8W5oZoYF0hmb2QvdnN0BWB)
 
   sql:
     init:
