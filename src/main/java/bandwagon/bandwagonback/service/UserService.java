@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,8 @@ public class UserService {
     private final UserInfoRepository userInfoRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final S3Uploader s3Uploader;
 
     /**
      * 회원가입
@@ -89,6 +92,22 @@ public class UserService {
         }
         UserInfo userInfo = user.getUserInfo();
         userInfo.setDescription(description);
+    }
+
+    @Transactional
+    public String  uploadAvatar(String email, MultipartFile multipartFile) throws Exception {
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        UserInfo userInfo = user.getUserInfo();
+        if (userInfo.getAvatarUrl() != null) {
+            //TODO: delete prev img from s3
+        }
+        String imgUrl = s3Uploader.upload(multipartFile, "user/avatar");
+        userInfo.setAvatarUrl(imgUrl);
+        return imgUrl;
     }
 
     // 이메일로 회원 중복 검사
