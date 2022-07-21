@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class UserApiController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtTokenUtil;
+    private final S3Uploader s3Uploader;
 
     //for Auth testing
     @Operation(description = "로그인 확인용 Mock api")
@@ -144,6 +146,18 @@ public class UserApiController {
         }
 
         return ResponseEntity.ok().body(null);
+    }
+
+    @Operation(description = "유저 아바타 변경")
+    @PostMapping("/api/users/{email}/avatar")
+    public ResponseEntity<?> postUserAvatar(@PathVariable("email") String email, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
+        try {
+            String jwt = getJwtFromHeader(email, request);
+            String imgUrl =  userService.uploadAvatar(email, multipartFile);
+            return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
     }
 
     private String getJwtFromHeader(String email, HttpServletRequest request) throws Exception {

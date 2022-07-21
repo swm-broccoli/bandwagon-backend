@@ -19,7 +19,9 @@ spring:
     defer-datasource-initialization: true
 
   profiles:
-    include: oauth
+    include:
+      - oauth
+      - aws
 
 logging:
   level:
