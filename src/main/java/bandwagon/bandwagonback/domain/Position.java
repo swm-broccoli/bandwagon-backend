@@ -19,4 +19,7 @@ public class Position {
 
     @ManyToMany(mappedBy = "positions")
     private List<User> users = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "positions")
+    private List<Band> bands = new ArrayList<>();
 }
