@@ -44,6 +44,23 @@ public class Band {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandMember> bandMembers;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    private List<BandGig> bandGigs = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    private List<BandPractice> bandPractices = new ArrayList<>();
+
+    // 공연기록 추가
+    public void addBandGig(BandGig bandGig) {
+        this.bandGigs.add(bandGig);
+        bandGig.setBand(this);
+    }
+    // 합주기록 추가
+    public void addBandPractice(BandPractice bandPractice) {
+        this.bandPractices.add(bandPractice);
+        bandPractice.setBand(this);
+    }
+
     // 포지션 추가
     public void addPosition(Position position) {
         this.positions.add(position);
