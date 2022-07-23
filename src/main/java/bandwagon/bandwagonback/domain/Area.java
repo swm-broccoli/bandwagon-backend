@@ -22,4 +22,7 @@ public class Area {
 
     @ManyToMany(mappedBy = "areas")
     private List<User> users = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "areas")
+    private List<Band> bands = new ArrayList<>();
 }

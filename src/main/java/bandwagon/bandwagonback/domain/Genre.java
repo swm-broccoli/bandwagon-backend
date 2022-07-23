@@ -20,4 +20,7 @@ public class Genre {
 
     @ManyToMany(mappedBy = "genres")
     private List<User> users = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "genres")
+    private List<Band> bands = new ArrayList<>();
 }

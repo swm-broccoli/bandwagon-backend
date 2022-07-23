@@ -53,6 +53,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "area_id"))
     private List<Area> areas = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
+    private BandMember bandMember;
+
     public User() {
     }
     
