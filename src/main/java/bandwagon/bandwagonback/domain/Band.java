@@ -41,6 +41,9 @@ public class Band {
             inverseJoinColumns = @JoinColumn(name = "area_id"))
     private List<Area> areas = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    private List<BandMember> bandMembers;
+
     // 포지션 추가
     public void addPosition(Position position) {
         this.positions.add(position);
