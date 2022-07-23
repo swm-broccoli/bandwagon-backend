@@ -50,6 +50,9 @@ public class Band {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandPractice> bandPractices = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    private List<BandPhoto> bandPhotos = new ArrayList<>();
+
     // 공연기록 추가
     public void addBandGig(BandGig bandGig) {
         this.bandGigs.add(bandGig);
@@ -95,5 +98,11 @@ public class Band {
     public void removeArea(Area area) {
         this.areas.remove(area);
         area.getBands().remove(this);
+    }
+
+    // 사진 추가
+    public void addBandPhoto(BandPhoto bandPhoto) {
+        this.bandPhotos.add(bandPhoto);
+        bandPhoto.setBand(this);
     }
 }
