@@ -43,7 +43,7 @@ public class Band {
     private List<Area> areas = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
-    private List<BandMember> bandMembers;
+    private List<BandMember> bandMembers = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandGig> bandGigs = new ArrayList<>();

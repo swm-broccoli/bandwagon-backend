@@ -42,9 +42,9 @@ public class BandService {
         Band band = new Band(bandCreateForm);
         bandRepository.save(band);
         BandMember bandMember = new BandMember();
-        bandMember.setBand(band);
         bandMember.setMember(user);
         bandMember.setIsFrontman(true);
+        band.addBandMember(bandMember);
         bandMemberRepository.save(bandMember);
         return band.getId();
     }
