@@ -4,12 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "bands")
 @Getter @Setter
 public class Band {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "band_id")
     private Long id;
 
     private String name;
@@ -19,4 +22,19 @@ public class Band {
 
     @Column(columnDefinition="TEXT")
     private String avatarUrl;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    private List<BandPosition> bandPositions = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "band_genres",
+            joinColumns = @JoinColumn(name = "band_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private List<Genre> genres = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "band_areas",
+            joinColumns = @JoinColumn(name = "band_id"),
+            inverseJoinColumns = @JoinColumn(name = "area_id"))
+    private List<Area> areas = new ArrayList<>();
 }
