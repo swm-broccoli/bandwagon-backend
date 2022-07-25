@@ -84,12 +84,7 @@ public class BandService {
         if(band == null) {
             throw new Exception("존재하지 않는 밴드입니다!");
         }
-        User user = userRepository.findByEmail(email).orElse(null);
-        if(user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
-        }
-        BandMember bandMember = bandMemberRepository.findFirstByMemberAndBand(user, band);
-        if (bandMember == null) {
+        if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
         return band;

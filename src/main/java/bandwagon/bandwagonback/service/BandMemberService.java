@@ -26,13 +26,7 @@ public class BandMemberService {
 
     @Transactional
     public void addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
-        BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
-        if (member == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
-        }
-        if (!member.getIsFrontman()) {
-            throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
-        }
+        confirmUserIsFrontman(email, bandId);
         User candidateUser = userRepository.findByEmail(candidateEmail).orElse(null);
         if (candidateUser == null) {
             throw new Exception("존재하지 않는 유저입니다!");
@@ -48,13 +42,7 @@ public class BandMemberService {
 
     @Transactional
     public void addPositionToBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
-        BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
-        if (member == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
-        }
-        if (!member.getIsFrontman()) {
-            throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
-        }
+        confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
@@ -72,13 +60,7 @@ public class BandMemberService {
 
     @Transactional
     public void deletePositionFromBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
-        BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
-        if (member == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
-        }
-        if (!member.getIsFrontman()) {
-            throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
-        }
+        confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
@@ -88,5 +70,16 @@ public class BandMemberService {
             throw new Exception("Position does not exist!");
         }
         bandMember.removePosition(position);
+    }
+
+    @Transactional
+    public void confirmUserIsFrontman(String email, Long bandId) throws Exception {
+        BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
+        if (member == null) {
+            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+        }
+        if (!member.getIsFrontman()) {
+            throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
+        }
     }
 }
