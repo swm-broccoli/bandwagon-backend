@@ -19,4 +19,10 @@ public class BandPhoto {
 
     @Column(columnDefinition="TEXT")
     private String imgUrl;
+
+    public BandPhoto() {}
+
+    public BandPhoto(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 }
