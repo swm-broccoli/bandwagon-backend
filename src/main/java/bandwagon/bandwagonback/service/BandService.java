@@ -51,18 +51,7 @@ public class BandService {
      */
     @Transactional
     public void editName(String email, Long bandId, String newName) throws Exception {
-        Band band = bandRepository.findById(bandId).orElse(null);
-        if(band == null) {
-            throw new Exception("존재하지 않는 밴드입니다!");
-        }
-        User user = userRepository.findByEmail(email).orElse(null);
-        if(user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
-        }
-        BandMember bandMember = bandMemberRepository.findFirstByMemberAndBand(user, band);
-        if (bandMember == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
-        }
+        Band band = confirmUserInBand(email, bandId);
         band.setName(newName);
     }
 
@@ -71,18 +60,7 @@ public class BandService {
      */
     @Transactional
     public void editDescription(String email, Long bandId, String newDescription) throws Exception {
-        Band band = bandRepository.findById(bandId).orElse(null);
-        if(band == null) {
-            throw new Exception("존재하지 않는 밴드입니다!");
-        }
-        User user = userRepository.findByEmail(email).orElse(null);
-        if(user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
-        }
-        BandMember bandMember = bandMemberRepository.findFirstByMemberAndBand(user, band);
-        if (bandMember == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
-        }
+        Band band = confirmUserInBand(email, bandId);
         band.setDescription(newDescription);
     }
 
@@ -91,6 +69,17 @@ public class BandService {
      */
     @Transactional
     public String uploadAvatar(String email, Long bandId, MultipartFile multipartFile) throws Exception {
+        Band band = confirmUserInBand(email, bandId);
+        if (band.getAvatarUrl() != null) {
+            s3Uploader.deleteFromS3(band.getAvatarUrl().replace(File.separatorChar, '/'));
+        }
+        String imgUrl = s3Uploader.upload(multipartFile, "band/avatar");
+        band.setAvatarUrl(imgUrl);
+        return imgUrl;
+    }
+
+    @Transactional
+    public Band confirmUserInBand(String email, Long bandId) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);
         if(band == null) {
             throw new Exception("존재하지 않는 밴드입니다!");
@@ -103,11 +92,6 @@ public class BandService {
         if (bandMember == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
-        if (band.getAvatarUrl() != null) {
-            s3Uploader.deleteFromS3(band.getAvatarUrl().replace(File.separatorChar, '/'));
-        }
-        String imgUrl = s3Uploader.upload(multipartFile, "band/avatar");
-        band.setAvatarUrl(imgUrl);
-        return imgUrl;
+        return band;
     }
 }
