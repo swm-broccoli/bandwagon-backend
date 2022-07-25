@@ -3,7 +3,6 @@ package bandwagon.bandwagonback.service;
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.BandMember;
 import bandwagon.bandwagonback.domain.User;
-import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
@@ -62,7 +61,7 @@ public class BandService {
         if(user == null) {
             throw new Exception("존재하지 않는 유저입니다!");
         }
-        BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, band);
+        BandMember bandMember = bandMemberRepository.findFirstByMemberAndBand(user, band);
         if (bandMember == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
@@ -82,7 +81,7 @@ public class BandService {
         if(user == null) {
             throw new Exception("존재하지 않는 유저입니다!");
         }
-        BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, band);
+        BandMember bandMember = bandMemberRepository.findFirstByMemberAndBand(user, band);
         if (bandMember == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
@@ -102,7 +101,7 @@ public class BandService {
         if(user == null) {
             throw new Exception("존재하지 않는 유저입니다!");
         }
-        BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, band);
+        BandMember bandMember = bandMemberRepository.findFirstByMemberAndBand(user, band);
         if (bandMember == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }

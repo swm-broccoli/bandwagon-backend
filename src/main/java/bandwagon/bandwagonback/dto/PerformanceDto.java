@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UserPerformanceDto {
+public class PerformanceDto {
 
     private Long id;
 
@@ -14,9 +14,9 @@ public class UserPerformanceDto {
     private String videoUrl;
     private String audioUrl;
 
-    public UserPerformanceDto() {}
+    public PerformanceDto() {}
 
-    public UserPerformanceDto(UserPerformance userPerformance){
+    public PerformanceDto(UserPerformance userPerformance){
         this.id = userPerformance.getId();
         this.musicTitle = userPerformance.getMusicTitle();
         this.performDate = userPerformance.getPerformDate();

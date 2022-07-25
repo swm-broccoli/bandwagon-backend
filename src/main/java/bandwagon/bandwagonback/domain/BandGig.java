@@ -1,6 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
-import bandwagon.bandwagonback.dto.UserPerformanceDto;
+import bandwagon.bandwagonback.dto.PerformanceDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,17 +30,17 @@ public class BandGig {
 
     public BandGig() {}
 
-    public BandGig(UserPerformanceDto userPerformanceDto) {
-        this.musicTitle = userPerformanceDto.getMusicTitle();
-        this.performDate = userPerformanceDto.getPerformDate();
-        this.videoUrl = userPerformanceDto.getVideoUrl();
-        this.audioUrl = userPerformanceDto.getAudioUrl();
+    public BandGig(PerformanceDto performanceDto) {
+        this.musicTitle = performanceDto.getMusicTitle();
+        this.performDate = performanceDto.getPerformDate();
+        this.videoUrl = performanceDto.getVideoUrl();
+        this.audioUrl = performanceDto.getAudioUrl();
     }
 
-    public void update(UserPerformanceDto userPerformanceDto) {
-        this.musicTitle = userPerformanceDto.getMusicTitle();
-        this.performDate = userPerformanceDto.getPerformDate();
-        this.videoUrl = userPerformanceDto.getVideoUrl();
-        this.audioUrl = userPerformanceDto.getAudioUrl();
+    public void update(PerformanceDto performanceDto) {
+        this.musicTitle = performanceDto.getMusicTitle();
+        this.performDate = performanceDto.getPerformDate();
+        this.videoUrl = performanceDto.getVideoUrl();
+        this.audioUrl = performanceDto.getAudioUrl();
     }
 }
