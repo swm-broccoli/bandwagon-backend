@@ -40,9 +40,7 @@ public class BandService {
         }
         Band band = new Band(bandCreateForm);
         bandRepository.save(band);
-        BandMember bandMember = new BandMember();
-        bandMember.setMember(user);
-        bandMember.setIsFrontman(true);
+        BandMember bandMember = new BandMember(user, true);
         band.addBandMember(bandMember);
         bandMemberRepository.save(bandMember);
         return band.getId();
