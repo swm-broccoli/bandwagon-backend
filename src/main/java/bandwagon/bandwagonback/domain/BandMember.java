@@ -30,4 +30,24 @@ public class BandMember {
     private List<Position> positions = new ArrayList<>();
 
     private Boolean isFrontman;
+
+    public BandMember(){}
+
+    // band는 Band entity의 addBandMember로 채워짐
+    public BandMember(User user, Boolean isFrontman) {
+        this.member = user;
+        this.isFrontman = isFrontman;
+    }
+
+    //포지션 추가
+    public void addPosition(Position position) {
+        this.positions.add(position);
+        position.getBandMembers().add(this);
+    }
+
+    //포지션 제거
+    public void removePosition(Position position) {
+        this.positions.remove(position);
+        position.getBandMembers().remove(this);
+    }
 }
