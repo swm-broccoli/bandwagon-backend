@@ -48,6 +48,18 @@ public class BandApiController {
         return ResponseEntity.ok().body(null);
     }
 
+    @PostMapping("/api/band/{band_id}/description")
+    public ResponseEntity<?> editDescription(@PathVariable("band_id") Long bandId, @RequestBody EditDescriptionForm editDescriptionForm, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandService.editDescription(email, bandId, editDescriptionForm.getDescription());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok().body(null);
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);
@@ -56,5 +68,9 @@ public class BandApiController {
     @Data
     static class EditNameForm {
         private String name;
+    }
+    @Data
+    static class EditDescriptionForm {
+        private String description;
     }
 }
