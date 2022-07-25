@@ -4,7 +4,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.DescriptionDto;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.MyPageDto;
-import bandwagon.bandwagonback.dto.UserPerformanceDto;
+import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,10 +59,10 @@ public class MyPageApiController {
 
     @Operation(description = "신규 연주기록 생성")
     @PostMapping("/api/users/{email}/performance")
-    public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
+    public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         try {
             String jwt = getJwtFromHeader(email, request);
-            userPerformanceService.saveUserPerformance(email, userPerformanceDto);
+            userPerformanceService.saveUserPerformance(email, performanceDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
@@ -84,10 +84,10 @@ public class MyPageApiController {
     @Operation(description = "연주기록 수정")
     @PutMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> putUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id,
-                                                @RequestBody UserPerformanceDto userPerformanceDto, HttpServletRequest request) {
+                                                @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         try {
             String jwt = getJwtFromHeader(email, request);
-            userPerformanceService.updateUserPerformance(email, user_performance_id, userPerformanceDto);
+            userPerformanceService.updateUserPerformance(email, user_performance_id, performanceDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }

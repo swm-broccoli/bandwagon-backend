@@ -17,7 +17,7 @@ public class MyPageDto {
     private List<AreaForm> areas = new ArrayList<>();
     private List<IdNameForm> genres = new ArrayList<>();
     private String description;
-    private List<UserPerformanceDto> userPerformances = new ArrayList<>();
+    private List<PerformanceDto> userPerformances = new ArrayList<>();
 
     public MyPageDto(User user) {
         this.name = user.getName();
@@ -33,7 +33,7 @@ public class MyPageDto {
         }
         this.description = user.getUserInfo().getDescription();
         for(UserPerformance userPerformance : user.getUserPerformances()) {
-            this.userPerformances.add(new UserPerformanceDto(userPerformance));
+            this.userPerformances.add(new PerformanceDto(userPerformance));
         }
     }
 

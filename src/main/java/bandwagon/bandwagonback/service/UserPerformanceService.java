@@ -2,7 +2,7 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserPerformance;
-import bandwagon.bandwagonback.dto.UserPerformanceDto;
+import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.repository.UserPerformanceRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +25,12 @@ public class UserPerformanceService {
 
     // 신규 연주기록 저장
     @Transactional
-    public void saveUserPerformance(String email, UserPerformanceDto userPerformanceDto) throws Exception {
+    public void saveUserPerformance(String email, PerformanceDto performanceDto) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new Exception("User does not exist!");
         }
-        UserPerformance userPerformance = new UserPerformance(userPerformanceDto);
+        UserPerformance userPerformance = new UserPerformance(performanceDto);
         user.addUserPerformance(userPerformance);
         userPerformanceRepository.save(userPerformance);
     }
@@ -54,7 +54,7 @@ public class UserPerformanceService {
 
     // 기존 연주기록 업데이트
     @Transactional
-    public void updateUserPerformance(String email, Long userPerformanceId, UserPerformanceDto userPerformanceDto) throws Exception{
+    public void updateUserPerformance(String email, Long userPerformanceId, PerformanceDto performanceDto) throws Exception{
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new Exception("User does not exist!");
@@ -66,7 +66,7 @@ public class UserPerformanceService {
         if (userPerformance.getUser() != user) {
             throw new Exception("Owner of performance is not inputted user!");
         }
-        userPerformance.update(userPerformanceDto);
+        userPerformance.update(performanceDto);
     }
 
     // 유저의 모든 연주기록 조회
