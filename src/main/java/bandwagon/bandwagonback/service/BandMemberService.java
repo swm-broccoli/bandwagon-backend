@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -41,10 +43,20 @@ public class BandMemberService {
     }
 
     @Transactional
+    public void removeMemberFromBand(String email, Long bandId, Long bandMemberId) throws Exception {
+        confirmUserIsFrontman(email, bandId);
+        BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
+        if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
+            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+        }
+        bandMemberRepository.deleteById(bandMemberId);
+    }
+
+    @Transactional
     public void addPositionToBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
-        if (bandMember == null) {
+        if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
         Position position = positionRepository.findById(positionId).orElse(null);
@@ -62,7 +74,7 @@ public class BandMemberService {
     public void deletePositionFromBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
-        if (bandMember == null) {
+        if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
         Position position = positionRepository.findById(positionId).orElse(null);
