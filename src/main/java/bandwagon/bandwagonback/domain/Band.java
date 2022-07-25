@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.dto.BandCreateForm;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,7 +43,7 @@ public class Band {
     private List<Area> areas = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
-    private List<BandMember> bandMembers;
+    private List<BandMember> bandMembers = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandGig> bandGigs = new ArrayList<>();
@@ -52,6 +53,20 @@ public class Band {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandPhoto> bandPhotos = new ArrayList<>();
+
+    public Band() {}
+
+    public Band(BandCreateForm bandCreateForm) {
+        this.name = bandCreateForm.getName();
+        this.description = bandCreateForm.getDescription();
+        this.avatarUrl = bandCreateForm.getAvatarUrl();
+    }
+
+    // 멤버 추가
+    public void addBandMember(BandMember bandMember) {
+        this.bandMembers.add(bandMember);
+        bandMember.setBand(this);
+    }
 
     // 공연기록 추가
     public void addBandGig(BandGig bandGig) {
