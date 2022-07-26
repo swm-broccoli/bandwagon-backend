@@ -20,11 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*")
 public class BandPageApiController {
 
-    private final BandService bandService;
-    private final BandMemberService bandMemberService;
     private final BandGigService bandGigService;
     private final BandPracticeService bandPracticeService;
     private final BandPhotoService bandPhotoService;
+    private final GenreService genreService;
+    private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
 
     @PostMapping("/api/band/{band_id}/gig")
@@ -93,6 +93,30 @@ public class BandPageApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             bandPracticeService.updateBandPractice(bandId, email, bandPracticeId, performanceDto);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/band/{band_id}/genres/{genre_id}")
+    public ResponseEntity<?> postBandGenre(@PathVariable("band_id") Long bandId, @PathVariable("genre_id") Long genreId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            genreService.addGenreToBand(email, bandId, genreId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/api/band/{band_id}/genres/{genre_id}")
+    public ResponseEntity<?> deleteBandGenre(@PathVariable("band_id") Long bandId, @PathVariable("genre_id") Long genreId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            genreService.deleteGenreFromBand(email, bandId, genreId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
