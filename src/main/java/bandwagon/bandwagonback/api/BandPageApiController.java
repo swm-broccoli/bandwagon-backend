@@ -7,6 +7,7 @@ import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.dto.exception.NoBandException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class BandPageApiController {
     private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
 
+    @Operation(description = "밴드 페이지 불러오기")
     @GetMapping("/api/band")
     public ResponseEntity<?> getBandPage(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -46,6 +48,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 공연 추가")
     @PostMapping("/api/band/{band_id}/gig")
     public ResponseEntity<?> postBandGig(@PathVariable("band_id") Long bandId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -58,6 +61,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 공연 삭제")
     @DeleteMapping("/api/band/{band_id}/gig/{band_gig_id}")
     public ResponseEntity<?> deleteBandGig(@PathVariable("band_id") Long bandId, @PathVariable("band_gig_id") Long bandGigId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -70,6 +74,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 공연 수정")
     @PutMapping("/api/band/{band_id}/gig/{band_gig_id}")
     public ResponseEntity<?> editBandGig(@PathVariable("band_id") Long bandId, @PathVariable("band_gig_id") Long bandGigId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -82,6 +87,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 연습 추가")
     @PostMapping("/api/band/{band_id}/practice")
     public ResponseEntity<?> postBandPractice(@PathVariable("band_id") Long bandId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -94,6 +100,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 연습 삭제")
     @DeleteMapping("/api/band/{band_id}/practice/{band_practice_id}")
     public ResponseEntity<?> deleteBandPractice(@PathVariable("band_id") Long bandId, @PathVariable("band_practice_id") Long bandPracticeId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -106,6 +113,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 연습 수정")
     @PutMapping("/api/band/{band_id}/practice/{band_practice_id}")
     public ResponseEntity<?> editBandPractice(@PathVariable("band_id") Long bandId, @PathVariable("band_practice_id") Long bandPracticeId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -118,6 +126,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 선호 장르 추가")
     @PostMapping("/api/band/{band_id}/genres/{genre_id}")
     public ResponseEntity<?> postBandGenre(@PathVariable("band_id") Long bandId, @PathVariable("genre_id") Long genreId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -130,6 +139,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 선호 장르 제거")
     @DeleteMapping("/api/band/{band_id}/genres/{genre_id}")
     public ResponseEntity<?> deleteBandGenre(@PathVariable("band_id") Long bandId, @PathVariable("genre_id") Long genreId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -142,6 +152,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 활동 지역 추가")
     @PostMapping("/api/band/{band_id}/areas/{area_id}")
     public ResponseEntity<?> postBandArea(@PathVariable("band_id") Long bandId, @PathVariable("area_id") Long areaId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -154,6 +165,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 활동 지역 제거")
     @DeleteMapping("/api/band/{band_id}/areas/{area_id}")
     public ResponseEntity<?> deleteBandArea(@PathVariable("band_id") Long bandId, @PathVariable("area_id") Long areaId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -166,6 +178,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 사진 추가")
     @PostMapping("/api/band/{band_id}/photos")
     public ResponseEntity<?> postBandPhoto(@PathVariable("band_id") Long bandId, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -178,6 +191,7 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 사진 제거")
     @DeleteMapping("/api/band/{band_id}/photos/{photo_id}")
     public ResponseEntity<?> deleteBandPhoto(@PathVariable("band_id") Long bandId, @PathVariable("photo_id") Long photoId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
