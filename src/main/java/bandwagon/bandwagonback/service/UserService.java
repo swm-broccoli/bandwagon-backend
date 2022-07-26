@@ -103,7 +103,7 @@ public class UserService {
             throw new Exception("존재하지 않는 유저입니다!");
         }
         UserInfo userInfo = user.getUserInfo();
-        if (userInfo.getAvatarUrl() != null) {
+        if (userInfo.getAvatarUrl() != null && userInfo.getAvatarUrl().length() != 0) {
             s3Uploader.deleteFromS3(userInfo.getAvatarUrl().replace(File.separatorChar, '/'));
         }
         String imgUrl = s3Uploader.upload(multipartFile, "user/avatar");
