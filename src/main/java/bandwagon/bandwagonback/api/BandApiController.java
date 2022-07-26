@@ -89,6 +89,18 @@ public class BandApiController {
         }
     }
 
+    @DeleteMapping("/api/band/{band_id}/member/{band_member_id}")
+    public ResponseEntity<?> removeMember(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try{
+            bandMemberService.removeMemberFromBand(email, bandId, bandMemberId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @PostMapping("/api/band/{band_id}/member/{band_member_id}/positions/{position_id}")
     public ResponseEntity<?> addPositionToMember(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, @PathVariable("position_id") Long positionId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);

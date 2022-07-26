@@ -92,7 +92,7 @@ public class BandMemberService {
     public void confirmUserIsFrontman(String email, Long bandId) throws Exception {
         BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (member == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new Exception("해당 밴드 - 유저 조합이 존재하지 않습니다!");
         }
         if (!member.getIsFrontman()) {
             throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
