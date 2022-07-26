@@ -70,7 +70,7 @@ public class BandService {
     @Transactional
     public String uploadAvatar(String email, Long bandId, MultipartFile multipartFile) throws Exception {
         Band band = confirmUserInBand(email, bandId);
-        if (band.getAvatarUrl() != null) {
+        if (band.getAvatarUrl() != null && band.getAvatarUrl().length() != 0) {
             s3Uploader.deleteFromS3(band.getAvatarUrl().replace(File.separatorChar, '/'));
         }
         String imgUrl = s3Uploader.upload(multipartFile, "band/avatar");

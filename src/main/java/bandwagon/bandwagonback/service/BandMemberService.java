@@ -27,7 +27,7 @@ public class BandMemberService {
     private final PositionRepository positionRepository;
 
     @Transactional
-    public void addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
+    public Long addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
         confirmUserIsFrontman(email, bandId);
         User candidateUser = userRepository.findByEmail(candidateEmail).orElse(null);
         if (candidateUser == null) {
@@ -37,9 +37,13 @@ public class BandMemberService {
         if (band == null) {
             throw new Exception("존재하지 않는 밴드입니다!");
         }
+        if (candidateUser.getBandMember() != null) {
+            throw new Exception("이미 밴드에 속한 유저입니다");
+        }
         BandMember newMember = new BandMember(candidateUser, false);
         band.addBandMember(newMember);
         bandMemberRepository.save(newMember);
+        return newMember.getId();
     }
 
     @Transactional
@@ -88,7 +92,7 @@ public class BandMemberService {
     public void confirmUserIsFrontman(String email, Long bandId) throws Exception {
         BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (member == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new Exception("해당 밴드 - 유저 조합이 존재하지 않습니다!");
         }
         if (!member.getIsFrontman()) {
             throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
