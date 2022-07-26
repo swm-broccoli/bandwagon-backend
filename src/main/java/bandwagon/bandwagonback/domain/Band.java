@@ -24,11 +24,11 @@ public class Band {
     @Column(columnDefinition="TEXT")
     private String avatarUrl;
 
-    @ManyToMany
-    @JoinTable(name = "band_positions",
-            joinColumns = @JoinColumn(name = "band_id"),
-            inverseJoinColumns = @JoinColumn(name = "position_id"))
-    private List<Position> positions = new ArrayList<>();
+//    @ManyToMany
+//    @JoinTable(name = "band_positions",
+//            joinColumns = @JoinColumn(name = "band_id"),
+//            inverseJoinColumns = @JoinColumn(name = "position_id"))
+//    private List<Position> positions = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "band_genres",
@@ -79,17 +79,17 @@ public class Band {
         bandPractice.setBand(this);
     }
 
-    // 포지션 추가
-    public void addPosition(Position position) {
-        this.positions.add(position);
-        position.getBands().add(this);
-    }
-
-    // 포지션 제거
-    public void removePosition(Position position) {
-        this.positions.remove(position);
-        position.getBands().remove(this);
-    }
+//    // 포지션 추가
+//    public void addPosition(Position position) {
+//        this.positions.add(position);
+//        position.getBands().add(this);
+//    }
+//
+//    // 포지션 제거
+//    public void removePosition(Position position) {
+//        this.positions.remove(position);
+//        position.getBands().remove(this);
+//    }
 
     // 선호 장르 추가
     public void addGenre(Genre genre) {
