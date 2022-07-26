@@ -27,7 +27,7 @@ public class BandMemberService {
     private final PositionRepository positionRepository;
 
     @Transactional
-    public void addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
+    public Long addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
         confirmUserIsFrontman(email, bandId);
         User candidateUser = userRepository.findByEmail(candidateEmail).orElse(null);
         if (candidateUser == null) {
@@ -37,9 +37,13 @@ public class BandMemberService {
         if (band == null) {
             throw new Exception("존재하지 않는 밴드입니다!");
         }
+        if (candidateUser.getBandMember() != null) {
+            throw new Exception("이미 밴드에 속한 유저입니다");
+        }
         BandMember newMember = new BandMember(candidateUser, false);
         band.addBandMember(newMember);
         bandMemberRepository.save(newMember);
+        return newMember.getId();
     }
 
     @Transactional
