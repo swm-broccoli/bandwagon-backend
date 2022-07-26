@@ -42,6 +42,7 @@ public class BandPhotoService {
             throw new Exception("해당 밴드의 사진이 아닙니다!");
         }
         s3Uploader.deleteFromS3(bandPhoto.getImgUrl().replace(File.separatorChar, '/'));
+        bandPhotoRepository.deleteById(bandPhotoId);
     }
 
     @Transactional

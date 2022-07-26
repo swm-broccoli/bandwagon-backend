@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.ImageResponseDto;
 import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -141,6 +143,30 @@ public class BandPageApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             areaService.deleteAreaFromBand(email, bandId, areaId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/band/{band_id}/photos")
+    public ResponseEntity<?> postBandPhoto(@PathVariable("band_id") Long bandId, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            String imgUrl = bandPhotoService.addPhotoToBand(email, bandId, multipartFile);
+            return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/api/band/{band_id}/photos/{photo_id}")
+    public ResponseEntity<?> deleteBandPhoto(@PathVariable("band_id") Long bandId, @PathVariable("photo_id") Long photoId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandPhotoService.removePhotoFromBand(email, bandId, photoId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
