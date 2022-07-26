@@ -34,7 +34,7 @@ public class BandPracticeService {
 
     // 기존 연습기록 삭제
     @Transactional
-    public void deleteBandGig(Long bandId, String email, Long bandPracticeId) throws Exception {
+    public void deleteBandPractice(Long bandId, String email, Long bandPracticeId) throws Exception {
         Band band = confirmUserInBand(email, bandId);
         BandPractice bandPractice = bandPracticeRepository.findById(bandPracticeId).orElse(null);
         if (bandPractice == null) {
@@ -48,7 +48,7 @@ public class BandPracticeService {
 
     // 기존 연습기록 수정
     @Transactional
-    public void updateBandGig(Long bandId, String email, Long bandPracticeId, PerformanceDto performanceDto) throws Exception {
+    public void updateBandPractice(Long bandId, String email, Long bandPracticeId, PerformanceDto performanceDto) throws Exception {
         Band band = confirmUserInBand(email, bandId);
         BandPractice bandPractice = bandPracticeRepository.findById(bandPracticeId).orElse(null);
         if (bandPractice == null) {

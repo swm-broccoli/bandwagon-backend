@@ -31,6 +31,7 @@ public class MyPageApiController {
     private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
 
+    @Operation(description = "마이 페이지 불러오기")
     @GetMapping("/api/users/{email}/mypage")
     public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
         try {

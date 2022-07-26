@@ -4,6 +4,8 @@ import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.BandMember;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.BandCreateForm;
+import bandwagon.bandwagonback.dto.BandPageDto;
+import bandwagon.bandwagonback.dto.exception.NoBandException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
@@ -25,6 +27,18 @@ public class BandService {
     private final UserRepository userRepository;
     private final BandMemberRepository bandMemberRepository;
     private final S3Uploader s3Uploader;
+
+    public BandPageDto getUsersBandPage(String email) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        BandMember bandMember = user.getBandMember();
+        if (bandMember == null) {
+            throw new NoBandException("가입된 밴드가 없습니다.");
+        }
+        return new BandPageDto(bandMember.getBand());
+    }
 
     /**
      * 밴드 생성
