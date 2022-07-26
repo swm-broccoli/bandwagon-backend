@@ -63,6 +63,42 @@ public class BandPageApiController {
         }
     }
 
+    @PostMapping("/api/band/{band_id}/practice")
+    public ResponseEntity<?> postBandPractice(@PathVariable("band_id") Long bandId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandPracticeService.saveBandPractice(bandId, email, performanceDto);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/api/band/{band_id}/practice/{band_practice_id}")
+    public ResponseEntity<?> deleteBandPractice(@PathVariable("band_id") Long bandId, @PathVariable("band_practice_id") Long bandPracticeId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandPracticeService.deleteBandPractice(bandId, email, bandPracticeId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/api/band/{band_id}/practice/{band_practice_id}")
+    public ResponseEntity<?> editBandPractice(@PathVariable("band_id") Long bandId, @PathVariable("band_practice_id") Long bandPracticeId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandPracticeService.updateBandPractice(bandId, email, bandPracticeId, performanceDto);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
 
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
