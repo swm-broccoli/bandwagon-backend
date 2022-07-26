@@ -1,8 +1,10 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.dto.BandPageDto;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.ImageResponseDto;
 import bandwagon.bandwagonback.dto.PerformanceDto;
+import bandwagon.bandwagonback.dto.exception.NoBandException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,12 +24,27 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*")
 public class BandPageApiController {
 
+    private final BandService bandService;
     private final BandGigService bandGigService;
     private final BandPracticeService bandPracticeService;
     private final BandPhotoService bandPhotoService;
     private final GenreService genreService;
     private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
+
+    @GetMapping("/api/band")
+    public ResponseEntity<?> getBandPage(HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            BandPageDto bandPageDto = bandService.getUsersBandPage(email);
+            return ResponseEntity.ok().body(bandPageDto);
+        } catch (NoBandException nbe) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(nbe.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
 
     @PostMapping("/api/band/{band_id}/gig")
     public ResponseEntity<?> postBandGig(@PathVariable("band_id") Long bandId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
