@@ -4,17 +4,14 @@ import bandwagon.bandwagonback.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter @Setter
 @DiscriminatorValue("User")
 public class UserPost extends Post{
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 }
