@@ -33,5 +33,5 @@ public abstract class Post {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private int view;
+    private Integer view = 0;
 }
