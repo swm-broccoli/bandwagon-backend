@@ -39,4 +39,12 @@ public class PostService {
         postRepository.save(bandPost);
     }
 
+    public PostDto viewBandPostByBandId(Long bandId) throws Exception {
+        BandPost bandPost = bandPostRepository.findFirstByBand_id(bandId);
+        if (bandPost == null) {
+            throw new Exception("Band Post does not exist!");
+        }
+        return new PostDto(bandPost);
+    }
+
 }
