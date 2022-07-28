@@ -23,6 +23,7 @@ public abstract class Post {
 
     private String title;
 
+    @Column(columnDefinition="TEXT")
     private String body;
 
     @Column(nullable = false, updatable = false)
@@ -34,4 +35,11 @@ public abstract class Post {
     private LocalDateTime updatedAt;
 
     private Integer view = 0;
+
+    public Post() {}
+
+    public Post(String title, String body) {
+        this.title = title;
+        this.body = body;
+    }
 }
