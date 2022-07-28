@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.prerequisite.GenrePrerequisite;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,4 +24,7 @@ public class Genre {
 
     @ManyToMany(mappedBy = "genres")
     private List<Band> bands = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "genres")
+    private List<GenrePrerequisite> genrePrerequisites = new ArrayList<>();
 }

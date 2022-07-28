@@ -55,7 +55,7 @@ public class AreaService {
         }
         user.removeArea(area);
     }
-
+    //TODO: Area, genre, position 등 서비스에서 객체 속 리스트에 중복 있는지 검사하지 않고 객체 자체 메서드에서 검사하게 변경 (like I did in prerequisites)
     @Transactional
     public void addAreaToBand(String email, Long bandId, Long areaId) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);

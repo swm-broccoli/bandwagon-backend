@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.prerequisite.PositionPrerequisite;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +23,9 @@ public class Position {
 
 //    @ManyToMany(mappedBy = "positions")
 //    private List<Band> bands = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "positions")
+    private List<PositionPrerequisite> positionPrerequisites = new ArrayList<>();
 
     @ManyToMany(mappedBy = "positions")
     private List<BandMember> bandMembers = new ArrayList<>();
