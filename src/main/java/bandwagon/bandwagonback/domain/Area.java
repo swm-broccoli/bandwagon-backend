@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.prerequisite.AreaPrerequisite;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,4 +26,8 @@ public class Area {
 
     @ManyToMany(mappedBy = "areas")
     private List<Band> bands = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "area_prerequisite_id")
+    private AreaPrerequisite areaPrerequisite;
 }
