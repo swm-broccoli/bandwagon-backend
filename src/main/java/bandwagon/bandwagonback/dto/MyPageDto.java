@@ -1,6 +1,8 @@
 package bandwagon.bandwagonback.dto;
 
 import bandwagon.bandwagonback.domain.*;
+import bandwagon.bandwagonback.dto.subdto.AreaForm;
+import bandwagon.bandwagonback.dto.subdto.IdNameForm;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,33 +39,4 @@ public class MyPageDto {
         }
     }
 
-
-    @Data
-    static class IdNameForm {
-        private Long id;
-        private String name;
-
-        public IdNameForm(Position position) {
-            this.id = position.getId();
-            this.name = position.getPosition();
-        }
-
-        public IdNameForm(Genre genre) {
-            this.id = genre.getId();
-            this.name = genre.getGenre();
-        }
-    }
-
-    @Data
-    static class AreaForm {
-        private Long id;
-        private String city;
-        private String district;
-
-        public AreaForm(Area area) {
-            this.id = area.getId();
-            this.city = area.getCity();
-            this.district = area.getDistrict();
-        }
-    }
 }

@@ -1,13 +1,8 @@
 package bandwagon.bandwagonback.service;
 
-import bandwagon.bandwagonback.domain.Area;
 import bandwagon.bandwagonback.domain.Band;
-import bandwagon.bandwagonback.domain.Genre;
-import bandwagon.bandwagonback.domain.Position;
 import bandwagon.bandwagonback.domain.post.BandPost;
-import bandwagon.bandwagonback.domain.prerequisite.*;
 import bandwagon.bandwagonback.dto.PostDto;
-import bandwagon.bandwagonback.dto.PrerequisiteDto;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
