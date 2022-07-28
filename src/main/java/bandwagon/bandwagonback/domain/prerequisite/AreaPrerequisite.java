@@ -4,9 +4,7 @@ import bandwagon.bandwagonback.domain.Area;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +14,9 @@ import java.util.List;
 @DiscriminatorValue("Area")
 public class AreaPrerequisite extends BandPrerequisite{
 
-    @OneToMany(mappedBy = "areaPrerequisite")
+    @ManyToMany
+    @JoinTable(name = "prerequisite_areas",
+            joinColumns = @JoinColumn(name = "prerequisite_id"),
+            inverseJoinColumns = @JoinColumn(name = "area_id"))
     private List<Area> areas = new ArrayList<>();
 }

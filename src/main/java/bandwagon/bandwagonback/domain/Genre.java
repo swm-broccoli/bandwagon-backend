@@ -25,7 +25,6 @@ public class Genre {
     @ManyToMany(mappedBy = "genres")
     private List<Band> bands = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "genre_prerequisite_id")
-    private GenrePrerequisite genrePrerequisite;
+    @ManyToMany(mappedBy = "genres")
+    private List<GenrePrerequisite> genrePrerequisites = new ArrayList<>();
 }
