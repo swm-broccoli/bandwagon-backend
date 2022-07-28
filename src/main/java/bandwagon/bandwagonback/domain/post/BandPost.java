@@ -2,7 +2,7 @@ package bandwagon.bandwagonback.domain.post;
 
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.prerequisite.BandPrerequisite;
-import bandwagon.bandwagonback.dto.BandPostDto;
+import bandwagon.bandwagonback.dto.PostDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +22,8 @@ public class BandPost extends Post{
     @OneToMany(mappedBy = "bandPost", fetch = FetchType.LAZY)
     private List<BandPrerequisite> bandPrerequisites = new ArrayList<>();
 
-    public BandPost(BandPostDto bandPostDto) {
-        super(bandPostDto.getTitle(), bandPostDto.getBody());
+    public BandPost(PostDto postDto) {
+        super(postDto.getTitle(), postDto.getBody());
     }
 
     // Prerequisite 추가
