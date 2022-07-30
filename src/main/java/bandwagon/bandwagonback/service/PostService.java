@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,20 @@ public class PostService {
             throw new Exception("Band Post does not exist!");
         }
         return new PostDto(bandPost);
+    }
+
+    @Transactional
+    public void editPost(PostDto postDto) throws Exception {
+        Post post = postRepository.findById(postDto.getId()).orElse(null);
+        if (post == null) {
+            throw new Exception("Post does not exist!");
+        }
+        post.update(postDto);
+    }
+
+    @Transactional
+    public void deletePost(Long postId) throws Exception {
+        postRepository.deleteById(postId);
     }
 
 }

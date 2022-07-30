@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain.post;
 
+import bandwagon.bandwagonback.dto.PostDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,5 +42,10 @@ public abstract class Post {
     public Post(String title, String body) {
         this.title = title;
         this.body = body;
+    }
+
+    public void update(PostDto postDto) {
+        this.title = postDto.getTitle();
+        this.body = postDto.getBody();
     }
 }
