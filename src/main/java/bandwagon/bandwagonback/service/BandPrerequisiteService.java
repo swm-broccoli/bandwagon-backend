@@ -116,4 +116,9 @@ public class BandPrerequisiteService {
         }
         return res;
     }
+
+    @Transactional
+    public void deletePrerequisite(PrerequisiteDto prerequisiteDto) {
+        bandPrerequisiteRepository.deleteById(prerequisiteDto.getId());
+    }
 }
