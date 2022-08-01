@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @Transactional(readOnly = true)
@@ -56,6 +58,14 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId) throws Exception {
         postRepository.deleteById(postId);
+    }
+
+    public BandPost getBandPostByPostId(Long postId) throws Exception {
+        Optional<BandPost> bandPost = bandPostRepository.findById(postId);
+        if (bandPost.isEmpty()) {
+            throw new Exception("No Band Post by requested post ID!");
+        }
+        return bandPost.get();
     }
 
 }
