@@ -10,6 +10,8 @@ public class IdNameForm {
     private Long id;
     private String name;
 
+    public IdNameForm() {}
+
     public IdNameForm(Position position) {
         this.id = position.getId();
         this.name = position.getPosition();

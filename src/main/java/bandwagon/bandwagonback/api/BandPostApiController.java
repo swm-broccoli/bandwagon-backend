@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
+import bandwagon.bandwagonback.dto.PrerequisiteDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
@@ -83,6 +84,20 @@ public class BandPostApiController {
                 throw new Exception("로그인 한 유저와 uri로 제공된 post의 band가 일치하지 않습니다!");
             }
             postService.deletePost(postId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/band/post/{post_id}/prerequisites")
+    public ResponseEntity<?> addBandPrerequisite(@PathVariable("post_id") Long postId, @RequestBody PrerequisiteDto prerequisiteDto,
+                                                 HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            bandPrerequisiteService.addPrerequisite(bandId, prerequisiteDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
