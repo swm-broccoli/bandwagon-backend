@@ -8,6 +8,7 @@ import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Tag(name = "BandPostApiController")
 @Slf4j
@@ -90,6 +92,19 @@ public class BandPostApiController {
         }
     }
 
+    @GetMapping("/api/band/post/{post_id}/prerequisites")
+    public ResponseEntity<?> getAllBandPrerequisites(@PathVariable("post_id") Long postId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            List<PrerequisiteDto> prerequisites = bandPrerequisiteService.getAllPrerequisiteByBandId(bandId);
+            return ResponseEntity.ok().body(new PrerequisitesDto(prerequisites));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @PostMapping("/api/band/post/{post_id}/prerequisites")
     public ResponseEntity<?> addBandPrerequisite(@PathVariable("post_id") Long postId, @RequestBody PrerequisiteDto prerequisiteDto,
                                                  HttpServletRequest request) {
@@ -138,6 +153,15 @@ public class BandPostApiController {
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);
+    }
+
+    @Data
+    static class PrerequisitesDto {
+        private List<PrerequisiteDto> prerequisites;
+
+        public PrerequisitesDto(List<PrerequisiteDto> prerequisites) {
+            this.prerequisites = prerequisites;
+        }
     }
 
 }
