@@ -26,6 +26,14 @@ public class BandMemberService {
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
 
+    public Long getBandIdByUserEmail(String email) throws Exception {
+        BandMember bandMember = bandMemberRepository.findFirstByMember_email(email).orElse(null);
+        if (bandMember == null) {
+           throw new Exception("밴드에 속한 유저가 아닙니다!");
+        }
+        return bandMember.getBand().getId();
+    }
+
     @Transactional
     public Long addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
         confirmUserIsFrontman(email, bandId);

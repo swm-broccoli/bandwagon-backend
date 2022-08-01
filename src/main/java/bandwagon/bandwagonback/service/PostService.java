@@ -21,7 +21,7 @@ public class PostService {
     private final BandRepository bandRepository;
 
     @Transactional
-    public void createBandPost(Long bandId, PostDto postDto) throws Exception {
+    public Long createBandPost(Long bandId, PostDto postDto) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
             throw new Exception("Band does not exist!");
@@ -33,6 +33,7 @@ public class PostService {
         BandPost bandPost = new BandPost(postDto);
         bandPost.setBand(band);
         postRepository.save(bandPost);
+        return bandPost.getId();
     }
 
     public PostDto viewBandPostByBandId(Long bandId) throws Exception {

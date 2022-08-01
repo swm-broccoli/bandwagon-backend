@@ -22,6 +22,8 @@ public class BandPost extends Post{
     @OneToMany(mappedBy = "bandPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BandPrerequisite> bandPrerequisites = new ArrayList<>();
 
+    public BandPost() {}
+
     public BandPost(PostDto postDto) {
         super(postDto.getTitle(), postDto.getBody());
     }
