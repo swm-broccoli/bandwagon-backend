@@ -118,13 +118,13 @@ public class BandPrerequisiteService {
     }
 
     @Transactional
-    public void deletePrerequisite(PrerequisiteDto prerequisiteDto) {
-        bandPrerequisiteRepository.deleteById(prerequisiteDto.getId());
+    public void deletePrerequisite(Long prerequisiteId) {
+        bandPrerequisiteRepository.deleteById(prerequisiteId);
     }
 
     @Transactional
     public void editPrerequisite(Long bandId, PrerequisiteDto prerequisiteDto) throws Exception {
-        deletePrerequisite(prerequisiteDto);
+        deletePrerequisite(prerequisiteDto.getId());
         addPrerequisite(bandId, prerequisiteDto);
     }
 }

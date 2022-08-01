@@ -120,6 +120,21 @@ public class BandPostApiController {
         }
     }
 
+    @DeleteMapping("/api/band/post/{post_id}/prerequisites/{prerequisite_id}")
+            public ResponseEntity<?> deleteBandPrerequisite(@PathVariable("post_id") Long postId,
+            @PathVariable("prerequisite_id") Long prerequisiteId,
+            HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            bandPrerequisiteService.deletePrerequisite(prerequisiteId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);
