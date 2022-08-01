@@ -30,8 +30,8 @@ public class BandPrerequisiteService {
     private final PositionRepository positionRepository;
 
     @Transactional
-    public void addPrerequisite(Long bandId, PrerequisiteDto prerequisiteDto) throws Exception {
-        BandPost bandPost = bandPostRepository.findFirstByBand_id(bandId);
+    public void addPrerequisite(Long postId, PrerequisiteDto prerequisiteDto) throws Exception {
+        BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if(bandPost == null) {
             throw new Exception("Band Post does not Exist!");
         }
@@ -87,8 +87,8 @@ public class BandPrerequisiteService {
         }
     }
 
-    public List<PrerequisiteDto> getAllPrerequisiteByBandId(Long bandId) throws Exception {
-        BandPost bandPost = bandPostRepository.findFirstByBand_id(bandId);
+    public List<PrerequisiteDto> getAllPrerequisiteOfPost(Long bandPostId) throws Exception {
+        BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
         if (bandPost == null) {
             throw new Exception("Band Post does not Exist!");
         }
@@ -118,20 +118,20 @@ public class BandPrerequisiteService {
     }
 
     @Transactional
-    public void deletePrerequisite(Long bandId, Long prerequisiteId) throws Exception {
+    public void deletePrerequisite(Long postId, Long prerequisiteId) throws Exception {
         BandPrerequisite bandPrerequisite = bandPrerequisiteRepository.findById(prerequisiteId).orElse(null);
         if (bandPrerequisite == null) {
             throw new Exception("Prerequisite doesn't exist!");
         }
-        if (!bandPrerequisite.getBandPost().getBand().getId().equals(bandId)) {
+        if (!bandPrerequisite.getBandPost().getId().equals(postId)) {
             throw new Exception("User has no permission to this Prerequisite!");
         }
         bandPrerequisiteRepository.deleteById(prerequisiteId);
     }
 
     @Transactional
-    public void editPrerequisite(Long bandId, PrerequisiteDto prerequisiteDto) throws Exception {
-        deletePrerequisite(bandId, prerequisiteDto.getId());
-        addPrerequisite(bandId, prerequisiteDto);
+    public void editPrerequisite(Long postId, Long prerequisiteId, PrerequisiteDto prerequisiteDto) throws Exception {
+        deletePrerequisite(postId, prerequisiteId);
+        addPrerequisite(postId, prerequisiteDto);
     }
 }

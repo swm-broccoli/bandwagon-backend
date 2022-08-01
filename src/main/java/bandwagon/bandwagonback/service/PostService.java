@@ -28,10 +28,11 @@ public class PostService {
         if (band == null) {
             throw new Exception("Band does not exist!");
         }
-        BandPost prevBandPost = bandPostRepository.findFirstByBand(band);
-        if (prevBandPost != null) {
-            throw new Exception("Band Already has Post");
-        }
+        // 밴드별 중복 포스트 허용?
+//        BandPost prevBandPost = bandPostRepository.findFirstByBand(band);
+//        if (prevBandPost != null) {
+//            throw new Exception("Band Already has Post");
+//        }
         BandPost bandPost = new BandPost(postDto);
         bandPost.setBand(band);
         postRepository.save(bandPost);
@@ -47,8 +48,8 @@ public class PostService {
     }
 
     @Transactional
-    public void editPost(PostDto postDto) throws Exception {
-        Post post = postRepository.findById(postDto.getId()).orElse(null);
+    public void editPost(Long postId, PostDto postDto) throws Exception {
+        Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
             throw new Exception("Post does not exist!");
         }
@@ -66,6 +67,14 @@ public class PostService {
             throw new Exception("No Band Post by requested post ID!");
         }
         return bandPost.get();
+    }
+
+    public Boolean isPostByBand(Long bandPostId, Long bandId) throws Exception {
+        BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
+        if (bandPost == null) {
+            throw new Exception("No Band post with that ID");
+        }
+        return bandPost.getBand().getId().equals(bandId);
     }
 
 }

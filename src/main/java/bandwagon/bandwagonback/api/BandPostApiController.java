@@ -1,6 +1,5 @@
 package bandwagon.bandwagonback.api;
 
-import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
@@ -25,8 +24,6 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class BandPostApiController {
 
-    private final UserService userService;
-    private final BandService bandService;
     private final BandMemberService bandMemberService;
     private final PostService postService;
     private final BandPrerequisiteService bandPrerequisiteService;
@@ -58,17 +55,16 @@ public class BandPostApiController {
         }
     }
 
-    @PutMapping("/api/band/post")
-    public ResponseEntity<?> editBandPost(@RequestBody PostDto postDto, HttpServletRequest request) {
+    @PutMapping("/api/band/post/{post_id}")
+    public ResponseEntity<?> editBandPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            BandPost bandPost = postService.getBandPostByPostId(postDto.getId());
-            if (!bandPost.getBand().getId().equals(bandId)) {
-                throw new Exception("로그인 한 유저와 request로 제공된 post의 band가 일치하지 않습니다!");
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
             }
-            postService.editPost(postDto);
+            postService.editPost(postId, postDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -81,9 +77,8 @@ public class BandPostApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            BandPost bandPost = postService.getBandPostByPostId(postId);
-            if (!bandPost.getBand().getId().equals(bandId)) {
-                throw new Exception("로그인 한 유저와 uri로 제공된 post의 band가 일치하지 않습니다!");
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
             }
             postService.deletePost(postId);
             return ResponseEntity.ok().body(null);
@@ -98,7 +93,10 @@ public class BandPostApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            List<PrerequisiteDto> prerequisites = bandPrerequisiteService.getAllPrerequisiteByBandId(bandId);
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+            }
+            List<PrerequisiteDto> prerequisites = bandPrerequisiteService.getAllPrerequisiteOfPost(postId);
             return ResponseEntity.ok().body(new PrerequisitesDto(prerequisites));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -112,7 +110,10 @@ public class BandPostApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            bandPrerequisiteService.addPrerequisite(bandId, prerequisiteDto);
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+            }
+            bandPrerequisiteService.addPrerequisite(postId, prerequisiteDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -128,7 +129,10 @@ public class BandPostApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            bandPrerequisiteService.editPrerequisite(bandId, prerequisiteDto);
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+            }
+            bandPrerequisiteService.editPrerequisite(postId, prerequisiteId, prerequisiteDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -136,14 +140,15 @@ public class BandPostApiController {
     }
 
     @DeleteMapping("/api/band/post/{post_id}/prerequisites/{prerequisite_id}")
-            public ResponseEntity<?> deleteBandPrerequisite(@PathVariable("post_id") Long postId,
-            @PathVariable("prerequisite_id") Long prerequisiteId,
-            HttpServletRequest request) {
+    public ResponseEntity<?> deleteBandPrerequisite(@PathVariable("post_id") Long postId, @PathVariable("prerequisite_id") Long prerequisiteId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            bandPrerequisiteService.deletePrerequisite(bandId, prerequisiteId);
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+            }
+            bandPrerequisiteService.deletePrerequisite(postId, prerequisiteId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
