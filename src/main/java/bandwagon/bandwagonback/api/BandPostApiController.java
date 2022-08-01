@@ -128,7 +128,7 @@ public class BandPostApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            bandPrerequisiteService.deletePrerequisite(prerequisiteId);
+            bandPrerequisiteService.deletePrerequisite(bandId, prerequisiteId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));

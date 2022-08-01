@@ -118,13 +118,20 @@ public class BandPrerequisiteService {
     }
 
     @Transactional
-    public void deletePrerequisite(Long prerequisiteId) {
+    public void deletePrerequisite(Long bandId, Long prerequisiteId) throws Exception {
+        BandPrerequisite bandPrerequisite = bandPrerequisiteRepository.findById(prerequisiteId).orElse(null);
+        if (bandPrerequisite == null) {
+            throw new Exception("Prerequisite doesn't exist!");
+        }
+        if (!bandPrerequisite.getBandPost().getBand().getId().equals(bandId)) {
+            throw new Exception("User has no permission to this Prerequisite!");
+        }
         bandPrerequisiteRepository.deleteById(prerequisiteId);
     }
 
     @Transactional
     public void editPrerequisite(Long bandId, PrerequisiteDto prerequisiteDto) throws Exception {
-        deletePrerequisite(prerequisiteDto.getId());
+        deletePrerequisite(bandId, prerequisiteDto.getId());
         addPrerequisite(bandId, prerequisiteDto);
     }
 }
