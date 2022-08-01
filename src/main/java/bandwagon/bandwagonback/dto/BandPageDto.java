@@ -1,6 +1,9 @@
 package bandwagon.bandwagonback.dto;
 
 import bandwagon.bandwagonback.domain.*;
+import bandwagon.bandwagonback.dto.subdto.AreaForm;
+import bandwagon.bandwagonback.dto.subdto.BandMemberForm;
+import bandwagon.bandwagonback.dto.subdto.IdNameForm;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -42,54 +45,6 @@ public class BandPageDto {
         }
         for (BandPhoto bandPhoto : band.getBandPhotos()) {
             this.bandPhotos.add(new IdNameForm(bandPhoto));
-        }
-    }
-
-    @Data
-    static class IdNameForm {
-        private Long id;
-        private String name;
-
-        public IdNameForm(Position position) {
-            this.id = position.getId();
-            this.name = position.getPosition();
-        }
-
-        public IdNameForm(Genre genre) {
-            this.id = genre.getId();
-            this.name = genre.getGenre();
-        }
-        public IdNameForm(BandPhoto bandPhoto) {
-            this.id = bandPhoto.getId();
-            this.name = bandPhoto.getImgUrl();
-        }
-    }
-
-    @Data
-    static class AreaForm {
-        private Long id;
-        private String city;
-        private String district;
-
-        public AreaForm(Area area) {
-            this.id = area.getId();
-            this.city = area.getCity();
-            this.district = area.getDistrict();
-        }
-    }
-
-    @Data
-    static class BandMemberForm {
-        private Long id;
-        private String name;
-        private List<IdNameForm> positions = new ArrayList<>();
-
-        public BandMemberForm(BandMember bandMember) {
-            this.id = bandMember.getId();
-            this.name = bandMember.getMember().getName();
-            for (Position position : bandMember.getPositions()) {
-                this.positions.add(new IdNameForm(position));
-            }
         }
     }
 }

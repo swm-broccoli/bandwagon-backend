@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.service;
 
+import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
@@ -118,6 +119,12 @@ public class UserService {
             log.error("Existing user: User = {}", email);
             throw new Exception("이미 존재하는 회원입니다");
         }
+    }
+
+    public Band findBand(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        Band band = user.getBandMember().getBand();
+        return band;
     }
 
     //회원 전체 조회

@@ -12,6 +12,13 @@ import javax.persistence.Entity;
 @DiscriminatorValue("Age")
 public class AgePrerequisite extends BandPrerequisite {
 
-    private int min;
-    private int max;
+    private Integer min;
+    private Integer max;
+
+    public AgePrerequisite() {}
+
+    public AgePrerequisite(Integer min, Integer max) {
+        this.min = min;
+        this.max = max;
+    }
 }

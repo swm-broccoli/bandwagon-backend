@@ -20,4 +20,7 @@ public abstract class BandPrerequisite {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private BandPost bandPost;
+
+    @Column(name = "dtype", insertable = false, updatable = false)
+    private String dtype;
 }

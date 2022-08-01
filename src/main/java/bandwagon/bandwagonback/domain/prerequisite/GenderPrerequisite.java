@@ -13,4 +13,8 @@ import javax.persistence.Entity;
 public class GenderPrerequisite extends BandPrerequisite{
 
     private Boolean gender;
+
+    public GenderPrerequisite(Boolean gender) {
+        this.gender = gender;
+    }
 }
