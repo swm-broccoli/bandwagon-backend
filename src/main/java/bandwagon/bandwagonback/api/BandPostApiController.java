@@ -29,6 +29,19 @@ public class BandPostApiController {
     private final BandPrerequisiteService bandPrerequisiteService;
     private final JwtUtil jwtTokenUtil;
 
+    @GetMapping("/api/band/post")
+    public ResponseEntity<?> getBandPost(HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            PostDto postDto = postService.viewBandPostByBandId(bandId);
+            return ResponseEntity.ok().body(postDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @PostMapping("/api/band/post")
     public ResponseEntity<?> postBandPost(@RequestBody PostDto postDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
