@@ -124,7 +124,7 @@ public class BandPrerequisiteService {
 
     @Transactional
     public void editPrerequisite(Long bandId, PrerequisiteDto prerequisiteDto) throws Exception {
-        positionRepository.deleteById(prerequisiteDto.getId());
+        deletePrerequisite(prerequisiteDto);
         addPrerequisite(bandId, prerequisiteDto);
     }
 }
