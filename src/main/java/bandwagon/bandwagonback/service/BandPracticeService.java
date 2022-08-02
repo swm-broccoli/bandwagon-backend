@@ -1,9 +1,7 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.Band;
-import bandwagon.bandwagonback.domain.BandMember;
 import bandwagon.bandwagonback.domain.BandPractice;
-import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandPracticeRepository;

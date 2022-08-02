@@ -2,13 +2,10 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.BandGig;
-import bandwagon.bandwagonback.domain.BandMember;
-import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.repository.BandGigRepository;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
-import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
