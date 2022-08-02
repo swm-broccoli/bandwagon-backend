@@ -37,6 +37,7 @@ public class MyPageApiController {
         try {
             String jwt = getJwtFromHeader(email, request);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         User user = userService.findOneByEmail(email);
@@ -53,6 +54,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             userService.editDescription(email, descriptionDto.getDescription());
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -65,6 +67,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             userPerformanceService.saveUserPerformance(email, performanceDto);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -77,6 +80,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             userPerformanceService.deleteUserPerformance(email, user_performance_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -90,6 +94,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             userPerformanceService.updateUserPerformance(email, user_performance_id, performanceDto);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -102,6 +107,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             positionService.addPositionToUser(email, position_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -114,6 +120,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             positionService.deletePositionFromUser(email, position_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -126,6 +133,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             genreService.addGenreToUser(email, genre_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -138,6 +146,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             genreService.deleteGenreFromUser(email, genre_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -150,6 +159,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             areaService.addAreaToUser(email, area_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -162,6 +172,7 @@ public class MyPageApiController {
             String jwt = getJwtFromHeader(email, request);
             areaService.deleteAreaFromUser(email, area_id);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);

@@ -38,6 +38,7 @@ public class BandApiController {
         try {
             bandService.createBand(email, bandCreateForm);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -51,6 +52,7 @@ public class BandApiController {
         try {
             bandService.editName(email, bandId, editNameForm.getName());
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -64,6 +66,7 @@ public class BandApiController {
         try {
             bandService.editDescription(email, bandId, editDescriptionForm.getDescription());
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         return ResponseEntity.ok().body(null);
@@ -78,6 +81,7 @@ public class BandApiController {
             String imgUrl = bandService.uploadAvatar(email, bandId, multipartFile);
             return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -92,6 +96,7 @@ public class BandApiController {
             Long newMemberId = bandMemberService.addMemberToBand(email, bandId, addMemberForm.getEmail());
             return ResponseEntity.ok().body(new SimpleIdResponse(newMemberId));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -105,6 +110,7 @@ public class BandApiController {
             bandMemberService.removeMemberFromBand(email, bandId, bandMemberId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -118,6 +124,7 @@ public class BandApiController {
             bandMemberService.addPositionToBandMember(email, bandId, bandMemberId, positionId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -131,6 +138,7 @@ public class BandApiController {
             bandMemberService.deletePositionFromBandMember(email, bandId, bandMemberId, positionId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }

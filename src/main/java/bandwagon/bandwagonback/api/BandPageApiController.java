@@ -42,8 +42,10 @@ public class BandPageApiController {
             BandPageDto bandPageDto = bandService.getUsersBandPage(email);
             return ResponseEntity.ok().body(bandPageDto);
         } catch (NoBandException nbe) {
+            log.error(nbe.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(nbe.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -57,6 +59,7 @@ public class BandPageApiController {
             bandGigService.saveBandGig(bandId, email, performanceDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -70,6 +73,7 @@ public class BandPageApiController {
             bandGigService.deleteBandGig(bandId, email, bandGigId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -83,6 +87,7 @@ public class BandPageApiController {
             bandGigService.updateBandGig(bandId, email, bandGigId, performanceDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -96,6 +101,7 @@ public class BandPageApiController {
             bandPracticeService.saveBandPractice(bandId, email, performanceDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -109,6 +115,7 @@ public class BandPageApiController {
             bandPracticeService.deleteBandPractice(bandId, email, bandPracticeId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -122,6 +129,7 @@ public class BandPageApiController {
             bandPracticeService.updateBandPractice(bandId, email, bandPracticeId, performanceDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -135,6 +143,7 @@ public class BandPageApiController {
             genreService.addGenreToBand(email, bandId, genreId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -148,6 +157,7 @@ public class BandPageApiController {
             genreService.deleteGenreFromBand(email, bandId, genreId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -161,6 +171,7 @@ public class BandPageApiController {
             areaService.addAreaToBand(email, bandId, areaId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -174,6 +185,7 @@ public class BandPageApiController {
             areaService.deleteAreaFromBand(email, bandId, areaId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -187,6 +199,7 @@ public class BandPageApiController {
             String imgUrl = bandPhotoService.addPhotoToBand(email, bandId, multipartFile);
             return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -200,6 +213,7 @@ public class BandPageApiController {
             bandPhotoService.removePhotoFromBand(email, bandId, photoId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }

@@ -91,6 +91,7 @@ public class UserApiController {
             log.info("Signup complete: User_id = {}", id);
             return ResponseEntity.status(HttpStatus.CREATED).body(new SignUpResponse(id));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -102,6 +103,7 @@ public class UserApiController {
             userService.validateDuplicateUser(request.getEmail());
             return ResponseEntity.ok(new DuplicateResponse(request.getEmail()));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -112,6 +114,7 @@ public class UserApiController {
         try {
             String jwt = getJwtFromHeader(email, request);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
         User user = userService.findOneByEmail(email);
@@ -126,6 +129,7 @@ public class UserApiController {
             UserEditDto userEditDto = userService.editUser(userRequest);
             return ResponseEntity.ok(userEditDto);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -142,6 +146,7 @@ public class UserApiController {
             }
             userService.editPassword(email, passRequest);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
 
@@ -156,6 +161,7 @@ public class UserApiController {
             String imgUrl =  userService.uploadAvatar(email, multipartFile);
             return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }

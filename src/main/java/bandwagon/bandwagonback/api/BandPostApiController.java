@@ -38,6 +38,7 @@ public class BandPostApiController {
             PostDto postDto = postService.viewBandPostByBandId(bandId);
             return ResponseEntity.ok().body(postDto);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -51,6 +52,7 @@ public class BandPostApiController {
             Long bandPostId = postService.createBandPost(bandId, postDto);
             return ResponseEntity.ok(new SimpleIdResponse(bandPostId));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -67,6 +69,7 @@ public class BandPostApiController {
             postService.editPost(postId, postDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -83,6 +86,7 @@ public class BandPostApiController {
             postService.deletePost(postId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -99,6 +103,7 @@ public class BandPostApiController {
             List<PrerequisiteDto> prerequisites = bandPrerequisiteService.getAllPrerequisiteOfPost(postId);
             return ResponseEntity.ok().body(new PrerequisitesDto(prerequisites));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -116,6 +121,7 @@ public class BandPostApiController {
             bandPrerequisiteService.addPrerequisite(postId, prerequisiteDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -135,6 +141,7 @@ public class BandPostApiController {
             bandPrerequisiteService.editPrerequisite(postId, prerequisiteId, prerequisiteDto);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -151,6 +158,7 @@ public class BandPostApiController {
             bandPrerequisiteService.deletePrerequisite(postId, prerequisiteId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
