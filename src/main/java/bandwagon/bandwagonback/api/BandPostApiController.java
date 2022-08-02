@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.dto.PrerequisiteDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class BandPostApiController {
     private final BandPrerequisiteService bandPrerequisiteService;
     private final JwtUtil jwtTokenUtil;
 
+    @Operation(description = "밴드 구인글(Band Post) 조회")
     @GetMapping("/api/band/post")
     public ResponseEntity<?> getBandPost(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -43,6 +45,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글(Band Post) 등록")
     @PostMapping("/api/band/post")
     public ResponseEntity<?> postBandPost(@RequestBody PostDto postDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -57,6 +60,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글(Band Post) 수정")
     @PutMapping("/api/band/post/{post_id}")
     public ResponseEntity<?> editBandPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -74,6 +78,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글(Band Post) 삭제")
     @DeleteMapping("/api/band/post/{post_id}")
     public ResponseEntity<?> deleteBandPost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -91,6 +96,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글 - 지원 조건(prerequisite) 조회")
     @GetMapping("/api/band/post/{post_id}/prerequisites")
     public ResponseEntity<?> getAllBandPrerequisites(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -108,6 +114,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글 - 지원 조건(prerequisite) 등록")
     @PostMapping("/api/band/post/{post_id}/prerequisites")
     public ResponseEntity<?> addBandPrerequisite(@PathVariable("post_id") Long postId, @RequestBody PrerequisiteDto prerequisiteDto,
                                                  HttpServletRequest request) {
@@ -126,6 +133,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글 - 지원 조건(prerequisite) 수정")
     @PutMapping("/api/band/post/{post_id}/prerequisites/{prerequisite_id}")
     public ResponseEntity<?> editBandPrerequisite(@PathVariable("post_id") Long postId,
                                                  @PathVariable("prerequisite_id") Long prerequisiteId,
@@ -146,6 +154,7 @@ public class BandPostApiController {
         }
     }
 
+    @Operation(description = "밴드 구인글 - 지원 조건(prerequisite) 삭제")
     @DeleteMapping("/api/band/post/{post_id}/prerequisites/{prerequisite_id}")
     public ResponseEntity<?> deleteBandPrerequisite(@PathVariable("post_id") Long postId, @PathVariable("prerequisite_id") Long prerequisiteId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
