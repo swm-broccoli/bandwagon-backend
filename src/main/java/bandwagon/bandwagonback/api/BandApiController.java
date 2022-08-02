@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.ImageResponseDto;
+import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.BandService;
@@ -89,7 +90,7 @@ public class BandApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try{
             Long newMemberId = bandMemberService.addMemberToBand(email, bandId, addMemberForm.getEmail());
-            return ResponseEntity.ok().body(new AddMemberResponse(newMemberId));
+            return ResponseEntity.ok().body(new SimpleIdResponse(newMemberId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
@@ -150,12 +151,5 @@ public class BandApiController {
     @Data
     static class AddMemberForm {
         private String email;
-    }
-    @Data
-    static class AddMemberResponse {
-        private Long id;
-        public AddMemberResponse(Long id) {
-            this.id = id;
-        }
     }
 }

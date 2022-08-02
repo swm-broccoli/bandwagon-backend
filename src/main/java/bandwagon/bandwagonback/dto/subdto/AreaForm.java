@@ -10,6 +10,8 @@ public class AreaForm {
     private String city;
     private String district;
 
+    public AreaForm(){}
+
     public AreaForm(Area area) {
         this.id = area.getId();
         this.city = area.getCity();

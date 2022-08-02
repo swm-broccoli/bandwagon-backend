@@ -19,8 +19,10 @@ public class BandPost extends Post{
     @JoinColumn(name = "band_id")
     private Band band;
 
-    @OneToMany(mappedBy = "bandPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "bandPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<BandPrerequisite> bandPrerequisites = new ArrayList<>();
+
+    public BandPost() {}
 
     public BandPost(PostDto postDto) {
         super(postDto.getTitle(), postDto.getBody());

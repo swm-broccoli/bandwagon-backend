@@ -14,6 +14,8 @@ public class GenderPrerequisite extends BandPrerequisite{
 
     private Boolean gender;
 
+    public GenderPrerequisite() {}
+
     public GenderPrerequisite(Boolean gender) {
         this.gender = gender;
     }
