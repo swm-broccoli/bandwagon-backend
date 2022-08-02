@@ -24,12 +24,6 @@ public class Band {
     @Column(columnDefinition="TEXT")
     private String avatarUrl;
 
-//    @ManyToMany
-//    @JoinTable(name = "band_positions",
-//            joinColumns = @JoinColumn(name = "band_id"),
-//            inverseJoinColumns = @JoinColumn(name = "position_id"))
-//    private List<Position> positions = new ArrayList<>();
-
     @ManyToMany
     @JoinTable(name = "band_genres",
             joinColumns = @JoinColumn(name = "band_id"),
