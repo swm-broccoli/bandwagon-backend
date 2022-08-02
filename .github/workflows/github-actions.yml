@@ -33,21 +33,21 @@ jobs:
       run: |
           cd ./src/main/resources
           touch ./application-db.yml
-          echo "${{ secrests.APPLICATION_DB }}" > ./application-db.yml
+          echo "${{ secrets.APPLICATION_DB }}" > ./application-db.yml
       shell: bash
       
     - name: Create application-aws.yml
       run: |
           cd ./src/main/resources
           touch ./application-aws.yml
-          echo "${{ secrests.APPLICATION_AWS }}" > ./application-aws.yml
+          echo "${{ secrets.APPLICATION_AWS }}" > ./application-aws.yml
       shell: bash
   
     - name: Create application-oauth.yml
       run: |
           cd ./src/main/resources
           touch ./application-oauth.yml
-          echo "${{ secrests.APPLICATION_OAUTH }}" > ./application-oauth.yml
+          echo "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.yml
       shell: bash
     
     - name: Build with Gradle
