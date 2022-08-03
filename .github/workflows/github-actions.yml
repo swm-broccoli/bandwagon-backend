@@ -63,7 +63,7 @@ jobs:
 
     - name: Create shell script for SSM
       run: |
-        cd /bin/sh
+        cd /home/ubuntu/application
         touch ./deploy.sh
         echo "${{ secrets.SSM_SCRIPT }}" > ./deploy.sh
       shell: bash
@@ -77,5 +77,5 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SSM_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.AWS_DEV_INSTANCE_ID }}
 
-        working-directory: /
+        working-directory: /home/ubuntu/application
         command: /bin/sh deploy.sh
