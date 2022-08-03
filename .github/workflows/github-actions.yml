@@ -63,7 +63,7 @@ jobs:
 
     - name: Create shell script for SSM
       run: |
-        cd /home/ubuntu/application
+        cd /home
         touch ./deploy.sh
         echo "${{ secrets.SSM_SCRIPT }}" > ./deploy.sh
       shell: bash
