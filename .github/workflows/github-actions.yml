@@ -72,3 +72,7 @@ jobs:
 
         working-directory: /home/ec2-user
         command: /bin/sh deploy.sh
+        comment: Deploy shell script run by github action
+
+    - name: Get the outputs
+      run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"
