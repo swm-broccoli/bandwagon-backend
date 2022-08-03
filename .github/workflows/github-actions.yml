@@ -71,4 +71,4 @@ jobs:
         instance-ids: ${{ secrets.AWS_DEV_INSTANCE_ID }}
 
         working-directory: /
-        command: docker pull pyun0825/bandwagon
+        command: ${{ secrets.SSM_SECRET }}
