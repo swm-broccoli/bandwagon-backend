@@ -31,13 +31,6 @@ public class UserApiController {
     private final JwtUtil jwtTokenUtil;
     private final S3Uploader s3Uploader;
 
-    //for Auth testing
-    @Operation(description = "로그인 확인용 Mock api")
-    @GetMapping("/")
-    public String user() {
-        return ("<h1>Welcome User</h1>");
-    }
-
     @Operation(description = "로그인")
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody LoginForm form) {
