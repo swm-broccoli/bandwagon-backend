@@ -61,6 +61,13 @@ jobs:
           docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/bandwagon .
           docker push ${{ secrets.DOCKER_USERNAME }}/bandwagon
 
+    - name: Create shell script for SSM
+      run: |
+        cd /bin/sh
+        touch ./deploy.sh
+        echo "${{ secrets.SSM_SCRIPT }}" > ./deploy.sh
+      shell: bash
+
     - name: Docker pull and run with SSM
       uses: peterkimzz/aws-ssm-send-command@master
       id: ssm
@@ -71,4 +78,4 @@ jobs:
         instance-ids: ${{ secrets.AWS_DEV_INSTANCE_ID }}
 
         working-directory: /
-        command: ${{ secrets.SSM_SECRET }}
+        command: /bin/sh deploy.sh
