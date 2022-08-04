@@ -32,12 +32,6 @@ public class UserPerformance {
     @Column(columnDefinition = "jsonb")
     private List<SiteUrlForm> urls = new ArrayList<>();
 
-//    @Column(columnDefinition="TEXT")
-//    private String videoUrl;
-//
-//    @Column(columnDefinition="TEXT")
-//    private String audioUrl;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -47,16 +41,12 @@ public class UserPerformance {
     public UserPerformance(PerformanceDto performanceDto) {
         this.musicTitle = performanceDto.getMusicTitle();
         this.performDate = performanceDto.getPerformDate();
-//        this.videoUrl = performanceDto.getVideoUrl();
-//        this.audioUrl = performanceDto.getAudioUrl();
         this.urls = performanceDto.getUrls();
     }
 
     public void update(PerformanceDto performanceDto) {
         this.musicTitle = performanceDto.getMusicTitle();
         this.performDate = performanceDto.getPerformDate();
-//        this.videoUrl = performanceDto.getVideoUrl();
-//        this.audioUrl = performanceDto.getAudioUrl();
         this.urls = performanceDto.getUrls();
     }
 }
