@@ -56,26 +56,22 @@ public class UserService {
     }
 
     @Transactional
-    public UserEditDto editUser(UserEditRequest request) throws Exception {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElse(null);
-        if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
-        }
-        user.setName(request.getName());
-        user.setNickname(request.getNickname());
-        user.setBirthday(request.getBirthday());
-        user.setGender(request.getGender());
-        return new UserEditDto(user);
-    }
-
-    @Transactional
-    public void editPassword(String email, PasswordEditRequest request) throws Exception {
+    public UserEditDto editUser(String email, UserEditRequest request) throws Exception {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
             throw new Exception("존재하지 않는 유저입니다!");
         }
+        if (request.getOldPassword() != null && !request.getOldPassword().equals("")) {
+            editPassword(user, request);
+        } else {
+            user.updateUser(request);
+        }
+        return new UserEditDto(user);
+    }
+
+    @Transactional
+    public void editPassword(User user, UserEditRequest request) throws Exception {
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new Exception("비밀번호가 올바르지 않습니다!");
         }

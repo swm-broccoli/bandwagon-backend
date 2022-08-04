@@ -8,7 +8,10 @@ import java.util.Date;
 public class UserEditRequest {
     private String name;
     private String nickname;
-    private String email;
     private Boolean gender; // 0 == Male, 1 == Female
     private Date birthday;
+
+    private String oldPassword;
+    private String newPassword;
+    private String newPasswordCheck;
 }

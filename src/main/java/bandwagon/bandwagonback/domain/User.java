@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.domain;
 
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
+import bandwagon.bandwagonback.dto.UserEditRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -79,6 +80,22 @@ public class User {
         this.gender = false;
         this.birthday = new Date();
         this.isSocial = true;
+    }
+
+    // User 기본 정보 수정
+    public void updateUser(UserEditRequest request) {
+        if(request.getName() != null && !request.getName().equals("")) {
+            this.name = request.getName();
+        }
+        if(request.getNickname() != null && !request.getNickname().equals("")) {
+            this.nickname = request.getNickname();
+        }
+        if(request.getGender() != null) {
+            this.gender = request.getGender();
+        }
+        if(request.getBirthday() != null) {
+            this.birthday = request.getBirthday();
+        }
     }
 
     // 연주기록 추가
