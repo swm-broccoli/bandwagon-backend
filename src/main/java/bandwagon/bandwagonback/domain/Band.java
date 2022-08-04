@@ -73,18 +73,6 @@ public class Band {
         bandPractice.setBand(this);
     }
 
-//    // 포지션 추가
-//    public void addPosition(Position position) {
-//        this.positions.add(position);
-//        position.getBands().add(this);
-//    }
-//
-//    // 포지션 제거
-//    public void removePosition(Position position) {
-//        this.positions.remove(position);
-//        position.getBands().remove(this);
-//    }
-
     // 선호 장르 추가
     public void addGenre(Genre genre) {
         this.genres.add(genre);
