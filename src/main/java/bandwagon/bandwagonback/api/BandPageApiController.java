@@ -205,6 +205,20 @@ public class BandPageApiController {
         }
     }
 
+    @Operation(description = "밴드 활동 요일 제거")
+    @DeleteMapping("/api/band/{band_id}/days/{day_id}")
+    public ResponseEntity<?> deleteDayArea(@PathVariable("band_id") Long bandId, @PathVariable("day_id") Long dayId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            dayService.deleteDayFromBand(email, bandId, dayId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @Operation(description = "밴드 사진 추가")
     @PostMapping("/api/band/{band_id}/photos")
     public ResponseEntity<?> postBandPhoto(@PathVariable("band_id") Long bandId, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
