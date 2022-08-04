@@ -95,3 +95,11 @@ insert into areas(city, district) values('경기도', '양주시');
 insert into areas(city, district) values('경기도', '포천시');
 insert into areas(city, district) values('경기도', '가평군');
 insert into areas(city, district) values('경기도', '연천군');
+
+insert into days(day) values('Mon');
+insert into days(day) values('Tue');
+insert into days(day) values('Wed');
+insert into days(day) values('Thu');
+insert into days(day) values('Fri');
+insert into days(day) values('Sat');
+insert into days(day) values('Sun');
