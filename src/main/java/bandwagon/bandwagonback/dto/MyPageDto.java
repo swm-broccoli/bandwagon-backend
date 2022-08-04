@@ -13,6 +13,8 @@ import java.util.List;
 @Slf4j
 @Data
 public class MyPageDto {
+
+    private String avatarUrl;
     private String name;
     private Date birthday;
     private List<IdNameForm> positions = new ArrayList<>();
@@ -22,6 +24,7 @@ public class MyPageDto {
     private List<PerformanceDto> userPerformances = new ArrayList<>();
 
     public MyPageDto(User user) {
+        this.avatarUrl = user.getUserInfo().getAvatarUrl();
         this.name = user.getName();
         this.birthday = user.getBirthday();
         for(Position position : user.getPositions()) {
