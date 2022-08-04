@@ -101,6 +101,7 @@ public class UserApiController {
         }
     }
 
+    @Operation(description = "유저 기본 정보 조회")
     @GetMapping("/api/users")
     public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
         try {
@@ -114,6 +115,7 @@ public class UserApiController {
         }
     }
 
+    @Operation(description = "유저 기본 정보/비밀번호 수정")
     @PutMapping("/api/users")
     public ResponseEntity<?> editUserInfo(@RequestBody UserEditRequest userEditRequest, HttpServletRequest request) {
         try {
