@@ -33,14 +33,14 @@ public class BandPractice {
     public BandPractice(PerformanceDto performanceDto) {
         this.musicTitle = performanceDto.getMusicTitle();
         this.performDate = performanceDto.getPerformDate();
-        this.videoUrl = performanceDto.getVideoUrl();
-        this.audioUrl = performanceDto.getAudioUrl();
+//        this.videoUrl = performanceDto.getVideoUrl();
+//        this.audioUrl = performanceDto.getAudioUrl();
     }
 
     public void update(PerformanceDto performanceDto) {
         this.musicTitle = performanceDto.getMusicTitle();
         this.performDate = performanceDto.getPerformDate();
-        this.videoUrl = performanceDto.getVideoUrl();
-        this.audioUrl = performanceDto.getAudioUrl();
+//        this.videoUrl = performanceDto.getVideoUrl();
+//        this.audioUrl = performanceDto.getAudioUrl();
     }
 }
