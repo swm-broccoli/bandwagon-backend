@@ -36,6 +36,12 @@ public class Band {
             inverseJoinColumns = @JoinColumn(name = "area_id"))
     private List<Area> areas = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "band_days",
+            joinColumns = @JoinColumn(name = "band_id"),
+            inverseJoinColumns = @JoinColumn(name = "day_id"))
+    private List<Day> days = new ArrayList<>();
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandMember> bandMembers = new ArrayList<>();
 
@@ -101,5 +107,17 @@ public class Band {
     public void addBandPhoto(BandPhoto bandPhoto) {
         this.bandPhotos.add(bandPhoto);
         bandPhoto.setBand(this);
+    }
+
+    // 활동 요일 추가
+    public void addDay(Day day) {
+        this.days.add(day);
+        day.getBands().add(this);
+    }
+
+    // 활동 요일 제거
+    public void removeDay(Day day) {
+        this.days.remove(day);
+        day.getBands().remove(this);
     }
 }
