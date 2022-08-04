@@ -18,6 +18,7 @@ public class BandPageDto {
     private List<BandMemberForm> bandMembers = new ArrayList<>();
     private List<AreaForm> areas = new ArrayList<>();
     private List<IdNameForm> genres = new ArrayList<>();
+    private List<IdNameForm> days = new ArrayList<>();
     private String description;
     private List<PerformanceDto> bandGigs = new ArrayList<>();
     private List<PerformanceDto> bandPractices = new ArrayList<>();
@@ -35,6 +36,9 @@ public class BandPageDto {
         }
         for (Genre genre : band.getGenres()) {
             this.genres.add(new IdNameForm(genre));
+        }
+        for (Day day : band.getDays()) {
+            this.days.add(new IdNameForm(day));
         }
         this.description = band.getDescription();
         for (BandGig bandGig : band.getBandGigs()) {

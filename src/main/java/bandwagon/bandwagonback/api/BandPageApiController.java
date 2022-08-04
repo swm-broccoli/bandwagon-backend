@@ -31,6 +31,7 @@ public class BandPageApiController {
     private final BandPhotoService bandPhotoService;
     private final GenreService genreService;
     private final AreaService areaService;
+    private final DayService dayService;
     private final JwtUtil jwtTokenUtil;
 
     @Operation(description = "밴드 페이지 불러오기")
@@ -183,6 +184,34 @@ public class BandPageApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             areaService.deleteAreaFromBand(email, bandId, areaId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "밴드 활동 요일 추가")
+    @PostMapping("/api/band/{band_id}/days/{day_id}")
+    public ResponseEntity<?> postDayArea(@PathVariable("band_id") Long bandId, @PathVariable("day_id") Long dayId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            dayService.addDayToBand(email, bandId, dayId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "밴드 활동 요일 제거")
+    @DeleteMapping("/api/band/{band_id}/days/{day_id}")
+    public ResponseEntity<?> deleteDayArea(@PathVariable("band_id") Long bandId, @PathVariable("day_id") Long dayId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            dayService.deleteDayFromBand(email, bandId, dayId);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             log.error(e.getMessage());
