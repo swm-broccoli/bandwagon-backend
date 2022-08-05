@@ -17,6 +17,7 @@ public class MyPageDto {
     private String avatarUrl;
     private String name;
     private Date birthday;
+    private Boolean gender;
     private List<IdNameForm> positions = new ArrayList<>();
     private List<AreaForm> areas = new ArrayList<>();
     private List<IdNameForm> genres = new ArrayList<>();
@@ -27,6 +28,7 @@ public class MyPageDto {
         this.avatarUrl = user.getUserInfo().getAvatarUrl();
         this.name = user.getName();
         this.birthday = user.getBirthday();
+        this.gender = user.getGender();
         for(Position position : user.getPositions()) {
             this.positions.add(new IdNameForm(position));
         }
