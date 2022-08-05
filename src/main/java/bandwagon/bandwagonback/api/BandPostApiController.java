@@ -30,6 +30,7 @@ public class BandPostApiController {
     private final BandPrerequisiteService bandPrerequisiteService;
     private final JwtUtil jwtTokenUtil;
 
+    // TODO: 아마 Deprecate 예정.. band가 post 복수로 등록 가능하고 post의 본문, 제목은 아무나 볼 수 있어야 하기 때문에 postapicontroller의 handler로 대체
     @Operation(description = "밴드 구인글(Band Post) 조회")
     @GetMapping("/api/band/post")
     public ResponseEntity<?> getBandPost(HttpServletRequest request) {

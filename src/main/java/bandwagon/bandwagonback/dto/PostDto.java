@@ -9,6 +9,7 @@ public class PostDto {
     private Long id;
     private String title;
     private String body;
+    private String dtype;
 
     public PostDto() {}
 
@@ -16,5 +17,6 @@ public class PostDto {
         this.id = post.getId();
         this.title = post.getTitle();
         this.body = post.getBody();
+        this.dtype = post.getDtype();
     }
 }
