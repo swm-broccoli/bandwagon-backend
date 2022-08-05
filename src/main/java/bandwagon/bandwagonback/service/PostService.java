@@ -39,6 +39,14 @@ public class PostService {
         return bandPost.getId();
     }
 
+    public PostDto viewPost(Long postId) throws Exception {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new Exception("No Post by that ID");
+        }
+        return new PostDto(post);
+    }
+
     public PostDto viewBandPostByBandId(Long bandId) throws Exception {
         BandPost bandPost = bandPostRepository.findFirstByBand_id(bandId);
         if (bandPost == null) {

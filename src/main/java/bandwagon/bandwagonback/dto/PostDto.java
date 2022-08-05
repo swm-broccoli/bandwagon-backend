@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.dto;
 
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.post.Post;
 import lombok.Data;
 
 @Data
@@ -11,9 +12,9 @@ public class PostDto {
 
     public PostDto() {}
 
-    public PostDto(BandPost bandPost) {
-        this.id = bandPost.getId();
-        this.title = bandPost.getTitle();
-        this.body = bandPost.getBody();
+    public PostDto(Post post) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.body = post.getBody();
     }
 }
