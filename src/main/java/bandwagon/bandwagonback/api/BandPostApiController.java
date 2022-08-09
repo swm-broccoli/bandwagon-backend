@@ -1,9 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
-import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
-import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;

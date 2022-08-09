@@ -1,6 +1,5 @@
 package bandwagon.bandwagonback.api;
 
-import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
