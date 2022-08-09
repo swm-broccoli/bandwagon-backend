@@ -1,8 +1,10 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.Band;
+import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
+import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,21 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final BandPostRepository bandPostRepository;
+    private final UserRepository userRepository;
     private final BandRepository bandRepository;
+
+
+    @Transactional
+    public Long createUserPost(String email, PostDto postDto) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
+        UserPost userPost = new UserPost(postDto);
+        userPost.setUser(user);
+        postRepository.save(userPost);
+        return userPost.getId();
+    }
 
     @Transactional
     public Long createBandPost(Long bandId, PostDto postDto) throws Exception {
