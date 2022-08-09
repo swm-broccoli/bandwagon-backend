@@ -68,11 +68,22 @@ public class PostApiController {
         try {
             String jwt = getJwtFromHeader(request);
             String email = jwtTokenUtil.extractUsername(jwt);
-            if (!postService.isPostByUser(postId, email)) {
-                throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+            if (postDto.getDtype().equals("Band")) {
+                Long bandId = bandMemberService.getBandIdByUserEmail(email);
+                if (!postService.isPostByBand(postId, bandId)) {
+                    throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+                }
+                postService.editPost(postId, postDto);
+                return ResponseEntity.ok(null);
+            } else if (postDto.getDtype().equals("User")) {
+                if (!postService.isPostByUser(postId, email)) {
+                    throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+                }
+                postService.editPost(postId, postDto);
+                return ResponseEntity.ok(null);
+            } else {
+                throw new Exception("Invalid dtype in request!");
             }
-            postService.editPost(postId, postDto);
-            return ResponseEntity.ok(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));

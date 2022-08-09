@@ -21,6 +21,7 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserPostRepository userPostRepository;
     private final BandPostRepository bandPostRepository;
     private final UserRepository userRepository;
     private final BandRepository bandRepository;
@@ -94,9 +95,9 @@ public class PostService {
     }
 
     public Boolean isPostByUser(Long postId, String email) throws Exception {
-        UserPost userPost = (UserPost) postRepository.findById(postId).orElse(null);
+        UserPost userPost = userPostRepository.findById(postId).orElse(null);
         if (userPost == null) {
-            throw new Exception("No post with that ID");
+            throw new Exception("No User post with that ID");
         }
         return userPost.getUser().getEmail().equals(email);
     }
