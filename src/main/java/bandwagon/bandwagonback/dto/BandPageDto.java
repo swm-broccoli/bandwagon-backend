@@ -23,8 +23,9 @@ public class BandPageDto {
     private List<PerformanceDto> bandGigs = new ArrayList<>();
     private List<PerformanceDto> bandPractices = new ArrayList<>();
     private List<IdNameForm> bandPhotos = new ArrayList<>();
+    private Boolean isReaderFrontman;
 
-    public BandPageDto(Band band) {
+    public BandPageDto(Band band, Boolean isFrontman) {
         this.id = band.getId();
         this.name = band.getName();
         this.avatarUrl = band.getAvatarUrl();
@@ -50,5 +51,6 @@ public class BandPageDto {
         for (BandPhoto bandPhoto : band.getBandPhotos()) {
             this.bandPhotos.add(new IdNameForm(bandPhoto));
         }
+        this.isReaderFrontman = isFrontman;
     }
 }

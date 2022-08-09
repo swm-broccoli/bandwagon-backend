@@ -37,7 +37,7 @@ public class BandService {
         if (bandMember == null) {
             throw new NoBandException("가입된 밴드가 없습니다.");
         }
-        return new BandPageDto(bandMember.getBand());
+        return new BandPageDto(bandMember.getBand(), bandMember.getIsFrontman());
     }
 
     /**
