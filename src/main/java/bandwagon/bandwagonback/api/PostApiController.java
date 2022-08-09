@@ -40,6 +40,7 @@ public class PostApiController {
         }
     }
 
+    @Operation(description = "게시글 등록")
     @PostMapping("/api/post")
     public ResponseEntity<?> postPost(@RequestBody PostDto postDto, HttpServletRequest request) {
         try {
@@ -61,6 +62,7 @@ public class PostApiController {
         }
     }
 
+    @Operation(description = "게시글 수정")
     @PutMapping("/api/post/{post_id}")
     public ResponseEntity<?> editPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
         try {
@@ -88,6 +90,7 @@ public class PostApiController {
         }
     }
 
+    @Operation(description = "게시글 삭제")
     @DeleteMapping("/api/post/{post_id}")
     public ResponseEntity<?> deletePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         try {
