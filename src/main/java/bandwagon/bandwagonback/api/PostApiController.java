@@ -69,6 +69,22 @@ public class PostApiController {
         }
     }
 
+    @DeleteMapping("/api/post/{post_id}")
+    public ResponseEntity<?> deletePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
+        try {
+            String jwt = getJwtFromHeader(request);
+            String email = jwtTokenUtil.extractUsername(jwt);
+            if (!postService.isPostByUser(postId, email)) {
+                throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+            }
+            postService.deletePost(postId);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);
