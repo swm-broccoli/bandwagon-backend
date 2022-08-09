@@ -115,6 +115,19 @@ public class BandApiController {
         }
     }
 
+    @PostMapping("/api/band/{band_id}/frontman/{band_member_id}")
+    public ResponseEntity<?> changeFrontman(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandMemberService.changeFrontman(email, bandMemberId, bandId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @Operation(description = "밴드 멤버 포지션 추가")
     @PostMapping("/api/band/{band_id}/member/{band_member_id}/positions/{position_id}")
     public ResponseEntity<?> addPositionToMember(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, @PathVariable("position_id") Long positionId, HttpServletRequest request) {
