@@ -37,6 +37,9 @@ public abstract class Post {
 
     private Integer view = 0;
 
+    @Column(name = "dtype", insertable = false, updatable = false)
+    private String dtype;
+
     public Post() {}
 
     public Post(String title, String body) {
