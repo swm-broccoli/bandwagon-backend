@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.dto.subdto.IdNameForm;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ public class MyPageDto {
 
     private String avatarUrl;
     private String name;
-    private Date birthday;
+    private LocalDate birthday;
     private Boolean gender;
     private List<IdNameForm> positions = new ArrayList<>();
     private List<AreaForm> areas = new ArrayList<>();

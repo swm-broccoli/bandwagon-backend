@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -20,5 +21,5 @@ public class SignUpRequest {
     @Schema(description = "성별", example = "false")
     private Boolean gender; // 0 == Male, 1 == Female
     @Schema(description = "생일", example = "1998-08-25")
-    private Date birthday;
+    private LocalDate birthday;
 }

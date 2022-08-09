@@ -5,6 +5,8 @@ import bandwagon.bandwagonback.domain.BandPractice;
 import bandwagon.bandwagonback.domain.UserPerformance;
 import bandwagon.bandwagonback.dto.subdto.SiteUrlForm;
 import lombok.Data;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class PerformanceDto {
     private Long id;
 
     private String musicTitle;
-    private Date performDate;
+    private LocalDate performDate;
     private List<SiteUrlForm> urls;
 
     public PerformanceDto() {}

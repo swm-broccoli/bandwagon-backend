@@ -10,6 +10,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +27,7 @@ public class BandGig {
     private Long id;
 
     private String musicTitle;
-    private Date performDate;
+    private LocalDate performDate;
 
     @Type(type = "json")
     @Column(columnDefinition = "jsonb")
