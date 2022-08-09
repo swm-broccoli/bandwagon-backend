@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,6 +20,7 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserPostRepository userPostRepository;
     private final BandPostRepository bandPostRepository;
     private final UserRepository userRepository;
     private final BandRepository bandRepository;
@@ -44,11 +44,6 @@ public class PostService {
         if (band == null) {
             throw new Exception("Band does not exist!");
         }
-        // 밴드별 중복 포스트 허용?
-//        BandPost prevBandPost = bandPostRepository.findFirstByBand(band);
-//        if (prevBandPost != null) {
-//            throw new Exception("Band Already has Post");
-//        }
         BandPost bandPost = new BandPost(postDto);
         bandPost.setBand(band);
         postRepository.save(bandPost);
@@ -61,14 +56,6 @@ public class PostService {
             throw new Exception("No Post by that ID");
         }
         return new PostDto(post);
-    }
-
-    public PostDto viewBandPostByBandId(Long bandId) throws Exception {
-        BandPost bandPost = bandPostRepository.findFirstByBand_id(bandId);
-        if (bandPost == null) {
-            throw new Exception("Band Post does not exist!");
-        }
-        return new PostDto(bandPost);
     }
 
     @Transactional
@@ -85,18 +72,18 @@ public class PostService {
         postRepository.deleteById(postId);
     }
 
-    public BandPost getBandPostByPostId(Long postId) throws Exception {
-        Optional<BandPost> bandPost = bandPostRepository.findById(postId);
-        if (bandPost.isEmpty()) {
-            throw new Exception("No Band Post by requested post ID!");
+    public String getPostType(Long postId) throws Exception {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new Exception("No post by that ID!");
         }
-        return bandPost.get();
+        return post.getDtype();
     }
 
     public Boolean isPostByUser(Long postId, String email) throws Exception {
-        UserPost userPost = (UserPost) postRepository.findById(postId).orElse(null);
+        UserPost userPost = userPostRepository.findById(postId).orElse(null);
         if (userPost == null) {
-            throw new Exception("No post with that ID");
+            throw new Exception("No User post with that ID");
         }
         return userPost.getUser().getEmail().equals(email);
     }

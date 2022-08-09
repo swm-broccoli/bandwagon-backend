@@ -1,10 +1,10 @@
 package bandwagon.bandwagonback.api;
 
-import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
+import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,9 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 public class PostApiController {
 
     private final PostService postService;
+    private final BandMemberService bandMemberService;
     private final JwtUtil jwtTokenUtil;
-    
-    // TODO: BandPostApi Controller 여기로 병합
+
 
     @Operation(description = "게시글 제목, 본문 조회")
     @GetMapping("/api/post/{post_id}")
@@ -40,44 +40,75 @@ public class PostApiController {
         }
     }
 
+    @Operation(description = "게시글 등록")
     @PostMapping("/api/post")
     public ResponseEntity<?> postPost(@RequestBody PostDto postDto, HttpServletRequest request) {
         try {
             String jwt = getJwtFromHeader(request);
             String email = jwtTokenUtil.extractUsername(jwt);
-            Long userPostId = postService.createUserPost(email, postDto);
-            return ResponseEntity.ok(new SimpleIdResponse(userPostId));
+            if (postDto.getDtype().equals("Band")) {
+                Long bandId = bandMemberService.getBandIdByUserEmail(email);
+                Long bandPostId = postService.createBandPost(bandId, postDto);
+                return ResponseEntity.ok(new SimpleIdResponse(bandPostId));
+            } else if (postDto.getDtype().equals("User")) {
+                Long userPostId = postService.createUserPost(email, postDto);
+                return ResponseEntity.ok(new SimpleIdResponse(userPostId));
+            } else {
+                throw new Exception("Invalid dtype in request!");
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
 
+    @Operation(description = "게시글 수정")
     @PutMapping("/api/post/{post_id}")
     public ResponseEntity<?> editPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
         try {
             String jwt = getJwtFromHeader(request);
             String email = jwtTokenUtil.extractUsername(jwt);
-            if (!postService.isPostByUser(postId, email)) {
-                throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+            if (postDto.getDtype().equals("Band")) {
+                Long bandId = bandMemberService.getBandIdByUserEmail(email);
+                if (!postService.isPostByBand(postId, bandId)) {
+                    throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+                }
+                postService.editPost(postId, postDto);
+                return ResponseEntity.ok(null);
+            } else if (postDto.getDtype().equals("User")) {
+                if (!postService.isPostByUser(postId, email)) {
+                    throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+                }
+                postService.editPost(postId, postDto);
+                return ResponseEntity.ok(null);
+            } else {
+                throw new Exception("Invalid dtype in request!");
             }
-            postService.editPost(postId, postDto);
-            return ResponseEntity.ok(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
 
+    @Operation(description = "게시글 삭제")
     @DeleteMapping("/api/post/{post_id}")
     public ResponseEntity<?> deletePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         try {
             String jwt = getJwtFromHeader(request);
             String email = jwtTokenUtil.extractUsername(jwt);
-            if (!postService.isPostByUser(postId, email)) {
-                throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+            String dtype = postService.getPostType(postId);
+            if (dtype.equals("Band")) {
+                Long bandId = bandMemberService.getBandIdByUserEmail(email);
+                if (!postService.isPostByBand(postId, bandId)) {
+                    throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+                }
+                postService.deletePost(postId);
+            } else {
+                if (!postService.isPostByUser(postId, email)) {
+                    throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+                }
+                postService.deletePost(postId);
             }
-            postService.deletePost(postId);
             return ResponseEntity.ok(null);
         } catch (Exception e) {
             log.error(e.getMessage());
