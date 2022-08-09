@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,7 +20,7 @@ public class AreaPrerequisite extends BandPrerequisite{
     @JoinTable(name = "prerequisite_areas",
             joinColumns = @JoinColumn(name = "prerequisite_id"),
             inverseJoinColumns = @JoinColumn(name = "area_id"))
-    private List<Area> areas = new ArrayList<>();
+    private Set<Area> areas = new HashSet<>();
 
     // 지원 자격 지역 추가
     public void addArea(Area area) {

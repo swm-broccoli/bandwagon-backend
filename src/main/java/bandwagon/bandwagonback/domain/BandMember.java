@@ -5,7 +5,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "band_members")
@@ -27,7 +29,7 @@ public class BandMember {
     @JoinTable(name = "band_member_positions",
             joinColumns = @JoinColumn(name = "band_member_id"),
             inverseJoinColumns = @JoinColumn(name = "position_id"))
-    private List<Position> positions = new ArrayList<>();
+    private Set<Position> positions = new HashSet<>();
 
     private Boolean isFrontman;
 

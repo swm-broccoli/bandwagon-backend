@@ -24,8 +24,8 @@ public class Position {
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "positions")
-    private List<PositionPrerequisite> positionPrerequisites = new ArrayList<>();
+    private Set<PositionPrerequisite> positionPrerequisites = new HashSet<>();
 
     @ManyToMany(mappedBy = "positions")
-    private List<BandMember> bandMembers = new ArrayList<>();
+    private Set<BandMember> bandMembers = new HashSet<>();
 }

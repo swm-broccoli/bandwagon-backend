@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "bands")
@@ -28,19 +30,19 @@ public class Band {
     @JoinTable(name = "band_genres",
             joinColumns = @JoinColumn(name = "band_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private List<Genre> genres = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "band_areas",
             joinColumns = @JoinColumn(name = "band_id"),
             inverseJoinColumns = @JoinColumn(name = "area_id"))
-    private List<Area> areas = new ArrayList<>();
+    private Set<Area> areas = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "band_days",
             joinColumns = @JoinColumn(name = "band_id"),
             inverseJoinColumns = @JoinColumn(name = "day_id"))
-    private List<Day> days = new ArrayList<>();
+    private Set<Day> days = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
     private List<BandMember> bandMembers = new ArrayList<>();

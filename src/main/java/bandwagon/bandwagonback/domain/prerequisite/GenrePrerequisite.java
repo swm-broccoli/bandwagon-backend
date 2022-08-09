@@ -7,7 +7,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,7 +21,7 @@ public class GenrePrerequisite extends BandPrerequisite {
     @JoinTable(name = "prerequisite_genres",
             joinColumns = @JoinColumn(name = "prerequisite_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private List<Genre> genres = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 
     // 지원 자격 장르 추가
     public void addGenre(Genre genre) {

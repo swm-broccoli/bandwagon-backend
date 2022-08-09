@@ -5,7 +5,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "days")
@@ -18,5 +20,5 @@ public class Day {
     private String day;
 
     @ManyToMany(mappedBy = "days")
-    private List<Band> bands = new ArrayList<>();
+    private Set<Band> bands = new HashSet<>();
 }

@@ -27,8 +27,8 @@ public class Area {
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "areas")
-    private List<Band> bands = new ArrayList<>();
+    private Set<Band> bands = new HashSet<>();
 
     @ManyToMany(mappedBy = "areas")
-    private List<AreaPrerequisite> areaPrerequisites = new ArrayList<>();
+    private Set<AreaPrerequisite> areaPrerequisites = new HashSet<>();
 }

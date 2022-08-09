@@ -25,8 +25,8 @@ public class Genre {
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "genres")
-    private List<Band> bands = new ArrayList<>();
+    private Set<Band> bands = new HashSet<>();
 
     @ManyToMany(mappedBy = "genres")
-    private List<GenrePrerequisite> genrePrerequisites = new ArrayList<>();
+    private Set<GenrePrerequisite> genrePrerequisites = new HashSet<>();
 }

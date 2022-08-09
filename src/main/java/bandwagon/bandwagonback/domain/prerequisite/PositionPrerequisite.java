@@ -7,7 +7,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -19,7 +21,7 @@ public class PositionPrerequisite extends BandPrerequisite {
     @JoinTable(name = "prerequisite_positions",
             joinColumns = @JoinColumn(name = "prerequisite_id"),
             inverseJoinColumns = @JoinColumn(name = "position_id"))
-    private List<Position> positions = new ArrayList<>();
+    private Set<Position> positions = new HashSet<>();
 
     // 지원 자격 포지션 추가
     public void addPosition(Position position) {
