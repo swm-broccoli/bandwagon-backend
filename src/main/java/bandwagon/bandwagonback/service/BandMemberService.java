@@ -97,7 +97,18 @@ public class BandMemberService {
     }
 
     @Transactional
-    public void confirmUserIsFrontman(String email, Long bandId) throws Exception {
+    public void changeFrontman(String editerEmail, Long targetBandMemberId, Long bandId) throws Exception {
+        BandMember editingMember = confirmUserIsFrontman(editerEmail, bandId);
+        BandMember targetMember = bandMemberRepository.findById(targetBandMemberId).orElse(null);
+        if (targetMember == null || !Objects.equals(targetMember.getBand().getId(), bandId)) {
+            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+        }
+        targetMember.setIsFrontman(true);
+        editingMember.setIsFrontman(false);
+    }
+
+    @Transactional
+    public BandMember confirmUserIsFrontman(String email, Long bandId) throws Exception {
         BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (member == null) {
             throw new Exception("해당 밴드 - 유저 조합이 존재하지 않습니다!");
@@ -105,5 +116,6 @@ public class BandMemberService {
         if (!member.getIsFrontman()) {
             throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
         }
+        return member;
     }
 }
