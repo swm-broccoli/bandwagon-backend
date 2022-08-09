@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
+import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public class PostApiController {
 
     private final PostService postService;
+    private final BandMemberService bandMemberService;
     private final JwtUtil jwtTokenUtil;
     
     // TODO: BandPostApi Controller 여기로 병합
@@ -45,8 +47,16 @@ public class PostApiController {
         try {
             String jwt = getJwtFromHeader(request);
             String email = jwtTokenUtil.extractUsername(jwt);
-            Long userPostId = postService.createUserPost(email, postDto);
-            return ResponseEntity.ok(new SimpleIdResponse(userPostId));
+            if (postDto.getDtype().equals("Band")) {
+                Long bandId = bandMemberService.getBandIdByUserEmail(email);
+                Long bandPostId = postService.createBandPost(bandId, postDto);
+                return ResponseEntity.ok(new SimpleIdResponse(bandPostId));
+            } else if (postDto.getDtype().equals("User")) {
+                Long userPostId = postService.createUserPost(email, postDto);
+                return ResponseEntity.ok(new SimpleIdResponse(userPostId));
+            } else {
+                throw new Exception("Invalid dtype in request!");
+            }
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
