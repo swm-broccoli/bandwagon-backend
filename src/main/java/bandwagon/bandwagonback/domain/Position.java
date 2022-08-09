@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "positions")
@@ -19,7 +21,7 @@ public class Position {
     private String position;
 
     @ManyToMany(mappedBy = "positions")
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "positions")
     private List<PositionPrerequisite> positionPrerequisites = new ArrayList<>();

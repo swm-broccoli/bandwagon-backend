@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -40,19 +37,19 @@ public class User {
     @JoinTable(name = "user_positions",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "position_id"))
-    private List<Position> positions = new ArrayList<>();
+    private Set<Position> positions = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_genres",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private List<Genre> genres = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_areas",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "area_id"))
-    private List<Area> areas = new ArrayList<>();
+    private Set<Area> areas = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
     private BandMember bandMember;

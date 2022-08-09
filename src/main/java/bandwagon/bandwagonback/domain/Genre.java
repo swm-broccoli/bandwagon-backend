@@ -6,7 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "genres")
@@ -20,7 +22,7 @@ public class Genre {
     private String genre;
 
     @ManyToMany(mappedBy = "genres")
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany(mappedBy = "genres")
     private List<Band> bands = new ArrayList<>();
