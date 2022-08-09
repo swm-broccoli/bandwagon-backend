@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
@@ -25,6 +26,8 @@ public class PostApiController {
     private final PostService postService;
     private final JwtUtil jwtTokenUtil;
     
+    // TODO: BandPostApi Controller 여기로 병합
+
     @Operation(description = "게시글 제목, 본문 조회")
     @GetMapping("/api/post/{post_id}")
     public ResponseEntity<?> getPost(@PathVariable("post_id") Long postId) {
@@ -44,6 +47,22 @@ public class PostApiController {
             String email = jwtTokenUtil.extractUsername(jwt);
             Long userPostId = postService.createUserPost(email, postDto);
             return ResponseEntity.ok(new SimpleIdResponse(userPostId));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/api/post/{post_id}")
+    public ResponseEntity<?> editPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
+        try {
+            String jwt = getJwtFromHeader(request);
+            String email = jwtTokenUtil.extractUsername(jwt);
+            if (!postService.isPostByUser(postId, email)) {
+                throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
+            }
+            postService.editPost(postId, postDto);
+            return ResponseEntity.ok(null);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));

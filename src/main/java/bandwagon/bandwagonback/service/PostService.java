@@ -93,6 +93,14 @@ public class PostService {
         return bandPost.get();
     }
 
+    public Boolean isPostByUser(Long postId, String email) throws Exception {
+        UserPost userPost = (UserPost) postRepository.findById(postId).orElse(null);
+        if (userPost == null) {
+            throw new Exception("No post with that ID");
+        }
+        return userPost.getUser().getEmail().equals(email);
+    }
+
     public Boolean isPostByBand(Long bandPostId, Long bandId) throws Exception {
         BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
         if (bandPost == null) {

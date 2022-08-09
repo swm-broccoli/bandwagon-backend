@@ -16,6 +16,8 @@ public class UserPost extends Post{
     @JoinColumn(name = "user_id")
     private User user;
 
+    public UserPost() {}
+
     public UserPost(PostDto postDto) {
         super(postDto.getTitle(), postDto.getBody());
     }
