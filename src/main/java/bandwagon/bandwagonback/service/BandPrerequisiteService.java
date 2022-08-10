@@ -3,8 +3,10 @@ package bandwagon.bandwagonback.service;
 import bandwagon.bandwagonback.domain.Area;
 import bandwagon.bandwagonback.domain.Genre;
 import bandwagon.bandwagonback.domain.Position;
+import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.prerequisite.*;
+import bandwagon.bandwagonback.dto.PrerequisiteCheckDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
 import bandwagon.bandwagonback.dto.subdto.AreaForm;
 import bandwagon.bandwagonback.dto.subdto.IdNameForm;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BandPrerequisiteService {
 
+    private final UserRepository userRepository;
     private final BandPrerequisiteRepository bandPrerequisiteRepository;
     private final BandPostRepository bandPostRepository;
     private final AreaRepository areaRepository;
@@ -133,5 +136,101 @@ public class BandPrerequisiteService {
     public void editPrerequisite(Long postId, Long prerequisiteId, PrerequisiteDto prerequisiteDto) throws Exception {
         deletePrerequisite(postId, prerequisiteId);
         addPrerequisite(postId, prerequisiteDto);
+    }
+
+    public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
+        BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
+        if (bandPost == null) {
+            throw new Exception("Band Post does not Exist!");
+        }
+        List<PrerequisiteCheckDto> res = new ArrayList<>();
+        for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
+            boolean check = true;
+            switch (bandPrerequisite.getDtype()) {
+                case "Age":
+                    if (((AgePrerequisite) bandPrerequisite).getMin() > user.getUserAge() || ((AgePrerequisite) bandPrerequisite).getMax() < user.getUserAge()) {
+                        check = false;
+                    }
+                    res.add(new PrerequisiteCheckDto((AgePrerequisite) bandPrerequisite, check));
+                    break;
+                case "Area":
+                    if (!user.getAreas().containsAll(((AreaPrerequisite) bandPrerequisite).getAreas())) {
+                        check = false;
+                    }
+                    res.add(new PrerequisiteCheckDto((AreaPrerequisite) bandPrerequisite, check));
+                    break;
+                case "Gender":
+                    if (!user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
+                        check = false;
+                    }
+                    res.add(new PrerequisiteCheckDto((GenderPrerequisite) bandPrerequisite, check));
+                    break;
+                case "Genre":
+                    if (!user.getGenres().containsAll(((GenrePrerequisite) bandPrerequisite).getGenres())) {
+                        check = false;
+                    }
+                    res.add(new PrerequisiteCheckDto((GenrePrerequisite) bandPrerequisite, check));
+                    break;
+                case "Position":
+                    if (!user.getPositions().containsAll(((PositionPrerequisite) bandPrerequisite).getPositions())) {
+                        check = false;
+                    }
+                    res.add(new PrerequisiteCheckDto((PositionPrerequisite) bandPrerequisite, check));
+                    break;
+                default:
+                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 유저 지원 시 지원 가능한지 검증용 메소드
+     */
+    public Boolean canUserApply(String email, Long postId) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
+        BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
+        if (bandPost == null) {
+            throw new Exception("Band Post does not Exist!");
+        }
+        for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
+            switch (bandPrerequisite.getDtype()) {
+                case "Age":
+                    if (((AgePrerequisite) bandPrerequisite).getMin() > user.getUserAge() || ((AgePrerequisite) bandPrerequisite).getMax() < user.getUserAge()) {
+                        return false;
+                    }
+                    break;
+                case "Area":
+                    if (!user.getAreas().containsAll(((AreaPrerequisite) bandPrerequisite).getAreas())) {
+                        return false;
+                    }
+                    break;
+                case "Gender":
+                    if (!user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
+                        return false;
+                    }
+                    break;
+                case "Genre":
+                    if (!user.getGenres().containsAll(((GenrePrerequisite) bandPrerequisite).getGenres())) {
+                        return false;
+                    }
+                    break;
+                case "Position":
+                    if (!user.getPositions().containsAll(((PositionPrerequisite) bandPrerequisite).getPositions())) {
+                        return false;
+                    }
+                    break;
+                default:
+                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+            }
+        }
+        return true;
     }
 }
