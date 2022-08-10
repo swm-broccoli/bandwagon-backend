@@ -16,6 +16,7 @@ public class BandMemberForm {
     private Long id;
     private String name;
     private LocalDate birthday;
+    private Integer age;
     private List<IdNameForm> positions = new ArrayList<>();
     private Boolean isFrontman;
 
@@ -24,6 +25,7 @@ public class BandMemberForm {
         this.id = bandMember.getId();
         this.name = bandMember.getMember().getName();
         this.birthday = bandMember.getMember().getBirthday();
+        this.age = bandMember.getMember().getUserAge();
         for (Position position : bandMember.getPositions()) {
             this.positions.add(new IdNameForm(position));
         }

@@ -99,8 +99,7 @@ public class User {
 
     // 나이 추출
     public int getUserAge() {
-        Period period = this.birthday.until(LocalDate.now());
-        return period.getYears() + 1;
+        return LocalDate.now().getYear() - this.birthday.getYear() + 1;
     }
 
     // 연주기록 추가
