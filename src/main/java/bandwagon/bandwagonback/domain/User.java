@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 @Entity
@@ -94,6 +95,12 @@ public class User {
         if(request.getBirthday() != null) {
             this.birthday = request.getBirthday();
         }
+    }
+
+    // 나이 추출
+    public int getUserAge() {
+        Period period = this.birthday.until(LocalDate.now());
+        return period.getYears() + 1;
     }
 
     // 연주기록 추가
