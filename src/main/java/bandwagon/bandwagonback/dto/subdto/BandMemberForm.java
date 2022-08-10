@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 public class BandMemberForm {
 
+    private String avatarUrl;
     private Long id;
     private String name;
     private LocalDate birthday;
@@ -19,6 +20,7 @@ public class BandMemberForm {
     private Boolean isFrontman;
 
     public BandMemberForm(BandMember bandMember) {
+        this.avatarUrl = bandMember.getMember().getUserInfo().getAvatarUrl();
         this.id = bandMember.getId();
         this.name = bandMember.getMember().getName();
         this.birthday = bandMember.getMember().getBirthday();
