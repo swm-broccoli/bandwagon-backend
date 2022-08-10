@@ -31,15 +31,9 @@ public class MyPageApiController {
     private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
 
-    @Operation(description = "마이 페이지 불러오기")
+    @Operation(description = "유저 페이지 불러오기")
     @GetMapping("/api/users/{email}/mypage")
     public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(email, request);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
         User user = userService.findOneByEmail(email);
         if(user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User does not exist"));
