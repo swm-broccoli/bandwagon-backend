@@ -149,35 +149,44 @@ public class BandPrerequisiteService {
         }
         List<PrerequisiteCheckDto> res = new ArrayList<>();
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
-            boolean check = true;
+            boolean check = false;
             switch (bandPrerequisite.getDtype()) {
                 case "Age":
-                    if (((AgePrerequisite) bandPrerequisite).getMin() > user.getUserAge() || ((AgePrerequisite) bandPrerequisite).getMax() < user.getUserAge()) {
-                        check = false;
+                    if (((AgePrerequisite) bandPrerequisite).getMin() <= user.getUserAge() && ((AgePrerequisite) bandPrerequisite).getMax() >= user.getUserAge()) {
+                        check = true;
                     }
                     res.add(new PrerequisiteCheckDto((AgePrerequisite) bandPrerequisite, check));
                     break;
                 case "Area":
-                    if (!user.getAreas().containsAll(((AreaPrerequisite) bandPrerequisite).getAreas())) {
-                        check = false;
+                    for (Area area : ((AreaPrerequisite) bandPrerequisite).getAreas()) {
+                        if(user.getAreas().contains(area)) {
+                            check = true;
+                            break;
+                        }
                     }
                     res.add(new PrerequisiteCheckDto((AreaPrerequisite) bandPrerequisite, check));
                     break;
                 case "Gender":
-                    if (!user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
-                        check = false;
+                    if (user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
+                        check = true;
                     }
                     res.add(new PrerequisiteCheckDto((GenderPrerequisite) bandPrerequisite, check));
                     break;
                 case "Genre":
-                    if (!user.getGenres().containsAll(((GenrePrerequisite) bandPrerequisite).getGenres())) {
-                        check = false;
+                    for (Genre genre : ((GenrePrerequisite) bandPrerequisite).getGenres()) {
+                        if(user.getGenres().contains(genre)) {
+                            check = true;
+                            break;
+                        }
                     }
                     res.add(new PrerequisiteCheckDto((GenrePrerequisite) bandPrerequisite, check));
                     break;
                 case "Position":
-                    if (!user.getPositions().containsAll(((PositionPrerequisite) bandPrerequisite).getPositions())) {
-                        check = false;
+                    for (Position position : ((PositionPrerequisite) bandPrerequisite).getPositions()) {
+                        if(user.getPositions().contains(position)) {
+                            check = true;
+                            break;
+                        }
                     }
                     res.add(new PrerequisiteCheckDto((PositionPrerequisite) bandPrerequisite, check));
                     break;
@@ -201,34 +210,47 @@ public class BandPrerequisiteService {
             throw new Exception("Band Post does not Exist!");
         }
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
+            boolean check = false;
             switch (bandPrerequisite.getDtype()) {
                 case "Age":
-                    if (((AgePrerequisite) bandPrerequisite).getMin() > user.getUserAge() || ((AgePrerequisite) bandPrerequisite).getMax() < user.getUserAge()) {
-                        return false;
+                    if (((AgePrerequisite) bandPrerequisite).getMin() <= user.getUserAge() && ((AgePrerequisite) bandPrerequisite).getMax() >= user.getUserAge()) {
+                        check = true;
                     }
                     break;
                 case "Area":
-                    if (!user.getAreas().containsAll(((AreaPrerequisite) bandPrerequisite).getAreas())) {
-                        return false;
+                    for (Area area : ((AreaPrerequisite) bandPrerequisite).getAreas()) {
+                        if (user.getAreas().contains(area)) {
+                            check = true;
+                            break;
+                        }
                     }
                     break;
                 case "Gender":
-                    if (!user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
-                        return false;
+                    if (user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
+                        check = true;
                     }
                     break;
                 case "Genre":
-                    if (!user.getGenres().containsAll(((GenrePrerequisite) bandPrerequisite).getGenres())) {
-                        return false;
+                    for (Genre genre : ((GenrePrerequisite) bandPrerequisite).getGenres()) {
+                        if (user.getGenres().contains(genre)) {
+                            check = true;
+                            break;
+                        }
                     }
                     break;
                 case "Position":
-                    if (!user.getPositions().containsAll(((PositionPrerequisite) bandPrerequisite).getPositions())) {
-                        return false;
+                    for (Position position : ((PositionPrerequisite) bandPrerequisite).getPositions()) {
+                        if (user.getPositions().contains(position)) {
+                            check = true;
+                            break;
+                        }
                     }
                     break;
                 default:
                     throw new Exception("Wrong dtype for Prerequisite in DB!");
+            }
+            if (!check) {
+                return false;
             }
         }
         return true;
