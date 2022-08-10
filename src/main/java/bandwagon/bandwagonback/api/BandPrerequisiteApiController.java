@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.PrerequisiteCheckDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
@@ -98,6 +99,20 @@ public class BandPrerequisiteApiController {
             }
             bandPrerequisiteService.deletePrerequisite(postId, prerequisiteId);
             return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "밴드 구인글 - 지원 조건 체크")
+    @GetMapping("/api/band/post/{post_id}/prerequisites/check")
+    public ResponseEntity<?> checkUserWithPrerequisites(@PathVariable("post_id") Long postId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            List<PrerequisiteCheckDto> prerequisiteCheckDtos = bandPrerequisiteService.checkUser(email, postId);
+            return ResponseEntity.ok(prerequisiteCheckDtos);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
