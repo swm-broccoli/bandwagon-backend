@@ -157,6 +157,20 @@ public class BandApiController {
         }
     }
 
+    @Operation(description = "밴드 탈퇴(본인이)")
+    @DeleteMapping("/api/band/{band_id}/member")
+    public ResponseEntity<?> withdrawFromBand(@PathVariable("band_id") Long bandId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandMemberService.withdrawMemberFromBand(email, bandId);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);
