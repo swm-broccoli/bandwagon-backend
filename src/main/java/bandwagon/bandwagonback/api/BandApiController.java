@@ -115,6 +115,7 @@ public class BandApiController {
         }
     }
 
+    @Operation(description = "프런트맨 변경")
     @PostMapping("/api/band/{band_id}/frontman/{band_member_id}")
     public ResponseEntity<?> changeFrontman(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
