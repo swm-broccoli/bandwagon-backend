@@ -111,7 +111,7 @@ public class BandPrerequisiteApiController {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
-            List<PrerequisiteCheckDto> prerequisiteCheckDtos = bandPrerequisiteService.checkUser(email, postId);
+            List<PrerequisiteCheckDto> prerequisiteCheckDtos = bandPrerequisiteService.checkUserAndReturnForm(email, postId);
             return ResponseEntity.ok(prerequisiteCheckDtos);
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -138,7 +138,7 @@ public class BandPrerequisiteService {
         addPrerequisite(postId, prerequisiteDto);
     }
 
-    public List<PrerequisiteCheckDto> checkUser(String email, Long postId) throws Exception {
+    public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new Exception("User does not exist!");
