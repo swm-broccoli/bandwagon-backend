@@ -65,6 +65,18 @@ public class BandMemberService {
     }
 
     @Transactional
+    public void withdrawMemberFromBand(String email, Long bandId) throws Exception {
+        BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
+        if (bandMember == null) {
+            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+        }
+        if (bandMember.getIsFrontman()) {
+            throw new Exception("프런트맨이라 탈퇴하실 수 없습니다!");
+        }
+        bandMemberRepository.delete(bandMember);
+    }
+
+    @Transactional
     public void addPositionToBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
