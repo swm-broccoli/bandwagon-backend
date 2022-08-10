@@ -31,15 +31,9 @@ public class MyPageApiController {
     private final AreaService areaService;
     private final JwtUtil jwtTokenUtil;
 
-    @Operation(description = "마이 페이지 불러오기")
+    @Operation(description = "유저 페이지 불러오기")
     @GetMapping("/api/users/{email}/mypage")
     public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(email, request);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
         User user = userService.findOneByEmail(email);
         if(user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User does not exist"));
@@ -51,7 +45,7 @@ public class MyPageApiController {
     @PutMapping("/api/users/{email}/description")
     public ResponseEntity<?> putUserDescription(@PathVariable("email") String email, @RequestBody DescriptionDto descriptionDto, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             userService.editDescription(email, descriptionDto.getDescription());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -64,7 +58,7 @@ public class MyPageApiController {
     @PostMapping("/api/users/{email}/performance")
     public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             userPerformanceService.saveUserPerformance(email, performanceDto);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -77,7 +71,7 @@ public class MyPageApiController {
     @DeleteMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> deleteUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             userPerformanceService.deleteUserPerformance(email, user_performance_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -91,7 +85,7 @@ public class MyPageApiController {
     public ResponseEntity<?> putUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id,
                                                 @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             userPerformanceService.updateUserPerformance(email, user_performance_id, performanceDto);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -104,7 +98,7 @@ public class MyPageApiController {
     @PostMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> postPosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             positionService.addPositionToUser(email, position_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -117,7 +111,7 @@ public class MyPageApiController {
     @DeleteMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> deletePosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             positionService.deletePositionFromUser(email, position_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -130,7 +124,7 @@ public class MyPageApiController {
     @PostMapping("/api/users/{email}/genres/{genre_id}")
     public ResponseEntity<?> postGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             genreService.addGenreToUser(email, genre_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -143,7 +137,7 @@ public class MyPageApiController {
     @DeleteMapping("/api/users/{email}/genres/{genre_id}")
     public ResponseEntity<?> deleteGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             genreService.deleteGenreFromUser(email, genre_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -156,7 +150,7 @@ public class MyPageApiController {
     @PostMapping("/api/users/{email}/areas/{area_id}")
     public ResponseEntity<?> postArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             areaService.addAreaToUser(email, area_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -169,7 +163,7 @@ public class MyPageApiController {
     @DeleteMapping("/api/users/{email}/areas/{area_id}")
     public ResponseEntity<?> deleteArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
         try {
-            String jwt = getJwtFromHeader(email, request);
+            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
             areaService.deleteAreaFromUser(email, area_id);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -178,7 +172,7 @@ public class MyPageApiController {
         return ResponseEntity.ok().body(null);
     }
 
-    private String getJwtFromHeader(String email, HttpServletRequest request) throws Exception {
+    private String getJwtFromHeaderAndCheckEmail(String email, HttpServletRequest request) throws Exception {
         String authorizationHeader = request.getHeader("Authorization");
         String jwt =  authorizationHeader.substring(7);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);

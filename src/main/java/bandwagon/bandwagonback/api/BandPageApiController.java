@@ -34,7 +34,7 @@ public class BandPageApiController {
     private final DayService dayService;
     private final JwtUtil jwtTokenUtil;
 
-    @Operation(description = "밴드 페이지 불러오기")
+    @Operation(description = "(자신의) 밴드 페이지 불러오기")
     @GetMapping("/api/band")
     public ResponseEntity<?> getBandPage(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
@@ -45,6 +45,18 @@ public class BandPageApiController {
         } catch (NoBandException nbe) {
             log.error(nbe.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(nbe.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "(아무나) 밴드 페이지 불러오기")
+    @GetMapping("/api/band/{band_id}/bandpage")
+    public ResponseEntity<?> getOtherBandPage(@PathVariable("band_id") Long bandId, HttpServletRequest request) {
+        try {
+            BandPageDto bandPageDto = bandService.getOtherBandPage(bandId);
+            return ResponseEntity.ok(bandPageDto);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));

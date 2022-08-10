@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Tag(name = "BandPostApiController")
+@Tag(name = "BandPrerequisiteApiController")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-public class BandPostApiController {
+public class BandPrerequisiteApiController {
 
     private final BandMemberService bandMemberService;
     private final PostService postService;

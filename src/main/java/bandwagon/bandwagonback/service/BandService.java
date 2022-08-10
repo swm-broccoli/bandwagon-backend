@@ -28,6 +28,9 @@ public class BandService {
     private final BandMemberRepository bandMemberRepository;
     private final S3Uploader s3Uploader;
 
+    /**
+     * 로그인 된 유저의 밴드 페이지 조회
+     */
     public BandPageDto getUsersBandPage(String email) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
@@ -38,6 +41,17 @@ public class BandService {
             throw new NoBandException("가입된 밴드가 없습니다.");
         }
         return new BandPageDto(bandMember.getBand(), bandMember.getIsFrontman());
+    }
+
+    /**
+     * 특정 밴드의 밴드 페이지 조회 (for band post)
+     */
+    public BandPageDto getOtherBandPage(Long bandId) throws Exception {
+        Band band = bandRepository.findById(bandId).orElse(null);
+        if (band == null) {
+            throw new Exception("존재하지 않는 밴드입니다!");
+        }
+        return new BandPageDto(band, false);
     }
 
     /**
