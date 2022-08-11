@@ -81,7 +81,7 @@ public class BandService {
     @Transactional
     public void disbandBand(String email, Long bandId) throws Exception {
         bandMemberService.confirmUserIsFrontman(email, bandId);
-        Band band = bandRepository.findById(bandId).orElse(null);
+        bandRepository.deleteById(bandId);
     }
 
     /**

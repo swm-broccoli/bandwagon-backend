@@ -14,7 +14,6 @@ public class UserInfo {
     @Column(name = "user_info_id")
     private Long Id;
 
-
     @Column(columnDefinition="TEXT")
     private String description;
 
