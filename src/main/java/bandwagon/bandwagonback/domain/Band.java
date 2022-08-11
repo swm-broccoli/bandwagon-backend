@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.domain;
 
 import bandwagon.bandwagonback.dto.BandCreateForm;
+import bandwagon.bandwagonback.listener.BandEntityListener;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "bands")
 @Getter @Setter
+@EntityListeners(BandEntityListener.class)
 public class Band {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "band_id")
