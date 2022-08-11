@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.listener.BandEntityListener;
 import lombok.Getter;
@@ -57,6 +58,9 @@ public class Band {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)
     private List<BandPhoto> bandPhotos = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)
+    private List<BandPost> bandPosts = new ArrayList<>();
 
     public Band() {}
 
@@ -123,5 +127,11 @@ public class Band {
     public void removeDay(Day day) {
         this.days.remove(day);
         day.getBands().remove(this);
+    }
+
+    // 게시글 등록
+    public void addPost(BandPost post) {
+        this.bandPosts.add(post);
+        post.setBand(this);
     }
 }
