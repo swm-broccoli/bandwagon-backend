@@ -27,6 +27,7 @@ public class BandService {
     private final UserRepository userRepository;
     private final BandMemberRepository bandMemberRepository;
     private final S3Uploader s3Uploader;
+    private final BandMemberService bandMemberService;
 
     /**
      * 로그인 된 유저의 밴드 페이지 조회
@@ -72,6 +73,15 @@ public class BandService {
         band.addBandMember(bandMember);
         bandMemberRepository.save(bandMember);
         return band.getId();
+    }
+
+    /**
+     * 밴드 삭제
+     */
+    @Transactional
+    public void disbandBand(String email, Long bandId) throws Exception {
+        bandMemberService.confirmUserIsFrontman(email, bandId);
+        bandRepository.deleteById(bandId);
     }
 
     /**

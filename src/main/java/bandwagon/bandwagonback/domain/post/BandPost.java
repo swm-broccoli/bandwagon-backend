@@ -15,7 +15,7 @@ import java.util.List;
 @DiscriminatorValue("Band")
 public class BandPost extends Post{
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "band_id")
     private Band band;
 

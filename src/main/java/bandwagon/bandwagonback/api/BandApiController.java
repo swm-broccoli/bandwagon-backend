@@ -43,7 +43,21 @@ public class BandApiController {
         }
         return ResponseEntity.ok().body(null);
     }
-    
+
+    @Operation(description = "밴드 해체")
+    @DeleteMapping("/api/band/{band_id}")
+    public ResponseEntity<?> deleteBand(@PathVariable("band_id") Long bandId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            bandService.disbandBand(email, bandId);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @Operation(description = "밴드 이름 수정")
     @PostMapping("/api/band/{band_id}/name")
     public ResponseEntity<?> editName(@PathVariable("band_id") Long bandId, @RequestBody EditNameForm editNameForm, HttpServletRequest request) {

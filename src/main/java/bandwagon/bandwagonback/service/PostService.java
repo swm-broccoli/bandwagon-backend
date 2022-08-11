@@ -45,7 +45,7 @@ public class PostService {
             throw new Exception("Band does not exist!");
         }
         BandPost bandPost = new BandPost(postDto);
-        bandPost.setBand(band);
+        band.addPost(bandPost);
         postRepository.save(bandPost);
         return bandPost.getId();
     }
