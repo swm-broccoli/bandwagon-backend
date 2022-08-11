@@ -15,6 +15,7 @@ public class BandMemberForm {
     private String avatarUrl;
     private Long id;
     private String name;
+    private String email;
     private LocalDate birthday;
     private Integer age;
     private List<IdNameForm> positions = new ArrayList<>();
@@ -24,6 +25,7 @@ public class BandMemberForm {
         this.avatarUrl = bandMember.getMember().getUserInfo().getAvatarUrl();
         this.id = bandMember.getId();
         this.name = bandMember.getMember().getName();
+        this.email = bandMember.getMember().getEmail();
         this.birthday = bandMember.getMember().getBirthday();
         this.age = bandMember.getMember().getUserAge();
         for (Position position : bandMember.getPositions()) {
