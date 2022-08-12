@@ -1,20 +1,28 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.dto.BandPostPageDto;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
+import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
 @Slf4j
@@ -114,6 +122,23 @@ public class PostApiController {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
+    }
+
+    @Operation(description = "밴드 게시글 검색")
+    @GetMapping("/api/band/post")
+    public ResponseEntity<?> searchBandPosts(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) String title) {
+
+        Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
+        if (title != null) {
+            specification = specification.and(BandPostSpecification.containsStringInTitle(title));
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
+        BandPostPageDto bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(PostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
+        return ResponseEntity.ok(bandPostPageDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
