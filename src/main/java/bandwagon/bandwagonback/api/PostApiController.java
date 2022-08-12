@@ -130,9 +130,9 @@ public class PostApiController {
                                              @RequestParam(defaultValue = "10") int size,
                                              @RequestParam(required = false) String title,
                                              @RequestParam(required = false) Integer[] position,
-                                             @RequestParam(required = false) int[] genre,
-                                             @RequestParam(required = false) int[] area,
-                                             @RequestParam(required = false) int[] day) {
+                                             @RequestParam(required = false) Integer[] genre,
+                                             @RequestParam(required = false) Integer[] area,
+                                             @RequestParam(required = false) Integer[] day) {
 
         Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
@@ -140,6 +140,9 @@ public class PostApiController {
         }
         if(position != null) {
             specification = specification.and(BandPostSpecification.containsPosition(position));
+        }
+        if(genre != null) {
+            specification = specification.and(BandPostSpecification.containsGenre(genre));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
