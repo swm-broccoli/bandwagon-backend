@@ -1,10 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.post.BandPost;
-import bandwagon.bandwagonback.dto.BandPostPageDto;
-import bandwagon.bandwagonback.dto.ErrorResponse;
-import bandwagon.bandwagonback.dto.PostDto;
-import bandwagon.bandwagonback.dto.SimpleIdResponse;
+import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.service.BandMemberService;
@@ -162,7 +159,7 @@ public class PostApiController {
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
-        BandPostPageDto bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(PostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
+        BandPostPageDto bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
         return ResponseEntity.ok(bandPostPageDto);
     }
 
