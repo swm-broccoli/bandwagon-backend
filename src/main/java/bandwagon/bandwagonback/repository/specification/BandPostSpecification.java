@@ -36,4 +36,12 @@ public class BandPostSpecification {
             return criteriaBuilder.treat(root.join("bandPrerequisites"), AreaPrerequisite.class).join("areas").get("id").in(areaIdList);
         };
     }
+
+    public static Specification<BandPost> containsDay(Integer[] dayIds) {
+        List<Integer> dayIdList = Arrays.asList(dayIds);
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return (root.join("band").join("days").get("id").in(dayIdList));
+        };
+    }
 }

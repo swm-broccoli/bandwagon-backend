@@ -147,6 +147,9 @@ public class PostApiController {
         if(area != null) {
             specification = specification.and(BandPostSpecification.containsArea(area));
         }
+        if(day != null) {
+            specification = specification.and(BandPostSpecification.containsDay(day));
+        }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
