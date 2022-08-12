@@ -144,6 +144,9 @@ public class PostApiController {
         if(genre != null) {
             specification = specification.and(BandPostSpecification.containsGenre(genre));
         }
+        if(area != null) {
+            specification = specification.and(BandPostSpecification.containsArea(area));
+        }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);

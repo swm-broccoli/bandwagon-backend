@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.repository.specification;
 
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.prerequisite.AreaPrerequisite;
 import bandwagon.bandwagonback.domain.prerequisite.GenrePrerequisite;
 import bandwagon.bandwagonback.domain.prerequisite.PositionPrerequisite;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +26,14 @@ public class BandPostSpecification {
         return (root, query, criteriaBuilder) -> {
             query.distinct(true);
             return criteriaBuilder.treat(root.join("bandPrerequisites"), GenrePrerequisite.class).join("genres").get("id").in(genreIdList);
+        };
+    }
+
+    public static Specification<BandPost> containsArea(Integer[] areaIds) {
+        List<Integer> areaIdList = Arrays.asList(areaIds);
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return criteriaBuilder.treat(root.join("bandPrerequisites"), AreaPrerequisite.class).join("areas").get("id").in(areaIdList);
         };
     }
 }
