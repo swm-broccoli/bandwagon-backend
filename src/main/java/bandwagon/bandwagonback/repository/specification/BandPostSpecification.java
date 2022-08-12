@@ -5,6 +5,8 @@ import bandwagon.bandwagonback.domain.prerequisite.AreaPrerequisite;
 import bandwagon.bandwagonback.domain.prerequisite.GenrePrerequisite;
 import bandwagon.bandwagonback.domain.prerequisite.PositionPrerequisite;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.time.LocalDate;
 import java.util.*;
 
 public class BandPostSpecification {
@@ -42,6 +44,14 @@ public class BandPostSpecification {
         return (root, query, criteriaBuilder) -> {
             query.distinct(true);
             return (root.join("band").join("days").get("id").in(dayIdList));
+        };
+    }
+
+    public static Specification<BandPost> ageGreaterThan(Integer minAge) {
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return criteriaBuilder.lessThanOrEqualTo(criteriaBuilder.function("YEAR", Integer.class, root.join("band").join("bandMembers").get("member").get("birthday")),
+                    LocalDate.now().minusYears(minAge - 1).getYear());
         };
     }
 }

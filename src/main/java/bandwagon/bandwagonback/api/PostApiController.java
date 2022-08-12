@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
@@ -128,6 +129,8 @@ public class PostApiController {
     @GetMapping("/api/band/post")
     public ResponseEntity<?> searchBandPosts(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) Integer minAge,
+                                             @RequestParam(required = false) Integer maxAge,
                                              @RequestParam(required = false) String title,
                                              @RequestParam(required = false) Integer[] position,
                                              @RequestParam(required = false) Integer[] genre,
@@ -149,6 +152,9 @@ public class PostApiController {
         }
         if(day != null) {
             specification = specification.and(BandPostSpecification.containsDay(day));
+        }
+        if (minAge != null) {
+            specification = specification.and(BandPostSpecification.ageGreaterThan(minAge));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
