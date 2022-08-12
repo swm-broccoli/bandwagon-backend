@@ -128,11 +128,18 @@ public class PostApiController {
     @GetMapping("/api/band/post")
     public ResponseEntity<?> searchBandPosts(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size,
-                                             @RequestParam(required = false) String title) {
+                                             @RequestParam(required = false) String title,
+                                             @RequestParam(required = false) Integer[] position,
+                                             @RequestParam(required = false) int[] genre,
+                                             @RequestParam(required = false) int[] area,
+                                             @RequestParam(required = false) int[] day) {
 
         Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
             specification = specification.and(BandPostSpecification.containsStringInTitle(title));
+        }
+        if(position != null) {
+            specification = specification.and(BandPostSpecification.containsPosition(position));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
