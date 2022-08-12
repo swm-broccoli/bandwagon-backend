@@ -141,20 +141,23 @@ public class PostApiController {
         if (title != null) {
             specification = specification.and(BandPostSpecification.containsStringInTitle(title));
         }
-        if(position != null) {
+        if (position != null) {
             specification = specification.and(BandPostSpecification.containsPosition(position));
         }
-        if(genre != null) {
+        if (genre != null) {
             specification = specification.and(BandPostSpecification.containsGenre(genre));
         }
-        if(area != null) {
+        if (area != null) {
             specification = specification.and(BandPostSpecification.containsArea(area));
         }
-        if(day != null) {
+        if (day != null) {
             specification = specification.and(BandPostSpecification.containsDay(day));
         }
         if (minAge != null) {
             specification = specification.and(BandPostSpecification.ageGreaterThan(minAge));
+        }
+        if (maxAge != null) {
+            specification = specification.and(BandPostSpecification.ageLessThan(maxAge));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));

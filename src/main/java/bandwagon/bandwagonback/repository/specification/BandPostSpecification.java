@@ -54,4 +54,12 @@ public class BandPostSpecification {
                     LocalDate.now().minusYears(minAge - 1).getYear());
         };
     }
+
+    public static Specification<BandPost> ageLessThan(Integer maxAge) {
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.function("YEAR", Integer.class, root.join("band").join("bandMembers").get("member").get("birthday")),
+                    LocalDate.now().minusYears(maxAge - 1).getYear());
+        };
+    }
 }
