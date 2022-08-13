@@ -36,6 +36,9 @@ public class PostService {
         if (user == null) {
             throw new Exception("User does not exist!");
         }
+        if(userPostRepository.existsByUser(user)) {
+            throw new Exception("User already has post!");
+        }
         UserPost userPost = new UserPost(postDto);
         userPost.setUser(user);
         postRepository.save(userPost);
@@ -78,6 +81,10 @@ public class PostService {
 
     public Page<BandPost> searchBandPosts(Specification<BandPost> specification, PageRequest pageRequest) {
         return bandPostRepository.findAll(specification, pageRequest);
+    }
+
+    public Page<UserPost> searchUserPosts(Specification<UserPost> specification, PageRequest pageRequest) {
+        return userPostRepository.findAll(specification, pageRequest);
     }
 
     public String getPostType(Long postId) throws Exception {

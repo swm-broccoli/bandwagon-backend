@@ -1,9 +1,11 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
+import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
@@ -161,6 +162,47 @@ public class PostApiController {
         Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
         BandPostPageDto bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
         return ResponseEntity.ok(bandPostPageDto);
+    }
+
+    @Operation(description = "유저 게시글 검색")
+    @GetMapping("/api/user/post")
+    public ResponseEntity<?> searchUserPosts(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) String title,
+                                             @RequestParam(required = false) Boolean gender,
+                                             @RequestParam(required = false) Integer[] position,
+                                             @RequestParam(required = false) Integer[] genre,
+                                             @RequestParam(required = false) Integer[] area,
+                                             @RequestParam(required = false) Integer minAge,
+                                             @RequestParam(required = false) Integer maxAge) {
+
+        Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
+        if (title != null) {
+            specification = specification.and(UserPostSpecification.containsStringInTitle(title));
+        }
+        if (gender != null) {
+            specification = specification.and(UserPostSpecification.isGender(gender));
+        }
+        if (position != null) {
+            specification = specification.and(UserPostSpecification.playsPosition(position));
+        }
+        if (genre != null) {
+            specification = specification.and(UserPostSpecification.likesGenre(genre));
+        }
+        if (area != null) {
+            specification = specification.and(UserPostSpecification.availableArea(area));
+        }
+        if (minAge != null) {
+            specification = specification.and(UserPostSpecification.ageGreaterThan(minAge));
+        }
+        if (maxAge != null) {
+            specification = specification.and(UserPostSpecification.ageLessThan(maxAge));
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<UserPost> userPosts = postService.searchUserPosts(specification, pageRequest);
+        UserPostPageDto userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(UserPostDto::new).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
+        return ResponseEntity.ok(userPostPageDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
