@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
+import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -166,9 +167,17 @@ public class PostApiController {
     @Operation(description = "유저 게시글 검색")
     @GetMapping("/api/user/post")
     public ResponseEntity<?> searchUserPosts(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) String title,
+                                             @RequestParam(required = false) Boolean gender) {
 
         Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
+        if (title != null) {
+            specification = specification.and(UserPostSpecification.containsStringInTitle(title));
+        }
+        if (gender != null) {
+            specification = specification.and(UserPostSpecification.isGender(gender));
+        }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<UserPost> userPosts = postService.searchUserPosts(specification, pageRequest);
