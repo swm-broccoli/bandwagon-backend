@@ -36,6 +36,9 @@ public class PostService {
         if (user == null) {
             throw new Exception("User does not exist!");
         }
+        if(userPostRepository.existsByUser(user)) {
+            throw new Exception("User already has post!");
+        }
         UserPost userPost = new UserPost(postDto);
         userPost.setUser(user);
         postRepository.save(userPost);
