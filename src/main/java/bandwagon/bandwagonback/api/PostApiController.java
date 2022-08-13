@@ -172,7 +172,9 @@ public class PostApiController {
                                              @RequestParam(required = false) Boolean gender,
                                              @RequestParam(required = false) Integer[] position,
                                              @RequestParam(required = false) Integer[] genre,
-                                             @RequestParam(required = false) Integer[] area) {
+                                             @RequestParam(required = false) Integer[] area,
+                                             @RequestParam(required = false) Integer minAge,
+                                             @RequestParam(required = false) Integer maxAge) {
 
         Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
@@ -189,6 +191,12 @@ public class PostApiController {
         }
         if (area != null) {
             specification = specification.and(UserPostSpecification.availableArea(area));
+        }
+        if (minAge != null) {
+            specification = specification.and(UserPostSpecification.ageGreaterThan(minAge));
+        }
+        if (maxAge != null) {
+            specification = specification.and(UserPostSpecification.ageLessThan(maxAge));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
