@@ -169,7 +169,8 @@ public class PostApiController {
     public ResponseEntity<?> searchUserPosts(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "10") int size,
                                              @RequestParam(required = false) String title,
-                                             @RequestParam(required = false) Boolean gender) {
+                                             @RequestParam(required = false) Boolean gender,
+                                             @RequestParam(required = false) Integer[] position) {
 
         Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
@@ -177,6 +178,9 @@ public class PostApiController {
         }
         if (gender != null) {
             specification = specification.and(UserPostSpecification.isGender(gender));
+        }
+        if (position != null) {
+            specification = specification.and(UserPostSpecification.playsPosition(position));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
