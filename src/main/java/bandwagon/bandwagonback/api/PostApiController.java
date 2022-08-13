@@ -1,20 +1,26 @@
 package bandwagon.bandwagonback.api;
 
-import bandwagon.bandwagonback.dto.ErrorResponse;
-import bandwagon.bandwagonback.dto.PostDto;
-import bandwagon.bandwagonback.dto.SimpleIdResponse;
+import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
+import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
 @Slf4j
@@ -114,6 +120,47 @@ public class PostApiController {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
+    }
+
+    @Operation(description = "밴드 게시글 검색")
+    @GetMapping("/api/band/post")
+    public ResponseEntity<?> searchBandPosts(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) Integer minAge,
+                                             @RequestParam(required = false) Integer maxAge,
+                                             @RequestParam(required = false) String title,
+                                             @RequestParam(required = false) Integer[] position,
+                                             @RequestParam(required = false) Integer[] genre,
+                                             @RequestParam(required = false) Integer[] area,
+                                             @RequestParam(required = false) Integer[] day) {
+
+        Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
+        if (title != null) {
+            specification = specification.and(BandPostSpecification.containsStringInTitle(title));
+        }
+        if (position != null) {
+            specification = specification.and(BandPostSpecification.containsPosition(position));
+        }
+        if (genre != null) {
+            specification = specification.and(BandPostSpecification.containsGenre(genre));
+        }
+        if (area != null) {
+            specification = specification.and(BandPostSpecification.containsArea(area));
+        }
+        if (day != null) {
+            specification = specification.and(BandPostSpecification.containsDay(day));
+        }
+        if (minAge != null) {
+            specification = specification.and(BandPostSpecification.ageGreaterThan(minAge));
+        }
+        if (maxAge != null) {
+            specification = specification.and(BandPostSpecification.ageLessThan(maxAge));
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
+        BandPostPageDto bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
+        return ResponseEntity.ok(bandPostPageDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {

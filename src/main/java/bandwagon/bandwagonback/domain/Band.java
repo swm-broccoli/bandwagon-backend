@@ -70,6 +70,16 @@ public class Band {
         this.avatarUrl = bandCreateForm.getAvatarUrl();
     }
 
+    // 밴드 최소 나이 추출
+    public int getBandMemberMinAge() {
+        return bandMembers.stream().mapToInt(v -> v.getMember().getUserAge()).min().orElse(Integer.MIN_VALUE);
+    }
+
+    // 밴드 최대 나이 추출
+    public int getBandMemberMaxAge() {
+        return bandMembers.stream().mapToInt(v -> v.getMember().getUserAge()).max().orElse(Integer.MAX_VALUE);
+    }
+
     // 멤버 추가
     public void addBandMember(BandMember bandMember) {
         this.bandMembers.add(bandMember);
