@@ -25,4 +25,12 @@ public class UserPostSpecification {
             return root.join("user").join("positions").get("id").in(positionIdList);
         };
     }
+
+    public static Specification<UserPost> likesGenre(Integer[] genreIds) {
+        List<Integer> genreIdList = Arrays.asList(genreIds);
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return root.join("user").join("genres").get("id").in(genreIdList);
+        };
+    }
 }

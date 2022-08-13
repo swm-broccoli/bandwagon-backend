@@ -170,7 +170,8 @@ public class PostApiController {
                                              @RequestParam(defaultValue = "10") int size,
                                              @RequestParam(required = false) String title,
                                              @RequestParam(required = false) Boolean gender,
-                                             @RequestParam(required = false) Integer[] position) {
+                                             @RequestParam(required = false) Integer[] position,
+                                             @RequestParam(required = false) Integer[] genre) {
 
         Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
@@ -181,6 +182,9 @@ public class PostApiController {
         }
         if (position != null) {
             specification = specification.and(UserPostSpecification.playsPosition(position));
+        }
+        if (genre != null) {
+            specification = specification.and(UserPostSpecification.likesGenre(genre));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
