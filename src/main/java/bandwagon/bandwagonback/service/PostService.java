@@ -80,6 +80,10 @@ public class PostService {
         return bandPostRepository.findAll(specification, pageRequest);
     }
 
+    public Page<UserPost> searchUserPosts(Specification<UserPost> specification, PageRequest pageRequest) {
+        return userPostRepository.findAll(specification, pageRequest);
+    }
+
     public String getPostType(Long postId) throws Exception {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {

@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
@@ -161,6 +162,19 @@ public class PostApiController {
         Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
         BandPostPageDto bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
         return ResponseEntity.ok(bandPostPageDto);
+    }
+
+    @Operation(description = "유저 게시글 검색")
+    @GetMapping("/api/user/post")
+    public ResponseEntity<?> searchUserPosts(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+
+        Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<UserPost> userPosts = postService.searchUserPosts(specification, pageRequest);
+        UserPostPageDto userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(UserPostDto::new).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
+        return ResponseEntity.ok(userPostPageDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
