@@ -33,4 +33,12 @@ public class UserPostSpecification {
             return root.join("user").join("genres").get("id").in(genreIdList);
         };
     }
+
+    public static Specification<UserPost> availableArea(Integer[] areaIds) {
+        List<Integer> areaIdList = Arrays.asList(areaIds);
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return root.join("user").join("areas").get("id").in(areaIdList);
+        };
+    }
 }
