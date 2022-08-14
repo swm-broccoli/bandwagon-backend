@@ -50,10 +50,10 @@ public class Band {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)
     private List<BandMember> bandMembers = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)
     private List<BandGig> bandGigs = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)
     private List<BandPractice> bandPractices = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)

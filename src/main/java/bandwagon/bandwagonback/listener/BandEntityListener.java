@@ -14,6 +14,8 @@ public class BandEntityListener {
 
     @PreRemove
     public void preRemove(Band band) throws URISyntaxException {
-        s3Uploader.deleteFromS3(band.getAvatarUrl());
+        if (band.getAvatarUrl() != null && band.getAvatarUrl().length() != 0) {
+            s3Uploader.deleteFromS3(band.getAvatarUrl());
+        }
     }
 }

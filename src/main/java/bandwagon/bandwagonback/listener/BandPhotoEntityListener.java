@@ -14,6 +14,8 @@ public class BandPhotoEntityListener {
 
     @PreRemove
     public void preRemove(BandPhoto bandPhoto) throws URISyntaxException {
-        s3Uploader.deleteFromS3(bandPhoto.getImgUrl());
+        if (bandPhoto.getImgUrl() != null && bandPhoto.getImgUrl().length() != 0) {
+            s3Uploader.deleteFromS3(bandPhoto.getImgUrl());
+        }
     }
 }

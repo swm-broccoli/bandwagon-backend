@@ -14,6 +14,8 @@ public class UserInfoEntityListener {
 
     @PreRemove
     public void preRemove(UserInfo userInfo) throws URISyntaxException {
-        s3Uploader.deleteFromS3(userInfo.getAvatarUrl());
+        if (userInfo.getAvatarUrl() != null && userInfo.getAvatarUrl().length() != 0) {
+            s3Uploader.deleteFromS3(userInfo.getAvatarUrl());
+        }
     }
 }
