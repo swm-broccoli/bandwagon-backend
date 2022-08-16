@@ -149,6 +149,9 @@ public class UserService {
         if (user == null) {
             throw new Exception("해당 정보의 유저가 존재하지 않습니다!");
         }
+        if (user.getIsSocial()) {
+            throw new Exception("소셜 로그인 유저라 비밀번호 변경이 불가합니다!");
+        }
         String newRandomPassword = randomPasswordGen();
         user.setPassword(passwordEncoder.encode(newRandomPassword));
         String emailText = "밴드웨건에서 " + user.getEmail() + "계정 비밀번호 찾기 요청에 따라 임시 비밀번호를 발급해드립니다. \n 임시 비밀번호: " + newRandomPassword;
