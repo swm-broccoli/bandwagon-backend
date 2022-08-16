@@ -56,6 +56,19 @@ public class UserService {
     }
 
     @Transactional
+    public void unregister(String email) throws Exception {
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        if (user.getBandMember() != null && user.getBandMember().getIsFrontman()) {
+            throw new Exception("밴드의 프런트맨입니다! 프런트맨을 넘기시거나 밴드를 해체해 주세요.");
+        }
+        userRepository.delete(user);
+    }
+
+    @Transactional
     public UserEditDto editUser(String email, UserEditRequest request) throws Exception {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
@@ -117,10 +130,17 @@ public class UserService {
         }
     }
 
-    public Band findBand(String email) {
+    public Band findBand(String email) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
-        Band band = user.getBandMember().getBand();
-        return band;
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        if (user.getBandMember() != null) {
+            return user.getBandMember().getBand();
+        }
+        else {
+            return null;
+        }
     }
 
     //회원 전체 조회
@@ -130,7 +150,7 @@ public class UserService {
 
     //회원 하나 조회 - table id로
     public User findOne(Long userId) {
-        return userRepository.findOne(userId);
+        return userRepository.findById(userId).orElse(null);
     }
 
     //회원 하나 조회 - email로
