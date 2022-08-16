@@ -136,7 +136,7 @@ public class UserService {
         if (users.isEmpty()) {
             throw new Exception("해당 이름과 생일 정보로 가입한 유저가 없습니다!");
         }
-        List<String> userEmails = users.stream().map(User::getEmail).collect(Collectors.toList());
+        List<String> userEmails = users.stream().map(user -> user.getEmail().replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*")).collect(Collectors.toList());
         return new FindUserEmailDto(userEmails);
     }
 
