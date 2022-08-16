@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -128,6 +129,15 @@ public class UserService {
             log.error("Existing user: User = {}", email);
             throw new Exception("이미 존재하는 회원입니다");
         }
+    }
+
+    public FindUserEmailDto findUserEmail(FindUserEmailRequest request) throws Exception {
+        List<User> users = userRepository.findAllByNameAndBirthday(request.getName(), request.getBirthday());
+        if (users.isEmpty()) {
+            throw new Exception("해당 이름과 생일 정보로 가입한 유저가 없습니다!");
+        }
+        List<String> userEmails = users.stream().map(user -> user.getEmail().replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*")).collect(Collectors.toList());
+        return new FindUserEmailDto(userEmails);
     }
 
     public Band findBand(String email) throws Exception {
