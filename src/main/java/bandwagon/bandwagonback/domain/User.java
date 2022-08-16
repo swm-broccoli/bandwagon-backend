@@ -32,7 +32,7 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserPerformance> userPerformances = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.REMOVE)
     private UserInfo userInfo;
 
     @ManyToMany
@@ -53,7 +53,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "area_id"))
     private Set<Area> areas = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.REMOVE)
     private BandMember bandMember;
 
     public User() {

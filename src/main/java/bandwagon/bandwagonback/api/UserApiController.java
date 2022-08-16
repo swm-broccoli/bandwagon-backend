@@ -56,6 +56,19 @@ public class UserApiController {
         }
     }
 
+    @Operation(description = "회원 탈퇴")
+    @DeleteMapping("/api/unregister")
+    public ResponseEntity<?> unregisterUser(HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            userService.unregister(email);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @Operation(description = "Refresh Token으로 token 재발급")
     @PostMapping("/api/refresh")
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
