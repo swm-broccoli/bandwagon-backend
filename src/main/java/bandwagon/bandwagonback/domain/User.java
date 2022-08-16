@@ -53,7 +53,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "area_id"))
     private Set<Area> areas = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.REMOVE)
     private BandMember bandMember;
 
     public User() {
