@@ -29,7 +29,6 @@ public class UserApiController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtTokenUtil;
-    private final S3Uploader s3Uploader;
 
     @Operation(description = "로그인")
     @PostMapping("/api/login")
