@@ -18,6 +18,7 @@ spring:
       - oauth
       - aws
       - db
+      - email
 
 logging:
   level:

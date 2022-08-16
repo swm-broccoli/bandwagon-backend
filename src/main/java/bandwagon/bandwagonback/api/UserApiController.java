@@ -126,6 +126,18 @@ public class UserApiController {
         }
     }
 
+    @Operation(description = "유저 비밀번호 찾기")
+    @PostMapping("/api/find/password")
+    public ResponseEntity<?> findUserPassword(@RequestBody FindUserPasswordRequest request) {
+        try {
+            userService.findUserPassword(request);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @Operation(description = "유저 기본 정보 조회")
     @GetMapping("/api/users")
     public ResponseEntity<?> getUserInfo(HttpServletRequest request) {

@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                 .and()
                 .csrf().disable()
                 .httpBasic().disable()
-                .authorizeRequests().antMatchers("/", "/api/login", "/api/signup", "/api/refresh", "/api/duplicate", "/api/find/email").permitAll()
+                .authorizeRequests().antMatchers("/", "/api/login", "/api/signup", "/api/refresh", "/api/duplicate", "/api/find/*").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().sessionManagement()

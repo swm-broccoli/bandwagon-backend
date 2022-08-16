@@ -42,6 +42,8 @@ application-db.yml
 application-oauth.yml
 ### AWS ###
 application-aws.yml
+### EMAIL ###
+application-email.yml
 
 ### JavaConfig ###
 JavaConfig.java
