@@ -143,6 +143,7 @@ public class UserService {
         return new FindUserEmailDto(userEmails);
     }
 
+    @Transactional
     public void findUserPassword(FindUserPasswordRequest request) throws Exception {
         User user = userRepository.findByNameAndEmail(request.getName(), request.getEmail()).orElse(null);
         if (user == null) {
