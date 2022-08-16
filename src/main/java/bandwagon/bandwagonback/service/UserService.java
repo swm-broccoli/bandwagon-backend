@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,6 +32,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final S3Uploader s3Uploader;
+
+    private final EmailService emailService;
 
     /**
      * 회원가입
@@ -140,6 +143,17 @@ public class UserService {
         return new FindUserEmailDto(userEmails);
     }
 
+    public void findUserPassword(FindUserPasswordRequest request) throws Exception {
+        User user = userRepository.findByNameAndEmail(request.getName(), request.getEmail()).orElse(null);
+        if (user == null) {
+            throw new Exception("해당 정보의 유저가 존재하지 않습니다!");
+        }
+        String newRandomPassword = randomPasswordGen();
+        user.setPassword(passwordEncoder.encode(newRandomPassword));
+        String emailText = "밴드웨건에서 " + user.getEmail() + "계정 비밀번호 찾기 요청에 따라 임시 비밀번호를 발급해드립니다. \n 임시 비밀번호: " + newRandomPassword;
+        emailService.sendSimpleMessage(user.getEmail(), "[Band:Wagon] 임시 비밀번호 발급", emailText);
+    }
+
     public Band findBand(String email) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
@@ -166,5 +180,17 @@ public class UserService {
     //회원 하나 조회 - email로
     public User findOneByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    private String randomPasswordGen() {
+        int len = 10;
+        String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random rnd = new Random();
+
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 }
