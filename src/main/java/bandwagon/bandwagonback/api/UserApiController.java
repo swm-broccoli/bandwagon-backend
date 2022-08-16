@@ -64,6 +64,7 @@ public class UserApiController {
             userService.unregister(email);
             return ResponseEntity.ok(null);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
     }
@@ -107,6 +108,18 @@ public class UserApiController {
         try {
             userService.validateDuplicateUser(request.getEmail());
             return ResponseEntity.ok(new DuplicateResponse(request.getEmail()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "유저 이메일 찾기")
+    @PostMapping("/api/find/email")
+    public ResponseEntity<?> findUserEmail(@RequestBody FindUserEmailRequest request) {
+        try {
+            FindUserEmailDto findUserEmailDto = userService.findUserEmail(request);
+            return ResponseEntity.ok(findUserEmailDto);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
