@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain.post;
 
+import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.PostDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -39,6 +42,9 @@ public abstract class Post {
 
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
+
+    @ManyToMany(mappedBy = "likedPosts")
+    private Set<User> likingUsers = new HashSet<>();
 
     public Post() {}
 

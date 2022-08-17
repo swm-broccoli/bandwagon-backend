@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
 import bandwagon.bandwagonback.dto.UserEditRequest;
@@ -52,6 +53,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "area_id"))
     private Set<Area> areas = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "user_posts",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    private Set<Post> likedPosts = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.REMOVE)
     private BandMember bandMember;
@@ -142,5 +149,17 @@ public class User {
     public void removeArea(Area area) {
         this.areas.remove(area);
         area.getUsers().remove(this);
+    }
+
+    // 좋아요한 게시글 추가
+    public void likePost(Post post) {
+        this.likedPosts.add(post);
+        post.getLikingUsers().add(this);
+    }
+    
+    // unlike 좋아요한 게시글
+    public void unlikePost(Post post) {
+        this.likedPosts.remove(post);
+        post.getLikingUsers().remove(this);
     }
 }
