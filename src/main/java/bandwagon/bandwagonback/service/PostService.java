@@ -87,6 +87,32 @@ public class PostService {
         return userPostRepository.findAll(specification, pageRequest);
     }
 
+    @Transactional
+    public void likePost(String email, Long postId) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new Exception("Post does not exist!");
+        }
+        user.likePost(post);
+    }
+
+    @Transactional
+    public void unlikePost(String email, Long postId) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new Exception("Post does not exist!");
+        }
+        user.unlikePost(post);
+    }
+
     public String getPostType(Long postId) throws Exception {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {

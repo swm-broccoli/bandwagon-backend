@@ -205,6 +205,34 @@ public class PostApiController {
         return ResponseEntity.ok(userPostPageDto);
     }
 
+    @Operation(description = "게시글 좋아요")
+    @PostMapping("/api/post/{post_id}/like")
+    public ResponseEntity<?> likePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            postService.likePost(email, postId);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "게시글 좋아요 취소")
+    @DeleteMapping("/api/post/{post_id}/like")
+    public ResponseEntity<?> unlikePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            postService.unlikePost(email, postId);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);
