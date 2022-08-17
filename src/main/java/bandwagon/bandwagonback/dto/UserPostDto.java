@@ -11,6 +11,7 @@ public class UserPostDto {
     private String body;
     private String dtype;
     private Long userId;
+    private String email;
     private String nickname;
     private String userAvatarUrl;
 
@@ -22,6 +23,7 @@ public class UserPostDto {
         this.body = post.getBody();
         this.dtype = post.getDtype();
         this.userId = post.getUser().getId();
+        this.email = post.getUser().getEmail();
         this.nickname = post.getUser().getNickname();
         this.userAvatarUrl = post.getUser().getUserInfo().getAvatarUrl();
     }
