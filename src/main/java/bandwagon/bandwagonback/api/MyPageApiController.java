@@ -34,11 +34,13 @@ public class MyPageApiController {
     @Operation(description = "유저 페이지 불러오기")
     @GetMapping("/api/users/{email}/mypage")
     public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
-        User user = userService.findOneByEmail(email);
-        if(user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("User does not exist"));
+        try {
+            User user = userService.findOneByEmail(email);
+            return ResponseEntity.ok().body(new MyPageDto(user));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
-        return ResponseEntity.ok().body(new MyPageDto(user));
     }
 
     @Operation(description = "자기소개 수정")

@@ -182,8 +182,12 @@ public class UserService {
     }
 
     //회원 하나 조회 - email로
-    public User findOneByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+    public User findOneByEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        return user;
     }
 
     private String randomPasswordGen() {
