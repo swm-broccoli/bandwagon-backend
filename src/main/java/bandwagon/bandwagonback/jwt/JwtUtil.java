@@ -65,7 +65,7 @@ public class JwtUtil {
         claims.put("isRefresh", false);
         // access Token expires after 3 hours
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 10))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
@@ -74,7 +74,7 @@ public class JwtUtil {
         claims.put("isRefresh", true);
         // refresh Token expires after 3 days
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 30))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
