@@ -11,6 +11,8 @@ public class UserPostDto extends PostDto {
     private String nickname;
     private String userAvatarUrl;
     private Boolean isLiked;
+    //TODO: 나중엔 필요한 테그 정보만 담게 변경
+    private MyPageDto tagInfo;
 
     public UserPostDto() {}
 
@@ -19,6 +21,7 @@ public class UserPostDto extends PostDto {
         this.nickname = post.getUser().getNickname();
         this.userAvatarUrl = post.getUser().getUserInfo().getAvatarUrl();
         this.isLiked = false;
+        this.tagInfo = new MyPageDto(post.getUser());
     }
 
     public static UserPostDto makeUserPostDto(UserPost post, User user) {
