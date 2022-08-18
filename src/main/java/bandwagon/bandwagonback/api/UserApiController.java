@@ -1,6 +1,9 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.post.Post;
+import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
@@ -8,6 +11,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "UserApiController")
 @Slf4j
@@ -27,6 +34,7 @@ import java.util.Map;
 public class UserApiController {
 
     private final UserService userService;
+    private final PostService postService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtTokenUtil;
 
@@ -185,6 +193,35 @@ public class UserApiController {
             }
             String imgUrl =  userService.uploadAvatar(email, multipartFile);
             return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "유저 찜한 게시글 목록")
+    @GetMapping("/api/users/{email}/likes")
+    public ResponseEntity<?> getUserLikePosts(@PathVariable("email") String email,
+                                              @RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size,
+                                              HttpServletRequest request) {
+        try {
+            String jwt = getJwtFromHeader(request);
+            String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+            if (!jwtEmail.equals(email)) {
+                throw new Exception("User in token and user in URL is different");
+            }
+            User user = userService.findOneByEmail(email);
+            PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+            Page<Post> likedPosts = postService.getLikedPosts(email, pageRequest);
+            LikedPostPageDto likedPostPageDto = new LikedPostPageDto(likedPosts.getContent().stream().map(post -> {
+                if (post.getDtype().equals("User")) {
+                    return UserPostDto.makeUserPostDto((UserPost) post, user);
+                } else {
+                    return BandPostDto.makeBandPostDto((BandPost) post, user);
+                }
+            }).collect(Collectors.toList()), likedPosts.getNumber(), likedPosts.getTotalElements(), likedPosts.getTotalPages());
+            return ResponseEntity.ok(likedPostPageDto);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));

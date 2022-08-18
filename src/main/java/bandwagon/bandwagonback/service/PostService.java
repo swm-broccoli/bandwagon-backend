@@ -5,13 +5,14 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
+import bandwagon.bandwagonback.dto.LikedPostPageDto;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,6 +112,10 @@ public class PostService {
             throw new Exception("Post does not exist!");
         }
         user.unlikePost(post);
+    }
+
+    public Page<Post> getLikedPosts(String email, PageRequest pageRequest) {
+        return postRepository.findAllByLikingUsers_email(email, pageRequest);
     }
 
     public String getPostType(Long postId) throws Exception {
