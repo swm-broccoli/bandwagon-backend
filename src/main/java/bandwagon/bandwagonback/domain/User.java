@@ -63,7 +63,7 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.REMOVE)
     private BandMember bandMember;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Request> requests = new ArrayList<>();
 
     public User() {

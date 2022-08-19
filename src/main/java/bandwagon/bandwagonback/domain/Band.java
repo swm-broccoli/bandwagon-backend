@@ -62,6 +62,9 @@ public class Band {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "band", cascade = CascadeType.REMOVE)
     private List<BandPost> bandPosts = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "band")
+    private List<Request> requests = new ArrayList<>();
+
     public Band() {}
 
     public Band(BandCreateForm bandCreateForm) {
@@ -143,5 +146,11 @@ public class Band {
     public void addPost(BandPost post) {
         this.bandPosts.add(post);
         post.setBand(this);
+    }
+
+    // 요청 추가
+    public void addRequest(Request request) {
+        this.getRequests().add(request);
+        request.setBand(this);
     }
 }
