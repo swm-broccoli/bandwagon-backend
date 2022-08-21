@@ -70,6 +70,18 @@ public class RequestService {
     }
 
     @Transactional
+    public void cancelApplyRequest(String email, Long requestId) throws Exception {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request == null || !request.getType().equals(RequestType.APPLY)) {
+            throw new Exception("Specified Request is Not Valid");
+        }
+        if (!email.equals(request.getUser().getEmail())) {
+            throw new Exception("User is not owner of Apply Request");
+        }
+        requestRepository.delete(request);
+    }
+
+    @Transactional
     public void acceptInviteRequest(String email, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
