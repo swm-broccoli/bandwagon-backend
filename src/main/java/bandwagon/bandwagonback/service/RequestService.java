@@ -70,6 +70,30 @@ public class RequestService {
     }
 
     @Transactional
+    public void acceptInviteRequest(String email, Long requestId) throws Exception {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request == null || !request.getType().equals(RequestType.INVITE)) {
+            throw new Exception("Specified Request is Not Valid");
+        }
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new Exception("User does not exist!");
+        }
+        if (!user.equals(request.getUser())) {
+            throw new Exception("Accepting user is not User in request!");
+        }
+        //Accepting logic
+        if (user.getBandMember() != null) {
+            throw new Exception("이미 밴드에 속한 유저입니다");
+        }
+        BandMember newMember = new BandMember(user, false);
+        request.getBand().addBandMember(newMember);
+        bandMemberRepository.save(newMember);
+
+        requestRepository.delete(request);
+    }
+
+    @Transactional
     public void declineInviteRequest(String email, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
