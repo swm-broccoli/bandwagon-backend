@@ -29,6 +29,15 @@ public class RequestService {
     }
 
     @Transactional
+    public void sendInviteRequest(User invitingUser, User invitedUser) throws Exception {
+        if (!invitingUser.getBandMember().getIsFrontman()) {
+            throw new Exception("Inviting User is not frontman!");
+        }
+        Band invitingBand = invitingUser.getBandMember().getBand();
+        createRequest(invitedUser, invitingBand, RequestType.INVITE);
+    }
+
+    @Transactional
     public void acceptApplyRequest(String email, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {

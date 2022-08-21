@@ -177,8 +177,12 @@ public class UserService {
     }
 
     //회원 하나 조회 - table id로
-    public User findOne(Long userId) {
-        return userRepository.findById(userId).orElse(null);
+    public User findOne(Long userId) throws Exception{
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new Exception("존재하지 않는 유저입니다!");
+        }
+        return user;
     }
 
     //회원 하나 조회 - email로
