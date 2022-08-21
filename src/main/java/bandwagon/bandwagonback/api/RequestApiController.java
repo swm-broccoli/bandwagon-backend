@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,8 +29,8 @@ public class RequestApiController {
     private final JwtUtil jwtTokenUtil;
 
     @Operation(description = "밴드 초대 요청 보내기")
-    @PostMapping("/api/request/invite/{user_id}")
-    public ResponseEntity<?> sendInviteRequest(@PathVariable("user_id") Long userId, HttpServletRequest request) {
+    @PostMapping("/api/request/invite")
+    public ResponseEntity<?> sendInviteRequest(@RequestParam Long userId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
