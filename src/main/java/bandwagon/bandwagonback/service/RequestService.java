@@ -29,6 +29,31 @@ public class RequestService {
     }
 
     @Transactional
+    public void acceptApplyRequest(String email, Long requestId) throws Exception {
+        Request request = requestRepository.findById(requestId).orElse(null);
+        if (request == null || !request.getType().equals(RequestType.APPLY)) {
+            throw new Exception("Specified Request is Not Valid");
+        }
+        BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, request.getBand().getId());
+        if (bandMember == null) {
+            throw new Exception("Accepting User is not Part of the Band in request");
+        }
+        if (!bandMember.getIsFrontman()) {
+            throw new Exception("Accepting User is not frontman and cannot decline this Request!");
+        }
+        // Accepting logic
+        User candidateUser = request.getUser();
+        if (candidateUser.getBandMember() != null) {
+            throw new Exception("이미 밴드에 속한 유저입니다");
+        }
+        BandMember newMember = new BandMember(candidateUser, false);
+        request.getBand().addBandMember(newMember);
+        bandMemberRepository.save(newMember);
+
+        requestRepository.delete(request);
+    }
+
+    @Transactional
     public void declineApplyRequest(String email, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
