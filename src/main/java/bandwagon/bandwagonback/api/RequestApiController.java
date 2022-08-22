@@ -77,6 +77,21 @@ public class RequestApiController {
         }
     }
 
+    @Operation(description = "밴드 가입 요청 보내기")
+    @PostMapping("/api/request/apply")
+    public ResponseEntity<?> sendApplyRequest(@RequestParam Long postId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            User applyingUser = userService.findOneByEmail(email);
+            requestService.sendApplyRequest(applyingUser, postId);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);

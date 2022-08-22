@@ -270,21 +270,6 @@ public class PostApiController {
         }
     }
 
-    @Operation(description = "해당 구인글 조건으로 밴드 지원")
-    @PostMapping("/api/post/{post_id}/apply")
-    public ResponseEntity<?> applyOnPost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User applyingUser = userService.findOneByEmail(email);
-            requestService.sendApplyRequest(applyingUser, postId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
-    }
-
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null) {
