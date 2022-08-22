@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
+import bandwagon.bandwagonback.service.BandPrerequisiteService;
 import bandwagon.bandwagonback.service.RequestService;
 import bandwagon.bandwagonback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestApiController {
 
     private final RequestService requestService;
+    private final BandPrerequisiteService bandPrerequisiteService;
     private final UserService userService;
     private final JwtUtil jwtTokenUtil;
 
@@ -84,6 +86,9 @@ public class RequestApiController {
         String email = jwtTokenUtil.extractUsername(jwt);
         try {
             User applyingUser = userService.findOneByEmail(email);
+            if (!bandPrerequisiteService.canUserApply(email, postId)) {
+                throw new Exception("User does not meet prerequisites!");
+            }
             requestService.sendApplyRequest(applyingUser, postId);
             return ResponseEntity.ok(null);
         } catch (Exception e) {
