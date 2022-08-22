@@ -59,12 +59,12 @@ public class RequestService {
     }
 
     @Transactional
-    public void acceptApplyRequest(String email, Long requestId) throws Exception {
+    public void acceptApplyRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
             throw new Exception("Specified Request is Not Valid");
         }
-        BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, request.getBand().getId());
+        BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
             throw new Exception("Accepting User is not Part of the Band in request");
         }
@@ -84,12 +84,12 @@ public class RequestService {
     }
 
     @Transactional
-    public void declineApplyRequest(String email, Long requestId) throws Exception {
+    public void declineApplyRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
             throw new Exception("Specified Request is Not Valid");
         }
-        BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, request.getBand().getId());
+        BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
             throw new Exception("Declining User is not Part of the Band in request");
         }

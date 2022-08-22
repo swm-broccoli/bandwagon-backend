@@ -97,6 +97,25 @@ public class RequestApiController {
         }
     }
 
+    @Operation(description = "밴드 가입 요청 응답하기")
+    @PostMapping("/api/request/apply/{request_id}")
+    public ResponseEntity<?> respondApplyRequest(@PathVariable("request_id") Long requestId, @RequestParam boolean accept, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            User respondingUser = userService.findOneByEmail(email);
+            if (accept) {
+                requestService.acceptApplyRequest(respondingUser, requestId);
+            } else {
+                requestService.declineApplyRequest(respondingUser, requestId);
+            }
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @Operation(description = "밴드 가입 요청 취소하기")
     @DeleteMapping("/api/request/apply/{request_id}")
     public ResponseEntity<?> cancelApplyRequest(@PathVariable("request_id") Long requestId, HttpServletRequest request) {
