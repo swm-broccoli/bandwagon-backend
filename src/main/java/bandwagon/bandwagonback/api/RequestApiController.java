@@ -1,7 +1,5 @@
 package bandwagon.bandwagonback.api;
 
-import bandwagon.bandwagonback.domain.Band;
-import bandwagon.bandwagonback.domain.RequestType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;

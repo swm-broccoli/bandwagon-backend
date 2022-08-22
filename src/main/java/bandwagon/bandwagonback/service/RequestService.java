@@ -34,6 +34,7 @@ public class RequestService {
             throw new Exception("Inviting User is not frontman!");
         }
         Band invitingBand = invitingUser.getBandMember().getBand();
+        // 중복 검사 로직?
         createRequest(invitedUser, invitingBand, RequestType.INVITE);
     }
 
