@@ -63,6 +63,9 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.REMOVE)
     private BandMember bandMember;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Request> requests = new ArrayList<>();
+
     public User() {
     }
     
@@ -161,5 +164,11 @@ public class User {
     public void unlikePost(Post post) {
         this.likedPosts.remove(post);
         post.getLikingUsers().remove(this);
+    }
+
+    // 요청 추가
+    public void addRequest(Request request) {
+        this.getRequests().add(request);
+        request.setUser(this);
     }
 }

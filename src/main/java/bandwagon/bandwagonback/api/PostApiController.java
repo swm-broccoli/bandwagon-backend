@@ -9,6 +9,7 @@ import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.PostService;
+import bandwagon.bandwagonback.service.RequestService;
 import bandwagon.bandwagonback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,7 @@ public class PostApiController {
 
     private final PostService postService;
     private final UserService userService;
+    private final RequestService requestService;
     private final BandMemberService bandMemberService;
     private final JwtUtil jwtTokenUtil;
 
