@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.dto;
 
+import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
@@ -13,6 +14,7 @@ public class PostDto {
     private String dtype;
     private String userEmail;
     private Long bandId;
+    private Boolean isLiked;
 
     public PostDto() {}
 
@@ -26,5 +28,14 @@ public class PostDto {
         } else {
             this.bandId = ((BandPost) post).getBand().getId();
         }
+        this.isLiked = false;
+    }
+
+    public static PostDto makePostDto(Post post, User user) {
+        PostDto postDto = new PostDto(post);
+        if (user.getLikedPosts().contains(post)) {
+            postDto.setIsLiked(true);
+        }
+        return postDto;
     }
 }
