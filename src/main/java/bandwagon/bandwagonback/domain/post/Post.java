@@ -57,4 +57,8 @@ public abstract class Post {
         this.title = postDto.getTitle();
         this.body = postDto.getBody();
     }
+
+    public int getLikeCount() {
+        return likingUsers.size();
+    }
 }
