@@ -66,6 +66,14 @@ public class PostService {
         return new PostDto(post);
     }
 
+    public PostDto viewPost(Long postId, User user) throws Exception {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) {
+            throw new Exception("No Post by that ID");
+        }
+        return PostDto.makePostDto(post, user);
+    }
+
     @Transactional
     public void editPost(Long postId, PostDto postDto) throws Exception {
         Post post = postRepository.findById(postId).orElse(null);

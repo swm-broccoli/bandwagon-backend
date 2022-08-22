@@ -14,6 +14,7 @@ public class PostDto {
     private String dtype;
     private String userEmail;
     private Long bandId;
+    private Integer likeCount;
     private Boolean isLiked;
 
     public PostDto() {}
@@ -28,6 +29,7 @@ public class PostDto {
         } else {
             this.bandId = ((BandPost) post).getBand().getId();
         }
+        this.likeCount = post.getLikeCount();
         this.isLiked = false;
     }
 

@@ -42,9 +42,17 @@ public class PostApiController {
 
     @Operation(description = "게시글 제목, 본문 조회")
     @GetMapping("/api/post/{post_id}")
-    public ResponseEntity<?> getPost(@PathVariable("post_id") Long postId) {
+    public ResponseEntity<?> getPost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         try {
-            PostDto postDto = postService.viewPost(postId);
+            String jwt = getJwtFromHeader(request);
+            PostDto postDto;
+            if (jwt == null) {
+                postDto = postService.viewPost(postId);
+            } else {
+                String email = jwtTokenUtil.extractUsername(jwt);
+                User user = userService.findOneByEmail(email);
+                postDto = postService.viewPost(postId, user);
+            }
             return ResponseEntity.ok(postDto);
         } catch (Exception e) {
             log.error(e.getMessage());
