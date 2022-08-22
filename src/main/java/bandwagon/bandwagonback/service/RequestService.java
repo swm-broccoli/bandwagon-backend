@@ -92,14 +92,10 @@ public class RequestService {
     }
 
     @Transactional
-    public void acceptInviteRequest(String email, Long requestId) throws Exception {
+    public void acceptInviteRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
             throw new Exception("Specified Request is Not Valid");
-        }
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            throw new Exception("User does not exist!");
         }
         if (!user.equals(request.getUser())) {
             throw new Exception("Accepting user is not User in request!");
@@ -116,14 +112,10 @@ public class RequestService {
     }
 
     @Transactional
-    public void declineInviteRequest(String email, Long requestId) throws Exception {
+    public void declineInviteRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
             throw new Exception("Specified Request is Not Valid");
-        }
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            throw new Exception("User does not exist!");
         }
         if (!user.equals(request.getUser())) {
             throw new Exception("Declining user is not User in request!");
