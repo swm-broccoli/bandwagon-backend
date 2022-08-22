@@ -93,14 +93,12 @@ public class PostApiController {
                 if (!postService.isPostByBand(postId, bandId)) {
                     throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
                 }
-                postService.editPost(postId, postDto);
-                return ResponseEntity.ok(null);
+                return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
             } else if (postDto.getDtype().equals("User")) {
                 if (!postService.isPostByUser(postId, email)) {
                     throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
                 }
-                postService.editPost(postId, postDto);
-                return ResponseEntity.ok(null);
+                return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
             } else {
                 throw new Exception("Invalid dtype in request!");
             }

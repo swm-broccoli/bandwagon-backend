@@ -75,12 +75,13 @@ public class PostService {
     }
 
     @Transactional
-    public void editPost(Long postId, PostDto postDto) throws Exception {
+    public Long editPost(Long postId, PostDto postDto) throws Exception {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
             throw new Exception("Post does not exist!");
         }
         post.update(postDto);
+        return post.getId();
     }
 
     @Transactional
