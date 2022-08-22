@@ -43,6 +43,21 @@ public class RequestApiController {
         }
     }
 
+    @Operation(description = "밴드 초대 요청 취소하기")
+    @DeleteMapping("/api/request/invite/{request_id}")
+    public ResponseEntity<?> cancelInviteRequest(@PathVariable("request_id") Long requestId, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            User cancelingUser = userService.findOneByEmail(email);
+            requestService.cancelInviteRequest(cancelingUser, requestId);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring(7);

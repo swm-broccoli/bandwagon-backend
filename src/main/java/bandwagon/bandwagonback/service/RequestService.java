@@ -132,12 +132,12 @@ public class RequestService {
     }
 
     @Transactional
-    public void cancelInviteRequest(String email, Long requestId) throws Exception {
+    public void cancelInviteRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
             throw new Exception("Specified Request is Not Valid");
         }
-        BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, request.getBand().getId());
+        BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
             throw new Exception("Canceling User is not Part of the Band in request");
         }
