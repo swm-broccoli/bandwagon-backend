@@ -1,9 +1,8 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
-import bandwagon.bandwagonback.repository.BandMemberRepository;
-import bandwagon.bandwagonback.repository.RequestRepository;
-import bandwagon.bandwagonback.repository.UserRepository;
+import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,15 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class RequestService {
 
     private final RequestRepository requestRepository;
+    private final BandPostRepository bandPostRepository;
     private final UserRepository userRepository;
     private final BandMemberRepository bandMemberRepository;
 
     @Transactional
-    public void createRequest(User user, Band band, RequestType requestType) {
+    public void createRequest(User user, Band band, RequestType requestType, BandPost bandPost) {
         Request request = new Request();
         request.setType(requestType);
         user.addRequest(request);
         band.addRequest(request);
+        if (requestType.equals(RequestType.APPLY)) {
+            bandPost.addRequest(request);
+        }
         requestRepository.save(request);
     }
 
@@ -34,8 +37,25 @@ public class RequestService {
             throw new Exception("Inviting User is not frontman!");
         }
         Band invitingBand = invitingUser.getBandMember().getBand();
+        if (invitedUser.getBandMember() != null) {
+            throw new Exception("Invited User is already in band!");
+        }
         // 중복 검사 로직?
-        createRequest(invitedUser, invitingBand, RequestType.INVITE);
+        createRequest(invitedUser, invitingBand, RequestType.INVITE, null);
+    }
+
+    @Transactional
+    public void sendApplyRequest(User applyingUser, Long postId) throws Exception {
+        if (applyingUser.getBandMember() != null) {
+            throw new Exception("Applying user is already in band!");
+        }
+        BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
+        if (bandPost == null) {
+            throw new Exception("Can't find Post User is applying to");
+        }
+        Band appliedBand = bandPost.getBand();
+        // 중복 검사 로직
+        createRequest(applyingUser, appliedBand, RequestType.APPLY, bandPost);
     }
 
     @Transactional

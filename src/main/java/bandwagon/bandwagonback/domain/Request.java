@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.post.BandPost;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,4 +25,8 @@ public class Request {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "band_id")
     private Band band;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private BandPost bandPost;
 }
