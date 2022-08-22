@@ -100,12 +100,12 @@ public class RequestService {
     }
 
     @Transactional
-    public void cancelApplyRequest(String email, Long requestId) throws Exception {
+    public void cancelApplyRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
             throw new Exception("Specified Request is Not Valid");
         }
-        if (!email.equals(request.getUser().getEmail())) {
+        if (!user.equals(request.getUser())) {
             throw new Exception("User is not owner of Apply Request");
         }
         requestRepository.delete(request);
