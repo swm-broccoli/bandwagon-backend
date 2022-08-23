@@ -130,8 +130,8 @@ public class RequestService {
         BandMember newMember = new BandMember(user, false);
         request.getBand().addBandMember(newMember);
         bandMemberRepository.save(newMember);
-
         requestRepository.delete(request);
+        notificationService.createUserToBand(user, request.getBand(), NotificationType.INVITE_ACCEPT);
     }
 
     @Transactional
@@ -144,6 +144,7 @@ public class RequestService {
             throw new Exception("Declining user is not User in request!");
         }
         requestRepository.delete(request);
+        notificationService.createUserToBand(user, request.getBand(), NotificationType.INVITE_DECLINE);
     }
 
     @Transactional
