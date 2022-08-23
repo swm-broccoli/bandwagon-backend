@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestApiController {
 
     private final RequestService requestService;
-    private final NotificationService notificationService;
     private final BandPrerequisiteService bandPrerequisiteService;
     private final UserService userService;
     private final JwtUtil jwtTokenUtil;
@@ -40,7 +39,6 @@ public class RequestApiController {
             User invitingUser = userService.findOneByEmail(email);
             User invitedUser = userService.findOne(userId);
             requestService.sendInviteRequest(invitingUser, invitedUser);
-            notificationService.createUserToUser(invitingUser, invitedUser, NotificationType.INVITE);
             return ResponseEntity.ok(null);
         } catch (Exception e) {
             log.error(e.getMessage());

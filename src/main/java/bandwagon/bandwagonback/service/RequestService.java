@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RequestService {
 
+    private final NotificationService notificationService;
     private final RequestRepository requestRepository;
     private final BandPostRepository bandPostRepository;
-    private final UserRepository userRepository;
     private final BandMemberRepository bandMemberRepository;
 
     @Transactional
@@ -42,6 +42,7 @@ public class RequestService {
         }
         // 중복 검사 로직?
         createRequest(invitedUser, invitingBand, RequestType.INVITE, null);
+        notificationService.createBandToUser(invitingBand, invitedUser, NotificationType.INVITE);
     }
 
     @Transactional
