@@ -60,8 +60,12 @@ public class BandMemberService {
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
-        notificationService.createBandToUser(band, bandMember.getMember(), NotificationType.KICK);
+        if (bandMember.getIsFrontman()) {
+            throw new Exception("프런트맨을(자신을) 탈퇴시킬 수 없습니다!");
+        }
+        User removedMember = bandMember.getMember();
         bandMemberRepository.deleteById(bandMemberId);
+        notificationService.createBandToUser(band, removedMember, NotificationType.KICK);
     }
 
     @Transactional
@@ -74,6 +78,7 @@ public class BandMemberService {
             throw new Exception("프런트맨이라 탈퇴하실 수 없습니다!");
         }
         bandMemberRepository.delete(bandMember);
+
     }
 
     @Transactional
