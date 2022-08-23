@@ -41,7 +41,7 @@ public class Notification {
         this.type = notificationType;
     }
 
-    public String createMessage() throws Exception {
+    public String createMessage(){
         switch (type) {
             case APPLY:
                 return sendingUser.getNickname() + "님이 밴드에 가입 요청을 보냈습니다!";
@@ -62,7 +62,7 @@ public class Notification {
             case WITHDRAW:
                 return sendingUser.getNickname() + "님이 밴드에서 나가셨습니다!";
             default:
-                throw new Exception("Non existing Notification Type!");
+                return null;
         }
     }
 }

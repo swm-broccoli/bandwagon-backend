@@ -1,12 +1,17 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
+import bandwagon.bandwagonback.dto.NotificationListDto;
+import bandwagon.bandwagonback.dto.subdto.NotificationDto;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -16,6 +21,12 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final BandMemberRepository bandMemberRepository;
+
+    public NotificationListDto getNotificationToUser(User user) {
+        List<Notification> notifications = notificationRepository.findAllByReceivingUser(user);
+        List<NotificationDto> notificationDtos = notifications.stream().map(NotificationDto::new).collect(Collectors.toList());
+        return new NotificationListDto(notificationDtos);
+    }
 
     @Transactional
     public void createNotification(User sendingUser, User receivingUser, NotificationType type) {
