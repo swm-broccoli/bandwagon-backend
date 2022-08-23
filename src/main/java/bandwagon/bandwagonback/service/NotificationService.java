@@ -28,6 +28,10 @@ public class NotificationService {
         return new NotificationListDto(notificationDtos);
     }
 
+    public long getUnreadNotificationCount(User user) {
+        return notificationRepository.countByReceivingUserAndIsReadFalse(user);
+    }
+
     @Transactional
     public void createNotification(User sendingUser, User receivingUser, NotificationType type) {
         Notification notification = new Notification(sendingUser, receivingUser, type);
