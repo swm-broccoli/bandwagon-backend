@@ -33,12 +33,15 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
+    private Boolean isRead;
+
     public Notification(){}
 
     public Notification(User sendingUser, User receivingUser, NotificationType notificationType) {
         this.sendingUser = sendingUser;
         this.receivingUser = receivingUser;
         this.type = notificationType;
+        this.isRead = false;
     }
 
     public String createMessage(){
