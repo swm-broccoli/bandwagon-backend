@@ -127,11 +127,12 @@ public class RequestService {
         if (user.getBandMember() != null) {
             throw new Exception("이미 밴드에 속한 유저입니다");
         }
+        // 자기 자신은 알림 받지 않게 밴드에 추가 되기 직전에 밴드 맴버들에게 알림 발송
+        notificationService.createUserToBand(user, request.getBand(), NotificationType.INVITE_ACCEPT);
         BandMember newMember = new BandMember(user, false);
         request.getBand().addBandMember(newMember);
         bandMemberRepository.save(newMember);
         requestRepository.delete(request);
-        notificationService.createUserToBand(user, request.getBand(), NotificationType.INVITE_ACCEPT);
     }
 
     @Transactional
