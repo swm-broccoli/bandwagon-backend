@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final BandMemberRepository bandMemberRepository;
 
+    @Transactional
     public NotificationListDto getNotificationToUser(User user) {
         List<Notification> notifications = notificationRepository.findAllByReceivingUser(user);
         notificationRepository.setIsReadOfAllNotificationsByUser(user);
