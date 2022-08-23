@@ -33,6 +33,14 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
+    public Notification(){}
+
+    public Notification(User sendingUser, User receivingUser, NotificationType notificationType) {
+        this.sendingUser = sendingUser;
+        this.receivingUser = receivingUser;
+        this.type = notificationType;
+    }
+
     public String createMessage() throws Exception {
         switch (type) {
             case APPLY:

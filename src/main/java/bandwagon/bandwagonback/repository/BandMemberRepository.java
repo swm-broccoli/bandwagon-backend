@@ -12,4 +12,5 @@ public interface BandMemberRepository extends JpaRepository<BandMember, Long> {
     BandMember findFirstByMember_emailAndBand_id(String email, Long bandId);
     Optional<BandMember> findByMemberAndBand(User user, Band band);
     Optional<BandMember> findFirstByMember_email(String email);
+    Optional<BandMember> findByBandAndIsFrontmanTrue(Band band);
 }
