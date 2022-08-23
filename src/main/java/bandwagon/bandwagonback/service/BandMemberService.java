@@ -1,9 +1,6 @@
 package bandwagon.bandwagonback.service;
 
-import bandwagon.bandwagonback.domain.Band;
-import bandwagon.bandwagonback.domain.BandMember;
-import bandwagon.bandwagonback.domain.Position;
-import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.PositionRepository;
@@ -21,6 +18,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BandMemberService {
 
+    private final NotificationService notificationService;
     private final BandMemberRepository bandMemberRepository;
     private final BandRepository bandRepository;
     private final UserRepository userRepository;
@@ -61,7 +59,14 @@ public class BandMemberService {
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
-        bandMemberRepository.deleteById(bandMemberId);
+        if (bandMember.getIsFrontman()) {
+            throw new Exception("프런트맨을(자신을) 탈퇴시킬 수 없습니다!");
+        }
+        Band band = bandMember.getBand();
+        User removedMember = bandMember.getMember();
+        bandMemberRepository.delete(bandMember);
+        band.removeBandMember(bandMember);
+        notificationService.createBandToUser(band, removedMember, NotificationType.KICK);
     }
 
     @Transactional
@@ -73,7 +78,11 @@ public class BandMemberService {
         if (bandMember.getIsFrontman()) {
             throw new Exception("프런트맨이라 탈퇴하실 수 없습니다!");
         }
+        User withdrawingUser = bandMember.getMember();
+        Band band = bandMember.getBand();
         bandMemberRepository.delete(bandMember);
+        band.removeBandMember(bandMember);
+        notificationService.createUserToBand(withdrawingUser, band, NotificationType.WITHDRAW);
     }
 
     @Transactional

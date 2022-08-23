@@ -89,6 +89,10 @@ public class Band {
         bandMember.setBand(this);
     }
 
+    public void removeBandMember(BandMember bandMember) {
+        this.bandMembers.remove(bandMember);
+    }
+
     // 공연기록 추가
     public void addBandGig(BandGig bandGig) {
         this.bandGigs.add(bandGig);

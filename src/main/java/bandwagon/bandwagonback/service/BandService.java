@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.BandMember;
+import bandwagon.bandwagonback.domain.NotificationType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.dto.BandPageDto;
@@ -23,6 +24,7 @@ import java.io.File;
 @RequiredArgsConstructor
 public class BandService {
 
+    private final NotificationService notificationService;
     private final BandRepository bandRepository;
     private final UserRepository userRepository;
     private final BandMemberRepository bandMemberRepository;
@@ -81,6 +83,10 @@ public class BandService {
     @Transactional
     public void disbandBand(String email, Long bandId) throws Exception {
         bandMemberService.confirmUserIsFrontman(email, bandId);
+        User user = userRepository.findByEmail(email).orElse(null);
+        Band band = bandRepository.findById(bandId).orElse(null);
+        // 둘 중 하나가 null이면 confirmIsFrontman에서 exception 터지므로 따로 검증 X
+        notificationService.createUserToBand(user, band, NotificationType.DISBAND);
         bandRepository.deleteById(bandId);
     }
 
