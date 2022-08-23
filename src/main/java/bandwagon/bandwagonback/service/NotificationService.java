@@ -24,6 +24,7 @@ public class NotificationService {
 
     public NotificationListDto getNotificationToUser(User user) {
         List<Notification> notifications = notificationRepository.findAllByReceivingUser(user);
+        notificationRepository.setIsReadOfAllNotificationsByUser(user);
         List<NotificationDto> notificationDtos = notifications.stream().map(NotificationDto::new).collect(Collectors.toList());
         return new NotificationListDto(notificationDtos);
     }
