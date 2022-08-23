@@ -81,8 +81,8 @@ public class RequestService {
         BandMember newMember = new BandMember(candidateUser, false);
         request.getBand().addBandMember(newMember);
         bandMemberRepository.save(newMember);
-
         requestRepository.delete(request);
+        notificationService.createBandToUser(request.getBand(), candidateUser, NotificationType.APPLY_ACCEPT);
     }
 
     @Transactional
@@ -99,6 +99,7 @@ public class RequestService {
             throw new Exception("Declining User is not frontman and cannot decline this Request!");
         }
         requestRepository.delete(request);
+        notificationService.createBandToUser(request.getBand(), request.getUser(), NotificationType.APPLY_DECLINE);
     }
 
     @Transactional
