@@ -57,6 +57,7 @@ public class RequestService {
         Band appliedBand = bandPost.getBand();
         // 중복 검사 로직
         createRequest(applyingUser, appliedBand, RequestType.APPLY, bandPost);
+        notificationService.createUserToBand(applyingUser, appliedBand, NotificationType.APPLY);
     }
 
     @Transactional
