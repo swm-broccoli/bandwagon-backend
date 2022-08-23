@@ -1,9 +1,6 @@
 package bandwagon.bandwagonback.service;
 
-import bandwagon.bandwagonback.domain.Band;
-import bandwagon.bandwagonback.domain.BandMember;
-import bandwagon.bandwagonback.domain.Position;
-import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.PositionRepository;
@@ -21,6 +18,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BandMemberService {
 
+    private final NotificationService notificationService;
     private final BandMemberRepository bandMemberRepository;
     private final BandRepository bandRepository;
     private final UserRepository userRepository;
@@ -57,10 +55,12 @@ public class BandMemberService {
     @Transactional
     public void removeMemberFromBand(String email, Long bandId, Long bandMemberId) throws Exception {
         confirmUserIsFrontman(email, bandId);
+        Band band = bandRepository.findById(bandId).orElse(null);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
+        notificationService.createBandToUser(band, bandMember.getMember(), NotificationType.KICK);
         bandMemberRepository.deleteById(bandMemberId);
     }
 
