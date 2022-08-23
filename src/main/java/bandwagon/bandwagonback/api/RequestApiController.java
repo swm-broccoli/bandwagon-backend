@@ -1,9 +1,11 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.NotificationType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.BandPrerequisiteService;
+import bandwagon.bandwagonback.service.NotificationService;
 import bandwagon.bandwagonback.service.RequestService;
 import bandwagon.bandwagonback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestApiController {
 
     private final RequestService requestService;
+    private final NotificationService notificationService;
     private final BandPrerequisiteService bandPrerequisiteService;
     private final UserService userService;
     private final JwtUtil jwtTokenUtil;
@@ -37,7 +40,7 @@ public class RequestApiController {
             User invitingUser = userService.findOneByEmail(email);
             User invitedUser = userService.findOne(userId);
             requestService.sendInviteRequest(invitingUser, invitedUser);
-            // ADD NOTIFICATION LOGIC HERE
+            notificationService.createUserToUser(invitingUser, invitedUser, NotificationType.INVITE);
             return ResponseEntity.ok(null);
         } catch (Exception e) {
             log.error(e.getMessage());
