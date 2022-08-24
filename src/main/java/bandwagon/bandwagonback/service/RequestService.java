@@ -24,14 +24,14 @@ public class RequestService {
     private final BandPostRepository bandPostRepository;
     private final BandMemberRepository bandMemberRepository;
 
-    public RequestListDto getInviteToUser(User user) {
-        List<Request> invitesToUser = requestRepository.findAllByUserAndType(user, RequestType.INVITE);
+    public RequestListDto getRequestOnUser(User user, RequestType type) {
+        List<Request> invitesToUser = requestRepository.findAllByUserAndType(user, type);
         List<RequestDto> requestDtos = invitesToUser.stream().map(RequestDto::new).collect(Collectors.toList());
         return new RequestListDto(requestDtos);
     }
 
-    public RequestListDto getInviteFromBand(Band band) {
-        List<Request> invitesFromBand = requestRepository.findAllByBandAndType(band, RequestType.INVITE);
+    public RequestListDto getRequestOnBand(Band band, RequestType type) {
+        List<Request> invitesFromBand = requestRepository.findAllByBandAndType(band, type);
         List<RequestDto> requestDtos = invitesFromBand.stream().map(RequestDto::new).collect(Collectors.toList());
         return new RequestListDto(requestDtos);
     }

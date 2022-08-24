@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.NotificationType;
+import bandwagon.bandwagonback.domain.RequestType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.RequestListDto;
@@ -39,10 +40,10 @@ public class RequestApiController {
             User user = userService.findOneByEmail(email);
             if (sent) {
                 Band band = bandService.getUsersBand(user);
-                RequestListDto requestListDto = requestService.getInviteFromBand(band);
+                RequestListDto requestListDto = requestService.getRequestOnBand(band, RequestType.INVITE);
                 return ResponseEntity.ok(requestListDto);
             } else {
-                RequestListDto requestListDto = requestService.getInviteToUser(user);
+                RequestListDto requestListDto = requestService.getRequestOnUser(user, RequestType.INVITE);
                 return ResponseEntity.ok(requestListDto);
             }
         } catch (Exception e) {
