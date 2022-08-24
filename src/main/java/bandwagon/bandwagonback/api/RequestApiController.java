@@ -52,7 +52,7 @@ public class RequestApiController {
         }
     }
 
-    @Operation(description = "유저가 보낸/밴드에게 언 밴드 가입 요청 조회")
+    @Operation(description = "유저가 보낸/밴드에게 온 밴드 가입 요청 조회")
     @GetMapping("/api/request/apply")
     public ResponseEntity<?> getApplyRequests(@RequestParam boolean sent, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
