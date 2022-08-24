@@ -1,13 +1,12 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.NotificationType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.RequestListDto;
 import bandwagon.bandwagonback.jwt.JwtUtil;
-import bandwagon.bandwagonback.service.BandPrerequisiteService;
-import bandwagon.bandwagonback.service.NotificationService;
-import bandwagon.bandwagonback.service.RequestService;
-import bandwagon.bandwagonback.service.UserService;
+import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,29 @@ public class RequestApiController {
     private final RequestService requestService;
     private final BandPrerequisiteService bandPrerequisiteService;
     private final UserService userService;
+    private final BandService bandService;
     private final JwtUtil jwtTokenUtil;
+
+    @Operation(description = "유저에게 온/밴드가 보낸 밴드 초대 요청 조회")
+    @GetMapping("/api/request/invite")
+    public ResponseEntity<?> getInviteRequests(@RequestParam boolean sent, HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            User user = userService.findOneByEmail(email);
+            if (sent) {
+                Band band = bandService.getUsersBand(user);
+                RequestListDto requestListDto = requestService.getInviteFromBand(band);
+                return ResponseEntity.ok(requestListDto);
+            } else {
+                RequestListDto requestListDto = requestService.getInviteToUser(user);
+                return ResponseEntity.ok(requestListDto);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
 
     @Operation(description = "밴드 초대 요청 보내기")
     @PostMapping("/api/request/invite")

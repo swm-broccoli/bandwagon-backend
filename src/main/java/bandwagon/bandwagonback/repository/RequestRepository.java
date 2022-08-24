@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.repository;
 
+import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.Request;
 import bandwagon.bandwagonback.domain.RequestType;
 import bandwagon.bandwagonback.domain.User;
@@ -9,4 +10,5 @@ import java.util.List;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findAllByUserAndType(User user, RequestType type);
+    List<Request> findAllByBandAndType(Band band, RequestType type);
 }

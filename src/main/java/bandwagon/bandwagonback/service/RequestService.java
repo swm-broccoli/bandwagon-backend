@@ -30,6 +30,12 @@ public class RequestService {
         return new RequestListDto(requestDtos);
     }
 
+    public RequestListDto getInviteFromBand(Band band) {
+        List<Request> invitesFromBand = requestRepository.findAllByBandAndType(band, RequestType.INVITE);
+        List<RequestDto> requestDtos = invitesFromBand.stream().map(RequestDto::new).collect(Collectors.toList());
+        return new RequestListDto(requestDtos);
+    }
+
     @Transactional
     public void createRequest(User user, Band band, RequestType requestType, BandPost bandPost) {
         Request request = new Request();
