@@ -57,7 +57,9 @@ public class RequestService {
         if (invitedUser.getBandMember() != null) {
             throw new Exception("Invited User is already in band!");
         }
-        // 중복 검사 로직?
+        if (requestRepository.existsByUserAndBandAndType(invitedUser, invitingBand, RequestType.INVITE)) {
+            throw new Exception("Already sent same Invite Request!");
+        }
         createRequest(invitedUser, invitingBand, RequestType.INVITE, null);
         notificationService.createBandToUser(invitingBand, invitedUser, NotificationType.INVITE);
     }
@@ -72,7 +74,9 @@ public class RequestService {
             throw new Exception("Can't find Post User is applying to");
         }
         Band appliedBand = bandPost.getBand();
-        // 중복 검사 로직
+        if (requestRepository.existsByUserAndBandPostAndType(applyingUser, bandPost, RequestType.APPLY)) {
+            throw new Exception("Already sent same Apply Request!");
+        }
         createRequest(applyingUser, appliedBand, RequestType.APPLY, bandPost);
         notificationService.createUserToBand(applyingUser, appliedBand, NotificationType.APPLY);
     }
