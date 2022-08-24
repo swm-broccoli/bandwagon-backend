@@ -32,6 +32,21 @@ public class BandService {
     private final BandMemberService bandMemberService;
 
     /**
+     * 유저의 밴드 반환
+     */
+    public Band getUsersBand(User user) throws Exception {
+        BandMember bandMember = user.getBandMember();
+        if (bandMember == null) {
+            throw new Exception("밴드에 가입된 유저가 아닙니다!");
+        }
+        Band band = bandMember.getBand();
+        if (band == null) {
+            throw new Exception("밴드를 찾을 수 없습니다!");
+        }
+        return band;
+    }
+
+    /**
      * 로그인 된 유저의 밴드 페이지 조회
      */
     public BandPageDto getUsersBandPage(String email) throws Exception {

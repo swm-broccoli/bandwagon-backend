@@ -2,11 +2,16 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.dto.RequestDto;
+import bandwagon.bandwagonback.dto.RequestListDto;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,6 +23,18 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final BandPostRepository bandPostRepository;
     private final BandMemberRepository bandMemberRepository;
+
+    public RequestListDto getRequestOnUser(User user, RequestType type) {
+        List<Request> invitesToUser = requestRepository.findAllByUserAndType(user, type);
+        List<RequestDto> requestDtos = invitesToUser.stream().map(RequestDto::new).collect(Collectors.toList());
+        return new RequestListDto(requestDtos);
+    }
+
+    public RequestListDto getRequestOnBand(Band band, RequestType type) {
+        List<Request> invitesFromBand = requestRepository.findAllByBandAndType(band, type);
+        List<RequestDto> requestDtos = invitesFromBand.stream().map(RequestDto::new).collect(Collectors.toList());
+        return new RequestListDto(requestDtos);
+    }
 
     @Transactional
     public void createRequest(User user, Band band, RequestType requestType, BandPost bandPost) {
