@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.BandPhoto;
 import bandwagon.bandwagonback.domain.Day;
 import bandwagon.bandwagonback.domain.Genre;
 import bandwagon.bandwagonback.domain.Position;
+import bandwagon.bandwagonback.domain.post.Post;
 import lombok.Data;
 
 @Data
@@ -31,5 +32,10 @@ public class IdNameForm {
     public IdNameForm(BandPhoto bandPhoto) {
         this.id = bandPhoto.getId();
         this.name = bandPhoto.getImgUrl();
+    }
+
+    public IdNameForm(Post post) {
+        this.id = post.getId();
+        this.name = post.getTitle();
     }
 }
