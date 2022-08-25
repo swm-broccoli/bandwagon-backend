@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 public class MyPageDto {
 
+    private Long id;
     private String avatarUrl;
     private String name;
     private LocalDate birthday;
@@ -26,6 +27,7 @@ public class MyPageDto {
     private List<PerformanceDto> userPerformances = new ArrayList<>();
 
     public MyPageDto(User user) {
+        this.id = user.getId();
         this.avatarUrl = user.getUserInfo().getAvatarUrl();
         this.name = user.getName();
         this.birthday = user.getBirthday();
