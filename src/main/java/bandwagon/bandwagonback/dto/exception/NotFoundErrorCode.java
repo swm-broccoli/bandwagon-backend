@@ -18,7 +18,8 @@ public enum NotFoundErrorCode implements ErrorCode{
     USER_PERFORMANCE_NOT_FOUND(HttpStatus.NOT_FOUND, "유저 연주기록을 찾을 수 없습니다"),
     BAND_GIG_NOT_FOUND(HttpStatus.NOT_FOUND, "밴드 공연기록을 찾을 수 없습니다"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다"),
-    FRONTMAN_NOT_FOUND(HttpStatus.NOT_FOUND, "프런트맨을 찾을 수 없습니다")
+    FRONTMAN_NOT_FOUND(HttpStatus.NOT_FOUND, "프런트맨을 찾을 수 없습니다"),
+    PREREQUISITE_NOT_FOUND(HttpStatus.NOT_FOUND, "지원조건을 찾을 수 없습니다")
     ;
 
 
