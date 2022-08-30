@@ -4,16 +4,15 @@ import org.springframework.http.HttpStatus;
 
 public class CustomException extends RuntimeException {
 
-    private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-    private final Long errorCode;
+    private final HttpStatus httpStatus;
 
-
-    public CustomException(Long errorCode) {
-        this.errorCode = errorCode;
+    public CustomException(String message) {
+        super(message);
+        this.httpStatus = HttpStatus.BAD_REQUEST;
     }
 
-    public CustomException(Long errorCode, String message) {
+    public CustomException(String message, HttpStatus httpStatus) {
         super(message);
-        this.errorCode = errorCode;
+        this.httpStatus = httpStatus;
     }
 }
