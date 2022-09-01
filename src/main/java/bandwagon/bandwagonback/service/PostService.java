@@ -18,6 +18,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @Slf4j
@@ -128,8 +130,8 @@ public class PostService {
         return postRepository.findAllByLikingUsers_email(email, pageRequest);
     }
 
-    public PopularPostsDto getPopularPosts() {
-
+    public List<Post> getPopularPosts() {
+        return postRepository.findTop3OrderByLikingUsersSize();
     }
 
     public String getPostType(Long postId) throws Exception {
