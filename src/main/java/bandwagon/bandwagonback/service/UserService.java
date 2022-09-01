@@ -194,6 +194,11 @@ public class UserService {
         return user;
     }
 
+    //유저 총 수 조회
+    public long getUserCount() {
+        return userRepository.count();
+    }
+
     private String randomPasswordGen() {
         int len = 10;
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
