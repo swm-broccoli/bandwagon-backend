@@ -12,6 +12,8 @@ import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -135,6 +137,23 @@ public class BandService {
         String imgUrl = s3Uploader.upload(multipartFile, "band/avatar");
         band.setAvatarUrl(imgUrl);
         return imgUrl;
+    }
+
+    /**
+     * 총 밴드 수 조회
+     */
+    private long getBandCount() {
+        return bandRepository.count();
+    }
+
+    /**
+     * 랜덤 밴드 조히
+     */
+    public Band getRandomBand() {
+        long bandCount = getBandCount();
+        int randomIndex = (int) (Math.random() * bandCount);
+        Page<Band> randomBand = bandRepository.findAll(PageRequest.of(randomIndex, 1));
+        return randomBand.getContent().get(0);
     }
 
     @Transactional

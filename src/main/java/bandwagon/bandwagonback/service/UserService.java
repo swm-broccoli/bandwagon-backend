@@ -8,6 +8,8 @@ import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,6 +194,19 @@ public class UserService {
             throw new Exception("존재하지 않는 유저입니다!");
         }
         return user;
+    }
+
+    //유저 총 수 조회
+    private long getUserCount() {
+        return userRepository.count();
+    }
+
+    //랜덤 유저 조회
+    public User getRandomUser() {
+        long userCount = getUserCount();
+        int randomIndex = (int) (Math.random() * userCount);
+        Page<User> randomUser = userRepository.findAll(PageRequest.of(randomIndex, 1));
+        return randomUser.getContent().get(0);
     }
 
     private String randomPasswordGen() {

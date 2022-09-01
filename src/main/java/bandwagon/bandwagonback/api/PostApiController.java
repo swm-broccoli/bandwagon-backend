@@ -278,22 +278,6 @@ public class PostApiController {
         }
     }
 
-    @Operation(description = "인기 게시글 조회")
-    @GetMapping("/api/post/popular")
-    public ResponseEntity<?> getPopularPosts() {
-        PageRequest pageRequest = PageRequest.of(0, 3);
-        List<Post> popularPosts = postService.getPopularPosts(pageRequest);
-        List<PostDto> postDtoList = popularPosts.stream().map(post -> {
-            if (post.getDtype().equals("Band")) {
-                return new BandPostDto((BandPost) post);
-            } else {
-                return new UserPostDto((UserPost) post);
-            }
-        }).collect(Collectors.toList());
-        PopularPostsDto popularPostsDto = new PopularPostsDto(postDtoList);
-        return ResponseEntity.ok(popularPostsDto);
-    }
-
     private String getJwtFromHeader(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null) {
