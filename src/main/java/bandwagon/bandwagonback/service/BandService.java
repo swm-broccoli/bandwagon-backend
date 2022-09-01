@@ -137,6 +137,14 @@ public class BandService {
         return imgUrl;
     }
 
+    /**
+     * 총 밴드 수 조회
+     */
+    private long getBandCount() {
+        return bandRepository.count();
+    }
+
+
     @Transactional
     public Band confirmUserInBand(String email, Long bandId) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);
