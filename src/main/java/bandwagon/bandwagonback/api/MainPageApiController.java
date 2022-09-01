@@ -1,13 +1,14 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.Band;
+import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
-import bandwagon.bandwagonback.dto.BandPostDto;
-import bandwagon.bandwagonback.dto.PopularPostsDto;
-import bandwagon.bandwagonback.dto.PostDto;
-import bandwagon.bandwagonback.dto.UserPostDto;
+import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.service.BandService;
 import bandwagon.bandwagonback.service.PostService;
+import bandwagon.bandwagonback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 public class MainPageApiController {
 
     private final PostService postService;
+    private final UserService userService;
+    private final BandService bandService;
 
     @Operation(description = "인기 게시글 조회")
     @GetMapping("/api/post/popular")
@@ -44,5 +47,18 @@ public class MainPageApiController {
         }).collect(Collectors.toList());
         PopularPostsDto popularPostsDto = new PopularPostsDto(postDtoList);
         return ResponseEntity.ok(popularPostsDto);
+    }
+    
+    //TODO: My/Band Page DTO 로 주지 말고 메인 페이지에 맞는 DTO로 변경 필요
+    @Operation(description = "오늘의(랜덤) 포트폴리오 조회")
+    @GetMapping("/api/random")
+    public ResponseEntity<?> getRandomPortfolio() {
+        if (Math.random() <= 0.5) {
+            User randomUser = userService.getRandomUser();
+            return ResponseEntity.ok(new MyPageDto(randomUser));
+        } else {
+            Band randomBand = bandService.getRandomBand();
+            return ResponseEntity.ok(new BandPageDto(randomBand, false));
+        }
     }
 }
