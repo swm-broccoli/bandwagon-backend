@@ -11,6 +11,6 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long>{
     Page<Post> findAllByLikingUsers_email(String email, PageRequest pageRequest);
 
-    @Query("select distinct p from Post p order by p.likingUsers.size desc")
-    List<Post> findTop3OrderByLikingUsersSize();
+    @Query("select p from Post p order by p.likingUsers.size desc")
+    List<Post> findTop3OrderByLikingUsersSize(PageRequest pageRequest);
 }
