@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.LikedPostPageDto;
+import bandwagon.bandwagonback.dto.PopularPostsDto;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -125,6 +128,10 @@ public class PostService {
 
     public Page<Post> getLikedPosts(String email, PageRequest pageRequest) {
         return postRepository.findAllByLikingUsers_email(email, pageRequest);
+    }
+
+    public List<Post> getPopularPosts() {
+        return postRepository.findTop3OrderByLikingUsersSize();
     }
 
     public String getPostType(Long postId) throws Exception {
