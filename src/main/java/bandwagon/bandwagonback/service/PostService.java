@@ -130,8 +130,8 @@ public class PostService {
         return postRepository.findAllByLikingUsers_email(email, pageRequest);
     }
 
-    public List<Post> getPopularPosts() {
-        return postRepository.findTop3OrderByLikingUsersSize();
+    public List<Post> getPopularPosts(PageRequest pageRequest) {
+        return postRepository.findTop3OrderByLikingUsersSize(pageRequest);
     }
 
     public String getPostType(Long postId) throws Exception {

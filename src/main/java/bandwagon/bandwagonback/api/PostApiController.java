@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
@@ -24,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
@@ -274,6 +276,22 @@ public class PostApiController {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
+    }
+
+    @Operation(description = "인기 게시글 조회")
+    @GetMapping("/api/post/popular")
+    public ResponseEntity<?> getPopularPosts() {
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        List<Post> popularPosts = postService.getPopularPosts(pageRequest);
+        List<PostDto> postDtoList = popularPosts.stream().map(post -> {
+            if (post.getDtype().equals("Band")) {
+                return new BandPostDto((BandPost) post);
+            } else {
+                return new UserPostDto((UserPost) post);
+            }
+        }).collect(Collectors.toList());
+        PopularPostsDto popularPostsDto = new PopularPostsDto(postDtoList);
+        return ResponseEntity.ok(popularPostsDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
