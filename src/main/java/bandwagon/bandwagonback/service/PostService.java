@@ -100,6 +100,18 @@ public class PostService {
         return userPostRepository.findAll(specification, pageRequest);
     }
 
+    public UserPost getUsersPost(User user) throws Exception {
+        UserPost userPost = userPostRepository.findOneByUser(user).orElse(null);
+        if (userPost == null) {
+            throw new Exception("User Post does not exist!");
+        }
+        return userPost;
+    }
+
+    public Page<BandPost> getBandsPosts(Band band, PageRequest pageRequest) {
+        return bandPostRepository.findAllByBand(band, pageRequest);
+    }
+
     @Transactional
     public void likePost(String email, Long postId) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
