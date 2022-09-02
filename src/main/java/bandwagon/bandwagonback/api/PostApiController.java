@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -248,6 +249,23 @@ public class PostApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
         }
 
+    }
+
+    @Operation(description = "유저 작성 구직글 조회")
+    @GetMapping("/api/my/user/post")
+    public ResponseEntity<?> getUsersPosts(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try{
+            User user = userService.findOneByEmail(email);
+            UserPost usersPost = postService.getUsersPost(user);
+            return ResponseEntity.ok(UserPostDto.makeUserPostDto(usersPost, user));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
     }
 
     @Operation(description = "게시글 좋아요")

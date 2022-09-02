@@ -11,5 +11,5 @@ import java.util.Optional;
 
 public interface UserPostRepository extends JpaRepository<UserPost, Long>, JpaSpecificationExecutor<UserPost> {
     boolean existsByUser(User user);
-    Page<UserPost> findByUser(User user, PageRequest pageRequest);
+    Optional<UserPost> findOneByUser(User user);
 }
