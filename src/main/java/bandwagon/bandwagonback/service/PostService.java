@@ -100,6 +100,10 @@ public class PostService {
         return userPostRepository.findAll(specification, pageRequest);
     }
 
+    public Page<UserPost> getUsersPosts(User user, PageRequest pageRequest) {
+        return userPostRepository.findByUser(user, pageRequest);
+    }
+
     @Transactional
     public void likePost(String email, Long postId) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
