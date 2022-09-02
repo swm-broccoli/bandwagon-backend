@@ -108,6 +108,10 @@ public class PostService {
         return userPost;
     }
 
+    public Page<BandPost> getBandsPosts(Band band, PageRequest pageRequest) {
+        return bandPostRepository.findAllByBand(band, pageRequest);
+    }
+
     @Transactional
     public void likePost(String email, Long postId) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
