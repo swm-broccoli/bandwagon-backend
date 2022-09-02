@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.api;
 
+import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
@@ -8,10 +9,7 @@ import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
-import bandwagon.bandwagonback.service.BandMemberService;
-import bandwagon.bandwagonback.service.PostService;
-import bandwagon.bandwagonback.service.RequestService;
-import bandwagon.bandwagonback.service.UserService;
+import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +36,7 @@ public class PostApiController {
 
     private final PostService postService;
     private final UserService userService;
-    private final RequestService requestService;
+    private final BandService bandService;
     private final BandMemberService bandMemberService;
     private final JwtUtil jwtTokenUtil;
 
@@ -253,15 +251,33 @@ public class PostApiController {
 
     @Operation(description = "유저 작성 구직글 조회")
     @GetMapping("/api/my/user/post")
-    public ResponseEntity<?> getUsersPosts(@RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size,
-                                           HttpServletRequest request) {
+    public ResponseEntity<?> getUsersPosts(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
         try{
             User user = userService.findOneByEmail(email);
             UserPost usersPost = postService.getUsersPost(user);
             return ResponseEntity.ok(UserPostDto.makeUserPostDto(usersPost, user));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @Operation(description = "유저의 밴드의 구인글 조회")
+    @GetMapping("/api/my/band/post")
+    public ResponseEntity<?> getUsersBandsPosts(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size,
+                                                HttpServletRequest request) {
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        try {
+            User user = userService.findOneByEmail(email);
+            Band usersBand = bandService.getUsersBand(user);
+            PageRequest pageRequest = PageRequest.of(page, size);
+            Page<BandPost> bandsPosts = postService.getBandsPosts(usersBand, pageRequest);
+            BandPostPageDto bandPostPageDto = new BandPostPageDto(bandsPosts.getContent().stream().map(post -> BandPostDto.makeBandPostDto(post, user)).collect(Collectors.toList()), bandsPosts.getNumber(), bandsPosts.getTotalElements(), bandsPosts.getTotalPages());
+            return ResponseEntity.ok(bandPostPageDto);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
