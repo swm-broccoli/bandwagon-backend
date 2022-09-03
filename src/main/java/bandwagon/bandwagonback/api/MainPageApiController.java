@@ -36,7 +36,7 @@ public class MainPageApiController {
     @Operation(description = "인기 게시글 조회")
     @GetMapping("/api/post/popular")
     public ResponseEntity<?> getPopularPosts() {
-        PageRequest pageRequest = PageRequest.of(0, 3);
+        PageRequest pageRequest = PageRequest.of(0, 4);
         List<Post> popularPosts = postService.getPopularPosts(pageRequest);
         List<PostDto> postDtoList = popularPosts.stream().map(post -> {
             if (post.getDtype().equals("Band")) {
