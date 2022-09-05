@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.inband.InBandException;
 import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.inband.UserNotInBandException;
@@ -32,6 +33,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InBandException.class)
     public ResponseEntity<?> handleInBandException(InBandException e) {
         log.error("handleInBandException", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTypeException.class)
+    public ResponseEntity<?> handleInvalidTypeException(InvalidTypeException e) {
+        log.error("handleInvalidTypeException", e);
         return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 }
