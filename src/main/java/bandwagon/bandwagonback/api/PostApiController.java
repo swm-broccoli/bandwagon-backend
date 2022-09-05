@@ -4,6 +4,8 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
+import bandwagon.bandwagonback.dto.exception.notof.PostNotOfBandException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
@@ -69,7 +71,7 @@ public class PostApiController {
                 Long userPostId = postService.createUserPost(email, postDto);
                 return ResponseEntity.ok(new SimpleIdResponse(userPostId));
             } else {
-                throw new Exception("Invalid dtype in request!");
+                throw new InvalidTypeException();
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -86,7 +88,7 @@ public class PostApiController {
             if (postDto.getDtype().equals("Band")) {
                 Long bandId = bandMemberService.getBandIdByUserEmail(email);
                 if (!postService.isPostByBand(postId, bandId)) {
-                    throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+                    throw new PostNotOfBandException();
                 }
                 return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
             } else if (postDto.getDtype().equals("User")) {
@@ -95,7 +97,7 @@ public class PostApiController {
                 }
                 return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
             } else {
-                throw new Exception("Invalid dtype in request!");
+                throw new InvalidTypeException();
             }
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -113,7 +115,7 @@ public class PostApiController {
             if (dtype.equals("Band")) {
                 Long bandId = bandMemberService.getBandIdByUserEmail(email);
                 if (!postService.isPostByBand(postId, bandId)) {
-                    throw new Exception("로그인 한 유저의 밴드와 request로 제공된 post의 band가 일치하지 않습니다!");
+                    throw new PostNotOfBandException();
                 }
                 postService.deletePost(postId);
             } else {
