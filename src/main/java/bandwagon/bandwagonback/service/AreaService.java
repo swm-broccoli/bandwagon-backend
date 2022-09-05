@@ -3,6 +3,9 @@ package bandwagon.bandwagonback.service;
 import bandwagon.bandwagonback.domain.Area;
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.dto.exception.notfound.AreaNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.AreaRepository;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
@@ -27,14 +30,14 @@ public class AreaService {
     private final BandMemberRepository bandMemberRepository;
 
     @Transactional
-    public void addAreaToUser(String email, Long areaId) throws Exception{
+    public void addAreaToUser(String email, Long areaId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         Area area = areaRepository.findById(areaId).orElse(null);
         if (area == null) {
-            throw new Exception("Area does not exist!");
+            throw new AreaNotFoundException();
         }
         if (user.getAreas().contains(area)) {
             log.info("User already has area: {} - {}", area.getCity(), area.getDistrict());
@@ -44,14 +47,14 @@ public class AreaService {
     }
 
     @Transactional
-    public void deleteAreaFromUser(String email, Long areaId) throws Exception {
+    public void deleteAreaFromUser(String email, Long areaId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         Area area = areaRepository.findById(areaId).orElse(null);
         if (area == null) {
-            throw new Exception("Area does not exist!");
+            throw new AreaNotFoundException();
         }
         user.removeArea(area);
     }
@@ -60,14 +63,14 @@ public class AreaService {
     public void addAreaToBand(String email, Long bandId, Long areaId) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
-            throw new Exception("Band does not exist!");
+            throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
         Area area = areaRepository.findById(areaId).orElse(null);
         if (area == null) {
-            throw new Exception("Area does not exist!");
+            throw new AreaNotFoundException();
         }
         if (band.getAreas().contains(area)) {
             log.info("User already has area: {} - {}", area.getCity(), area.getDistrict());
@@ -80,14 +83,14 @@ public class AreaService {
     public void deleteAreaFromBand(String email, Long bandId, Long areaId) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
-            throw new Exception("Band does not exist!");
+            throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
         }
         Area area = areaRepository.findById(areaId).orElse(null);
         if (area == null) {
-            throw new Exception("Area does not exist!");
+            throw new AreaNotFoundException();
         }
         band.removeArea(area);
     }
