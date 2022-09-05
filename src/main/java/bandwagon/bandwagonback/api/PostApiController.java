@@ -43,21 +43,16 @@ public class PostApiController {
     @Operation(description = "게시글 제목, 본문 조회")
     @GetMapping("/api/post/{post_id}")
     public ResponseEntity<?> getPost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            PostDto postDto;
-            if (jwt == null) {
-                postDto = postService.viewPost(postId);
-            } else {
-                String email = jwtTokenUtil.extractUsername(jwt);
-                User user = userService.findOneByEmail(email);
-                postDto = postService.viewPost(postId, user);
-            }
-            return ResponseEntity.ok(postDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        String jwt = getJwtFromHeader(request);
+        PostDto postDto;
+        if (jwt == null) {
+            postDto = postService.viewPost(postId);
+        } else {
+            String email = jwtTokenUtil.extractUsername(jwt);
+            User user = userService.findOneByEmail(email);
+            postDto = postService.viewPost(postId, user);
         }
+        return ResponseEntity.ok(postDto);
     }
 
     @Operation(description = "게시글 등록")
@@ -147,48 +142,40 @@ public class PostApiController {
                                              @RequestParam(required = false) Integer[] day,
                                              HttpServletRequest request) {
 
-        try {
-            Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
-            if (title != null) {
-                specification = specification.and(BandPostSpecification.containsStringInTitle(title));
-            }
-            if (position != null) {
-                specification = specification.and(BandPostSpecification.containsPosition(position));
-            }
-            if (genre != null) {
-                specification = specification.and(BandPostSpecification.containsGenre(genre));
-            }
-            if (area != null) {
-                specification = specification.and(BandPostSpecification.containsArea(area));
-            }
-            if (day != null) {
-                specification = specification.and(BandPostSpecification.containsDay(day));
-            }
-            if (minAge != null) {
-                specification = specification.and(BandPostSpecification.ageGreaterThan(minAge));
-            }
-            if (maxAge != null) {
-                specification = specification.and(BandPostSpecification.ageLessThan(maxAge));
-            }
-
-            PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
-
-            String jwt = getJwtFromHeader(request);
-            BandPostPageDto bandPostPageDto;
-            if (jwt == null) {
-                bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
-            } else {
-                String email = jwtTokenUtil.extractUsername(jwt);
-                User user = userService.findOneByEmail(email);
-                bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(post -> BandPostDto.makeBandPostDto(post, user)).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
-            }
-            return ResponseEntity.ok(bandPostPageDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
+        if (title != null) {
+            specification = specification.and(BandPostSpecification.containsStringInTitle(title));
         }
-
+        if (position != null) {
+            specification = specification.and(BandPostSpecification.containsPosition(position));
+        }
+        if (genre != null) {
+            specification = specification.and(BandPostSpecification.containsGenre(genre));
+        }
+        if (area != null) {
+            specification = specification.and(BandPostSpecification.containsArea(area));
+        }
+        if (day != null) {
+            specification = specification.and(BandPostSpecification.containsDay(day));
+        }
+        if (minAge != null) {
+            specification = specification.and(BandPostSpecification.ageGreaterThan(minAge));
+        }
+        if (maxAge != null) {
+            specification = specification.and(BandPostSpecification.ageLessThan(maxAge));
+        }
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
+        String jwt = getJwtFromHeader(request);
+        BandPostPageDto bandPostPageDto;
+        if (jwt == null) {
+            bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
+        } else {
+            String email = jwtTokenUtil.extractUsername(jwt);
+            User user = userService.findOneByEmail(email);
+            bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(post -> BandPostDto.makeBandPostDto(post, user)).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
+        }
+        return ResponseEntity.ok(bandPostPageDto);
     }
 
     @Operation(description = "유저 게시글 검색")
@@ -204,48 +191,42 @@ public class PostApiController {
                                              @RequestParam(required = false) Integer maxAge,
                                              HttpServletRequest request) {
 
-        try {
-            Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
-            if (title != null) {
-                specification = specification.and(UserPostSpecification.containsStringInTitle(title));
-            }
-            if (gender != null) {
-                specification = specification.and(UserPostSpecification.isGender(gender));
-            }
-            if (position != null) {
-                specification = specification.and(UserPostSpecification.playsPosition(position));
-            }
-            if (genre != null) {
-                specification = specification.and(UserPostSpecification.likesGenre(genre));
-            }
-            if (area != null) {
-                specification = specification.and(UserPostSpecification.availableArea(area));
-            }
-            if (minAge != null) {
-                specification = specification.and(UserPostSpecification.ageGreaterThan(minAge));
-            }
-            if (maxAge != null) {
-                specification = specification.and(UserPostSpecification.ageLessThan(maxAge));
-            }
-
-            PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            Page<UserPost> userPosts = postService.searchUserPosts(specification, pageRequest);
-
-            String jwt = getJwtFromHeader(request);
-            UserPostPageDto userPostPageDto;
-            if (jwt == null) {
-                userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(UserPostDto::new).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
-            } else {
-                String email = jwtTokenUtil.extractUsername(jwt);
-                User user = userService.findOneByEmail(email);
-                userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(post -> UserPostDto.makeUserPostDto(post, user)).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
-            }
-            return ResponseEntity.ok(userPostPageDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
+        if (title != null) {
+            specification = specification.and(UserPostSpecification.containsStringInTitle(title));
+        }
+        if (gender != null) {
+            specification = specification.and(UserPostSpecification.isGender(gender));
+        }
+        if (position != null) {
+            specification = specification.and(UserPostSpecification.playsPosition(position));
+        }
+        if (genre != null) {
+            specification = specification.and(UserPostSpecification.likesGenre(genre));
+        }
+        if (area != null) {
+            specification = specification.and(UserPostSpecification.availableArea(area));
+        }
+        if (minAge != null) {
+            specification = specification.and(UserPostSpecification.ageGreaterThan(minAge));
+        }
+        if (maxAge != null) {
+            specification = specification.and(UserPostSpecification.ageLessThan(maxAge));
         }
 
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<UserPost> userPosts = postService.searchUserPosts(specification, pageRequest);
+
+        String jwt = getJwtFromHeader(request);
+        UserPostPageDto userPostPageDto;
+        if (jwt == null) {
+            userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(UserPostDto::new).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
+        } else {
+            String email = jwtTokenUtil.extractUsername(jwt);
+            User user = userService.findOneByEmail(email);
+            userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(post -> UserPostDto.makeUserPostDto(post, user)).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
+        }
+        return ResponseEntity.ok(userPostPageDto);
     }
 
     @Operation(description = "게시글 좋아요")
@@ -253,13 +234,8 @@ public class PostApiController {
     public ResponseEntity<?> likePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            postService.likePost(email, postId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        postService.likePost(email, postId);
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "게시글 좋아요 취소")
@@ -267,13 +243,8 @@ public class PostApiController {
     public ResponseEntity<?> unlikePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            postService.unlikePost(email, postId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        postService.unlikePost(email, postId);
+        return ResponseEntity.ok(null);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
