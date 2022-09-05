@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -186,10 +187,10 @@ public class UserService {
     }
 
     //회원 하나 조회 - email로
-    public User findOneByEmail(String email) throws Exception {
+    public User findOneByEmail(String email) throws UserNotFoundException {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         return user;
     }
