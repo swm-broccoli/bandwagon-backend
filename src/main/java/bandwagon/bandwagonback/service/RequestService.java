@@ -4,6 +4,8 @@ import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.RequestDto;
 import bandwagon.bandwagonback.dto.RequestListDto;
+import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +73,7 @@ public class RequestService {
         }
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Can't find Post User is applying to");
+            throw new PostNotFoundException();
         }
         Band appliedBand = bandPost.getBand();
         if (requestRepository.existsByUserAndBandPostAndType(applyingUser, bandPost, RequestType.APPLY)) {
@@ -89,7 +91,7 @@ public class RequestService {
         }
         BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
-            throw new Exception("Accepting User is not Part of the Band in request");
+            throw new UserNotOfBandException();
         }
         if (!bandMember.getIsFrontman()) {
             throw new Exception("Accepting User is not frontman and cannot decline this Request!");
@@ -114,7 +116,7 @@ public class RequestService {
         }
         BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
-            throw new Exception("Declining User is not Part of the Band in request");
+            throw new UserNotOfBandException();
         }
         if (!bandMember.getIsFrontman()) {
             throw new Exception("Declining User is not frontman and cannot decline this Request!");
@@ -177,7 +179,7 @@ public class RequestService {
         }
         BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
-            throw new Exception("Canceling User is not Part of the Band in request");
+            throw new UserNotOfBandException();
         }
         if (!bandMember.getIsFrontman()) {
             throw new Exception("Canceling User is not frontman and cannot decline this Request!");
