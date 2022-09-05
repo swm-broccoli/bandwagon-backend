@@ -8,6 +8,7 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.prerequisite.*;
 import bandwagon.bandwagonback.dto.PrerequisiteCheckDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
+import bandwagon.bandwagonback.dto.exception.notfound.*;
 import bandwagon.bandwagonback.dto.subdto.AreaForm;
 import bandwagon.bandwagonback.dto.subdto.IdNameForm;
 import bandwagon.bandwagonback.repository.*;
@@ -36,7 +37,7 @@ public class BandPrerequisiteService {
     public void addPrerequisite(Long postId, PrerequisiteDto prerequisiteDto) throws Exception {
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if(bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         switch (prerequisiteDto.getDtype()) {
             case "Age":
@@ -49,7 +50,7 @@ public class BandPrerequisiteService {
                 for (AreaForm areaForm : prerequisiteDto.getAreas()) {
                     Area area = areaRepository.findById(areaForm.getId()).orElse(null);
                     if (area == null) {
-                        throw new Exception("Area does not exist!");
+                        throw new AreaNotFoundException();
                     }
                     areaPrerequisite.addArea(area);
                 }
@@ -66,7 +67,7 @@ public class BandPrerequisiteService {
                 for (IdNameForm idNameForm : prerequisiteDto.getGenres()) {
                     Genre genre = genreRepository.findById(idNameForm.getId()).orElse(null);
                     if (genre == null) {
-                        throw new Exception("Genre does not exist!");
+                        throw new GenreNotFoundException();
                     }
                     genrePrerequisite.addGenre(genre);
                 }
@@ -78,7 +79,7 @@ public class BandPrerequisiteService {
                 for (IdNameForm idNameForm : prerequisiteDto.getPositions()) {
                     Position position = positionRepository.findById(idNameForm.getId()).orElse(null);
                     if (position == null) {
-                        throw new Exception("Position does not exist!");
+                        throw new PositionNotFoundException();
                     }
                     positionPrerequisite.addPosition(position);
                 }
@@ -124,7 +125,7 @@ public class BandPrerequisiteService {
     public void deletePrerequisite(Long postId, Long prerequisiteId) throws Exception {
         BandPrerequisite bandPrerequisite = bandPrerequisiteRepository.findById(prerequisiteId).orElse(null);
         if (bandPrerequisite == null) {
-            throw new Exception("Prerequisite doesn't exist!");
+            throw new PrerequisiteNotFoundException();
         }
         if (!bandPrerequisite.getBandPost().getId().equals(postId)) {
             throw new Exception("User has no permission to this Prerequisite!");
@@ -141,11 +142,11 @@ public class BandPrerequisiteService {
     public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         List<PrerequisiteCheckDto> res = new ArrayList<>();
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
@@ -203,11 +204,11 @@ public class BandPrerequisiteService {
     public Boolean canUserApply(String email, Long postId) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
             boolean check = false;
