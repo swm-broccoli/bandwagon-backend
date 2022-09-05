@@ -2,8 +2,6 @@ package bandwagon.bandwagonback.dto;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class ErrorResponse {
 

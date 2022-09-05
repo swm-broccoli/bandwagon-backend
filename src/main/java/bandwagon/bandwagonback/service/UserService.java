@@ -65,7 +65,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if (user.getBandMember() != null && user.getBandMember().getIsFrontman()) {
             throw new Exception("밴드의 프런트맨입니다! 프런트맨을 넘기시거나 밴드를 해체해 주세요.");
@@ -78,7 +78,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if (request.getOldPassword() != null && !request.getOldPassword().equals("")) {
             editPassword(user, request);
@@ -100,11 +100,11 @@ public class UserService {
     }
 
     @Transactional
-    public void editDescription(String email, String description) throws Exception {
+    public void editDescription(String email, String description) {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         UserInfo userInfo = user.getUserInfo();
         userInfo.setDescription(description);
@@ -115,7 +115,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         UserInfo userInfo = user.getUserInfo();
         if (userInfo.getAvatarUrl() != null && userInfo.getAvatarUrl().length() != 0) {
@@ -135,10 +135,10 @@ public class UserService {
         }
     }
 
-    public FindUserEmailDto findUserEmail(FindUserEmailRequest request) throws Exception {
+    public FindUserEmailDto findUserEmail(FindUserEmailRequest request) {
         List<User> users = userRepository.findAllByNameAndBirthday(request.getName(), request.getBirthday());
         if (users.isEmpty()) {
-            throw new Exception("해당 이름과 생일 정보로 가입한 유저가 없습니다!");
+            throw new UserNotFoundException();
         }
         List<String> userEmails = users.stream().map(user -> user.getEmail().replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*")).collect(Collectors.toList());
         return new FindUserEmailDto(userEmails);
@@ -148,7 +148,7 @@ public class UserService {
     public void findUserPassword(FindUserPasswordRequest request) throws Exception {
         User user = userRepository.findByNameAndEmail(request.getName(), request.getEmail()).orElse(null);
         if (user == null) {
-            throw new Exception("해당 정보의 유저가 존재하지 않습니다!");
+            throw new UserNotFoundException();
         }
         if (user.getIsSocial()) {
             throw new Exception("소셜 로그인 유저라 비밀번호 변경이 불가합니다!");
@@ -159,10 +159,10 @@ public class UserService {
         emailService.sendSimpleMessage(user.getEmail(), "[Band:Wagon] 임시 비밀번호 발급", emailText);
     }
 
-    public Band findBand(String email) throws Exception {
+    public Band findBand(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if (user.getBandMember() != null) {
             return user.getBandMember().getBand();
@@ -178,16 +178,16 @@ public class UserService {
     }
 
     //회원 하나 조회 - table id로
-    public User findOne(Long userId) throws Exception{
+    public User findOne(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         return user;
     }
 
     //회원 하나 조회 - email로
-    public User findOneByEmail(String email) throws UserNotFoundException {
+    public User findOneByEmail(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
