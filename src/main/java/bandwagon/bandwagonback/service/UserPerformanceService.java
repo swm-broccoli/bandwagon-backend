@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.domain.UserPerformance;
 import bandwagon.bandwagonback.dto.PerformanceDto;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserPerformanceNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserPerformanceNotOfUserException;
 import bandwagon.bandwagonback.repository.UserPerformanceRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class UserPerformanceService {
 
     // 기존 연주기록 삭제
     @Transactional
-    public void deleteUserPerformance(String email, Long userPerformanceId) throws Exception {
+    public void deleteUserPerformance(String email, Long userPerformanceId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
@@ -49,14 +50,14 @@ public class UserPerformanceService {
             throw new UserPerformanceNotFoundException();
         }
         if (userPerformance.getUser() != user) {
-            throw new Exception("Owner of performance is not inputted user!");
+            throw new UserPerformanceNotOfUserException();
         }
         userPerformanceRepository.deleteById(userPerformanceId);
     }
 
     // 기존 연주기록 업데이트
     @Transactional
-    public void updateUserPerformance(String email, Long userPerformanceId, PerformanceDto performanceDto) throws Exception{
+    public void updateUserPerformance(String email, Long userPerformanceId, PerformanceDto performanceDto) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
@@ -66,7 +67,7 @@ public class UserPerformanceService {
             throw new UserPerformanceNotFoundException();
         }
         if (userPerformance.getUser() != user) {
-            throw new Exception("Owner of performance is not inputted user!");
+            throw new UserPerformanceNotOfUserException();
         }
         userPerformance.update(performanceDto);
     }
