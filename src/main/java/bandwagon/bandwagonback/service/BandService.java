@@ -7,6 +7,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.dto.BandPageDto;
 import bandwagon.bandwagonback.dto.exception.NoBandException;
+import bandwagon.bandwagonback.dto.exception.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
@@ -54,14 +55,14 @@ public class BandService {
     /**
      * 로그인 된 유저의 밴드 페이지 조회
      */
-    public BandPageDto getUsersBandPage(String email) throws Exception {
+    public BandPageDto getUsersBandPage(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
         }
         BandMember bandMember = user.getBandMember();
         if (bandMember == null) {
-            throw new NoBandException("가입된 밴드가 없습니다.");
+            throw new UserNotInBandException();
         }
         return new BandPageDto(bandMember.getBand(), bandMember.getIsFrontman());
     }

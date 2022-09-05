@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.exception.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,5 +25,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
         log.error("handleBadCredentialsException", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
+    }
+
+    @ExceptionHandler(UserNotInBandException.class)
+    public ResponseEntity<?> handleUserNotInBandException(UserNotInBandException e) {
+        log.error("handleUserNotInBandException", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 }

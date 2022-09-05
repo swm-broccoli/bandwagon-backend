@@ -39,16 +39,8 @@ public class BandPageApiController {
     public ResponseEntity<?> getBandPage(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            BandPageDto bandPageDto = bandService.getUsersBandPage(email);
-            return ResponseEntity.ok().body(bandPageDto);
-        } catch (NoBandException nbe) {
-            log.error(nbe.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(nbe.getMessage()));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        BandPageDto bandPageDto = bandService.getUsersBandPage(email);
+        return ResponseEntity.ok().body(bandPageDto);
     }
 
     @Operation(description = "(아무나) 밴드 페이지 불러오기")
