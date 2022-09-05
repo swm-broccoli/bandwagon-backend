@@ -3,6 +3,8 @@ package bandwagon.bandwagonback.service;
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.BandPractice;
 import bandwagon.bandwagonback.dto.PerformanceDto;
+import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.BandPracticeNotFoundException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandPracticeRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
@@ -36,7 +38,7 @@ public class BandPracticeService {
         Band band = confirmUserInBand(email, bandId);
         BandPractice bandPractice = bandPracticeRepository.findById(bandPracticeId).orElse(null);
         if (bandPractice == null) {
-            throw new Exception("존재하지 않는 연주기록입니다!");
+            throw new BandPracticeNotFoundException();
         }
         if(bandPractice.getBand() != band) {
             throw new Exception("해당 밴드의 연주기록이 아닙니다!");
@@ -50,7 +52,7 @@ public class BandPracticeService {
         Band band = confirmUserInBand(email, bandId);
         BandPractice bandPractice = bandPracticeRepository.findById(bandPracticeId).orElse(null);
         if (bandPractice == null) {
-            throw new Exception("존재하지 않는 연주기록입니다!");
+            throw new BandPracticeNotFoundException();
         }
         if(bandPractice.getBand() != band) {
             throw new Exception("해당 밴드의 연주기록이 아닙니다!");
@@ -62,7 +64,7 @@ public class BandPracticeService {
     public Band confirmUserInBand(String email, Long bandId) throws Exception {
         Band band = bandRepository.findById(bandId).orElse(null);
         if(band == null) {
-            throw new Exception("존재하지 않는 밴드입니다!");
+            throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
             throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
