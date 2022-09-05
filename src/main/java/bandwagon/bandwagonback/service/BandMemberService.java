@@ -1,6 +1,9 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
+import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.PositionNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.PositionRepository;
@@ -37,11 +40,11 @@ public class BandMemberService {
         confirmUserIsFrontman(email, bandId);
         User candidateUser = userRepository.findByEmail(candidateEmail).orElse(null);
         if (candidateUser == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
-            throw new Exception("존재하지 않는 밴드입니다!");
+            throw new BandNotFoundException();
         }
         if (candidateUser.getBandMember() != null) {
             throw new Exception("이미 밴드에 속한 유저입니다");
@@ -94,7 +97,7 @@ public class BandMemberService {
         }
         Position position = positionRepository.findById(positionId).orElse(null);
         if (position == null) {
-            throw new Exception("Position does not exist!");
+            throw new PositionNotFoundException();
         }
         if (bandMember.getPositions().contains(position)){
             log.info("User already has position: {}", position.getPosition());
@@ -112,7 +115,7 @@ public class BandMemberService {
         }
         Position position = positionRepository.findById(positionId).orElse(null);
         if (position == null) {
-            throw new Exception("Position does not exist!");
+            throw new PositionNotFoundException();
         }
         bandMember.removePosition(position);
     }
