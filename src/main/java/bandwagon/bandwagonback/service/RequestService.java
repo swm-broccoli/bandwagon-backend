@@ -4,7 +4,7 @@ import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.RequestDto;
 import bandwagon.bandwagonback.dto.RequestListDto;
-import bandwagon.bandwagonback.dto.exception.UserInBandException;
+import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.*;

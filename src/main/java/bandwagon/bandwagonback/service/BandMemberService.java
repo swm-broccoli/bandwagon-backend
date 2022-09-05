@@ -1,8 +1,8 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
-import bandwagon.bandwagonback.dto.exception.UserInBandException;
-import bandwagon.bandwagonback.dto.exception.UserNotInBandException;
+import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
+import bandwagon.bandwagonback.dto.exception.inband.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.PositionNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
