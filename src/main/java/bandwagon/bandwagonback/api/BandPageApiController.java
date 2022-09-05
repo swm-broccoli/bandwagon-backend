@@ -4,7 +4,6 @@ import bandwagon.bandwagonback.dto.BandPageDto;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.ImageResponseDto;
 import bandwagon.bandwagonback.dto.PerformanceDto;
-import bandwagon.bandwagonback.dto.exception.NoBandException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
