@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.exception.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotInBandException.class)
     public ResponseEntity<?> handleUserNotInBandException(UserNotInBandException e) {
         log.error("handleUserNotInBandException", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(UserInBandException.class)
+    public ResponseEntity<?> handleUserInBandException(UserInBandException e) {
+        log.error("handleUserInBandException", e);
         return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 }
