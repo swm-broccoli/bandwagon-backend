@@ -7,6 +7,7 @@ import bandwagon.bandwagonback.dto.RequestListDto;
 import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.RequestNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -89,7 +90,7 @@ public class RequestService {
     public void acceptApplyRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
-            throw new Exception("Specified Request is Not Valid");
+            throw new RequestNotFoundException();
         }
         BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
@@ -114,7 +115,7 @@ public class RequestService {
     public void declineApplyRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
-            throw new Exception("Specified Request is Not Valid");
+            throw new RequestNotFoundException();
         }
         BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
@@ -128,10 +129,10 @@ public class RequestService {
     }
 
     @Transactional
-    public void cancelApplyRequest(User user, Long requestId) throws Exception {
+    public void cancelApplyRequest(User user, Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
-            throw new Exception("Specified Request is Not Valid");
+            throw new RequestNotFoundException();
         }
         if (!user.equals(request.getUser())) {
             throw new UserNotAuthorizedException();
@@ -140,10 +141,10 @@ public class RequestService {
     }
 
     @Transactional
-    public void acceptInviteRequest(User user, Long requestId) throws Exception {
+    public void acceptInviteRequest(User user, Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
-            throw new Exception("Specified Request is Not Valid");
+            throw new RequestNotFoundException();
         }
         if (!user.equals(request.getUser())) {
             throw new UserNotAuthorizedException();
@@ -161,10 +162,10 @@ public class RequestService {
     }
 
     @Transactional
-    public void declineInviteRequest(User user, Long requestId) throws Exception {
+    public void declineInviteRequest(User user, Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
-            throw new Exception("Specified Request is Not Valid");
+            throw new RequestNotFoundException();
         }
         if (!user.equals(request.getUser())) {
             throw new UserNotAuthorizedException();
@@ -177,7 +178,7 @@ public class RequestService {
     public void cancelInviteRequest(User user, Long requestId) throws Exception {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
-            throw new Exception("Specified Request is Not Valid");
+            throw new RequestNotFoundException();
         }
         BandMember bandMember = bandMemberRepository.findByMemberAndBand(user, request.getBand()).orElse(null);
         if (bandMember == null) {
