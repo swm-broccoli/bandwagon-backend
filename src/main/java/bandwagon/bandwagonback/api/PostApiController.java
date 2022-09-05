@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.notof.PostNotOfBandException;
+import bandwagon.bandwagonback.dto.exception.notof.PostNotOfUserException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
@@ -82,53 +83,43 @@ public class PostApiController {
     @Operation(description = "게시글 수정")
     @PutMapping("/api/post/{post_id}")
     public ResponseEntity<?> editPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            String email = jwtTokenUtil.extractUsername(jwt);
-            if (postDto.getDtype().equals("Band")) {
-                Long bandId = bandMemberService.getBandIdByUserEmail(email);
-                if (!postService.isPostByBand(postId, bandId)) {
-                    throw new PostNotOfBandException();
-                }
-                return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
-            } else if (postDto.getDtype().equals("User")) {
-                if (!postService.isPostByUser(postId, email)) {
-                    throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
-                }
-                return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
-            } else {
-                throw new InvalidTypeException();
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        if (postDto.getDtype().equals("Band")) {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new PostNotOfBandException();
             }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+            return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
+        } else if (postDto.getDtype().equals("User")) {
+            if (!postService.isPostByUser(postId, email)) {
+                throw new PostNotOfUserException();
+            }
+            return ResponseEntity.ok(new SimpleIdResponse(postService.editPost(postId, postDto)));
+        } else {
+            throw new InvalidTypeException();
         }
     }
 
     @Operation(description = "게시글 삭제")
     @DeleteMapping("/api/post/{post_id}")
     public ResponseEntity<?> deletePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            String email = jwtTokenUtil.extractUsername(jwt);
-            String dtype = postService.getPostType(postId);
-            if (dtype.equals("Band")) {
-                Long bandId = bandMemberService.getBandIdByUserEmail(email);
-                if (!postService.isPostByBand(postId, bandId)) {
-                    throw new PostNotOfBandException();
-                }
-                postService.deletePost(postId);
-            } else {
-                if (!postService.isPostByUser(postId, email)) {
-                    throw new Exception("로그인 한 유저와 post의 유저가 일치하지 않습니다!");
-                }
-                postService.deletePost(postId);
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        String dtype = postService.getPostType(postId);
+        if (dtype.equals("Band")) {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            if (!postService.isPostByBand(postId, bandId)) {
+                throw new PostNotOfBandException();
             }
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+            postService.deletePost(postId);
+        } else {
+            if (!postService.isPostByUser(postId, email)) {
+                throw new PostNotOfUserException();
+            }
+            postService.deletePost(postId);
         }
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "밴드 게시글 검색")
