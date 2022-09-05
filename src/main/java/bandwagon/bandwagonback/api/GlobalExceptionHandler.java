@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.inband.InBandException;
+import bandwagon.bandwagonback.dto.exception.notauthorized.NotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.NotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.NotOfException;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidTypeException.class)
     public ResponseEntity<?> handleInvalidTypeException(InvalidTypeException e) {
         log.error("handleInvalidTypeException", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(NotAuthorizedException.class)
+    public ResponseEntity<?> handleNotAuthorizedException(NotAuthorizedException e) {
+        log.error("handleNotAuthorizedException", e);
         return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 }
