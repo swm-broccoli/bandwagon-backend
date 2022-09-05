@@ -10,6 +10,7 @@ import bandwagon.bandwagonback.dto.PrerequisiteCheckDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.notfound.*;
+import bandwagon.bandwagonback.dto.exception.notof.PrerequisiteNotOfBandException;
 import bandwagon.bandwagonback.dto.subdto.AreaForm;
 import bandwagon.bandwagonback.dto.subdto.IdNameForm;
 import bandwagon.bandwagonback.repository.*;
@@ -123,19 +124,19 @@ public class BandPrerequisiteService {
     }
 
     @Transactional
-    public void deletePrerequisite(Long postId, Long prerequisiteId) throws Exception {
+    public void deletePrerequisite(Long postId, Long prerequisiteId) {
         BandPrerequisite bandPrerequisite = bandPrerequisiteRepository.findById(prerequisiteId).orElse(null);
         if (bandPrerequisite == null) {
             throw new PrerequisiteNotFoundException();
         }
         if (!bandPrerequisite.getBandPost().getId().equals(postId)) {
-            throw new Exception("User has no permission to this Prerequisite!");
+            throw new PrerequisiteNotOfBandException();
         }
         bandPrerequisiteRepository.deleteById(prerequisiteId);
     }
 
     @Transactional
-    public void editPrerequisite(Long postId, Long prerequisiteId, PrerequisiteDto prerequisiteDto) throws Exception {
+    public void editPrerequisite(Long postId, Long prerequisiteId, PrerequisiteDto prerequisiteDto) {
         deletePrerequisite(postId, prerequisiteId);
         addPrerequisite(postId, prerequisiteDto);
     }

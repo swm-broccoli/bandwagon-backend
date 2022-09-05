@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.RequestDto;
 import bandwagon.bandwagonback.dto.RequestListDto;
 import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
+import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.*;
@@ -133,7 +134,7 @@ public class RequestService {
             throw new Exception("Specified Request is Not Valid");
         }
         if (!user.equals(request.getUser())) {
-            throw new Exception("User is not owner of Apply Request");
+            throw new UserNotAuthorizedException();
         }
         requestRepository.delete(request);
     }
@@ -145,7 +146,7 @@ public class RequestService {
             throw new Exception("Specified Request is Not Valid");
         }
         if (!user.equals(request.getUser())) {
-            throw new Exception("Accepting user is not User in request!");
+            throw new UserNotAuthorizedException();
         }
         //Accepting logic
         if (user.getBandMember() != null) {
@@ -166,7 +167,7 @@ public class RequestService {
             throw new Exception("Specified Request is Not Valid");
         }
         if (!user.equals(request.getUser())) {
-            throw new Exception("Declining user is not User in request!");
+            throw new UserNotAuthorizedException();
         }
         requestRepository.delete(request);
         notificationService.createUserToBand(user, request.getBand(), NotificationType.INVITE_DECLINE);

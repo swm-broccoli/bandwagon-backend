@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.notauthorized.SocialAccountNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
@@ -145,13 +146,13 @@ public class UserService {
     }
 
     @Transactional
-    public void findUserPassword(FindUserPasswordRequest request) throws Exception {
+    public void findUserPassword(FindUserPasswordRequest request) {
         User user = userRepository.findByNameAndEmail(request.getName(), request.getEmail()).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
         }
         if (user.getIsSocial()) {
-            throw new Exception("소셜 로그인 유저라 비밀번호 변경이 불가합니다!");
+            throw new SocialAccountNotAuthorizedException();
         }
         String newRandomPassword = randomPasswordGen();
         user.setPassword(passwordEncoder.encode(newRandomPassword));
