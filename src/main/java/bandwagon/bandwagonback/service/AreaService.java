@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.exception.notfound.AreaNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.AreaRepository;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
@@ -60,13 +61,13 @@ public class AreaService {
     }
     //TODO: Area, genre, position 등 서비스에서 객체 속 리스트에 중복 있는지 검사하지 않고 객체 자체 메서드에서 검사하게 변경 (like I did in prerequisites)
     @Transactional
-    public void addAreaToBand(String email, Long bandId, Long areaId) throws Exception {
+    public void addAreaToBand(String email, Long bandId, Long areaId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
             throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         Area area = areaRepository.findById(areaId).orElse(null);
         if (area == null) {
@@ -80,13 +81,13 @@ public class AreaService {
     }
 
     @Transactional
-    public void deleteAreaFromBand(String email, Long bandId, Long areaId) throws Exception {
+    public void deleteAreaFromBand(String email, Long bandId, Long areaId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
             throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         Area area = areaRepository.findById(areaId).orElse(null);
         if (area == null) {
