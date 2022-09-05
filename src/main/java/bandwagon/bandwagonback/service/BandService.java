@@ -9,6 +9,7 @@ import bandwagon.bandwagonback.dto.BandPageDto;
 import bandwagon.bandwagonback.dto.exception.NoBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 @Slf4j
 @Service
@@ -111,7 +114,7 @@ public class BandService {
      * 밴드 이름 변경
      */
     @Transactional
-    public void editName(String email, Long bandId, String newName) throws Exception {
+    public void editName(String email, Long bandId, String newName) {
         Band band = confirmUserInBand(email, bandId);
         band.setName(newName);
     }
@@ -120,7 +123,7 @@ public class BandService {
      * 밴드 소개 변경
      */
     @Transactional
-    public void editDescription(String email, Long bandId, String newDescription) throws Exception {
+    public void editDescription(String email, Long bandId, String newDescription) {
         Band band = confirmUserInBand(email, bandId);
         band.setDescription(newDescription);
     }
@@ -129,7 +132,7 @@ public class BandService {
      * 밴드 아바타 변경
      */
     @Transactional
-    public String uploadAvatar(String email, Long bandId, MultipartFile multipartFile) throws Exception {
+    public String uploadAvatar(String email, Long bandId, MultipartFile multipartFile) throws URISyntaxException, IOException {
         Band band = confirmUserInBand(email, bandId);
         if (band.getAvatarUrl() != null && band.getAvatarUrl().length() != 0) {
             s3Uploader.deleteFromS3(band.getAvatarUrl().replace(File.separatorChar, '/'));
@@ -140,13 +143,13 @@ public class BandService {
     }
 
     @Transactional
-    public Band confirmUserInBand(String email, Long bandId) throws Exception {
+    public Band confirmUserInBand(String email, Long bandId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if(band == null) {
             throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         return band;
     }

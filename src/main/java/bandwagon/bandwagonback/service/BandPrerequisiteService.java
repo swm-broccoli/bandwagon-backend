@@ -94,7 +94,7 @@ public class BandPrerequisiteService {
     public List<PrerequisiteDto> getAllPrerequisiteOfPost(Long bandPostId) throws Exception {
         BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         List<PrerequisiteDto> res = new ArrayList<>();
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
