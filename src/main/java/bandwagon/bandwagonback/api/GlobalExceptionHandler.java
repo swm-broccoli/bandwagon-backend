@@ -3,9 +3,8 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.inband.InBandException;
-import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
-import bandwagon.bandwagonback.dto.exception.inband.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.NotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.NotOfException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +20,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleNotFoundException(NotFoundException e) {
         log.error("handleNotFoundException", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(NotOfException.class)
+    public ResponseEntity<?> handleNotOfException(NotOfException e) {
+        log.error("handleNotOfException", e);
         return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 
