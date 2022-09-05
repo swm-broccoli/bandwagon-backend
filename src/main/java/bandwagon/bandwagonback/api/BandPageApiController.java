@@ -54,13 +54,8 @@ public class BandPageApiController {
     @Operation(description = "(아무나) 밴드 페이지 불러오기")
     @GetMapping("/api/band/{band_id}/bandpage")
     public ResponseEntity<?> getOtherBandPage(@PathVariable("band_id") Long bandId, HttpServletRequest request) {
-        try {
-            BandPageDto bandPageDto = bandService.getOtherBandPage(bandId);
-            return ResponseEntity.ok(bandPageDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        BandPageDto bandPageDto = bandService.getOtherBandPage(bandId);
+        return ResponseEntity.ok(bandPageDto);
     }
 
     @Operation(description = "밴드 공연 추가")
