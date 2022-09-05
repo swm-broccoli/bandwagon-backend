@@ -1,6 +1,8 @@
 package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
+import bandwagon.bandwagonback.dto.exception.UserInBandException;
+import bandwagon.bandwagonback.dto.exception.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.PositionNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
@@ -28,10 +30,10 @@ public class BandMemberService {
     private final UserRepository userRepository;
     private final PositionRepository positionRepository;
 
-    public Long getBandIdByUserEmail(String email) throws Exception {
+    public Long getBandIdByUserEmail(String email) {
         BandMember bandMember = bandMemberRepository.findFirstByMember_email(email).orElse(null);
         if (bandMember == null) {
-           throw new Exception("밴드에 속한 유저가 아닙니다!");
+           throw new UserNotInBandException();
         }
         return bandMember.getBand().getId();
     }
@@ -48,7 +50,7 @@ public class BandMemberService {
             throw new BandNotFoundException();
         }
         if (candidateUser.getBandMember() != null) {
-            throw new Exception("이미 밴드에 속한 유저입니다");
+            throw new UserInBandException();
         }
         BandMember newMember = new BandMember(candidateUser, false);
         band.addBandMember(newMember);

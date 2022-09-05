@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.NotificationType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.dto.BandPageDto;
+import bandwagon.bandwagonback.dto.exception.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.UserNotInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
@@ -39,10 +40,10 @@ public class BandService {
     /**
      * 유저의 밴드 반환
      */
-    public Band getUsersBand(User user) throws Exception {
+    public Band getUsersBand(User user) {
         BandMember bandMember = user.getBandMember();
         if (bandMember == null) {
-            throw new Exception("밴드에 가입된 유저가 아닙니다!");
+            throw new UserNotInBandException();
         }
         Band band = bandMember.getBand();
         if (band == null) {
@@ -81,13 +82,13 @@ public class BandService {
      * 밴드 생성
      */
     @Transactional
-    public Long createBand(String email, BandCreateForm bandCreateForm) throws Exception {
+    public Long createBand(String email, BandCreateForm bandCreateForm) {
         User user = userRepository.findByEmail(email).orElse(null);
         if(user == null) {
             throw new UserNotFoundException();
         }
         if(user.getBandMember() != null) {
-            throw new Exception("밴드에 이미 가입한 유저입니다!");
+            throw new UserInBandException();
         }
         Band band = new Band(bandCreateForm);
         bandRepository.save(band);

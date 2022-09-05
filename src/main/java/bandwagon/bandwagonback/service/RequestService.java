@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.RequestDto;
 import bandwagon.bandwagonback.dto.RequestListDto;
+import bandwagon.bandwagonback.dto.exception.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.*;
@@ -57,7 +58,7 @@ public class RequestService {
         }
         Band invitingBand = invitingUser.getBandMember().getBand();
         if (invitedUser.getBandMember() != null) {
-            throw new Exception("Invited User is already in band!");
+            throw new UserInBandException();
         }
         if (requestRepository.existsByUserAndBandAndType(invitedUser, invitingBand, RequestType.INVITE)) {
             throw new Exception("Already sent same Invite Request!");
@@ -69,7 +70,7 @@ public class RequestService {
     @Transactional
     public void sendApplyRequest(User applyingUser, Long postId) throws Exception {
         if (applyingUser.getBandMember() != null) {
-            throw new Exception("Applying user is already in band!");
+            throw new UserInBandException();
         }
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if (bandPost == null) {
@@ -99,7 +100,7 @@ public class RequestService {
         // Accepting logic
         User candidateUser = request.getUser();
         if (candidateUser.getBandMember() != null) {
-            throw new Exception("이미 밴드에 속한 유저입니다");
+            throw new UserInBandException();
         }
         BandMember newMember = new BandMember(candidateUser, false);
         request.getBand().addBandMember(newMember);
@@ -148,7 +149,7 @@ public class RequestService {
         }
         //Accepting logic
         if (user.getBandMember() != null) {
-            throw new Exception("이미 밴드에 속한 유저입니다");
+            throw new UserInBandException();
         }
         // 자기 자신은 알림 받지 않게 밴드에 추가 되기 직전에 밴드 맴버들에게 알림 발송
         notificationService.createUserToBand(user, request.getBand(), NotificationType.INVITE_ACCEPT);
