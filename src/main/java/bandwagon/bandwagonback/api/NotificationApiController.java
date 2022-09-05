@@ -35,14 +35,9 @@ public class NotificationApiController {
     public ResponseEntity<?> getUnreadNotiCount(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User user = userService.findOneByEmail(email);
-            long count = notificationService.getUnreadNotificationCount(user);
-            return ResponseEntity.ok(new SimpleCountResponse(count));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User user = userService.findOneByEmail(email);
+        long count = notificationService.getUnreadNotificationCount(user);
+        return ResponseEntity.ok(new SimpleCountResponse(count));
     }
 
     @Operation(description = "알림 조회")
@@ -50,14 +45,9 @@ public class NotificationApiController {
     public ResponseEntity<?> getUserNotifications(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User user = userService.findOneByEmail(email);
-            NotificationListDto notificationListDto = notificationService.getNotificationToUser(user);
-            return ResponseEntity.ok(notificationListDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User user = userService.findOneByEmail(email);
+        NotificationListDto notificationListDto = notificationService.getNotificationToUser(user);
+        return ResponseEntity.ok(notificationListDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
