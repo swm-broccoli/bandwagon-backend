@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.GenreNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.GenreRepository;
@@ -60,13 +61,13 @@ public class GenreService {
     }
 
     @Transactional
-    public void addGenreToBand(String email, Long bandId, Long genreId) throws Exception {
+    public void addGenreToBand(String email, Long bandId, Long genreId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
             throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         Genre genre = genreRepository.findById(genreId).orElse(null);
         if (genre == null) {
@@ -80,13 +81,13 @@ public class GenreService {
     }
 
     @Transactional
-    public void deleteGenreFromBand(String email, Long bandId, Long genreId) throws Exception {
+    public void deleteGenreFromBand(String email, Long bandId, Long genreId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
             throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         Genre genre = genreRepository.findById(genreId).orElse(null);
         if (genre == null) {
