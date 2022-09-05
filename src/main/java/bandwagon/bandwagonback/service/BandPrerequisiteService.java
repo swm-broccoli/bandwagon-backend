@@ -8,6 +8,7 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.prerequisite.*;
 import bandwagon.bandwagonback.dto.PrerequisiteCheckDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
+import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.notfound.*;
 import bandwagon.bandwagonback.dto.subdto.AreaForm;
 import bandwagon.bandwagonback.dto.subdto.IdNameForm;
@@ -34,7 +35,7 @@ public class BandPrerequisiteService {
     private final PositionRepository positionRepository;
 
     @Transactional
-    public void addPrerequisite(Long postId, PrerequisiteDto prerequisiteDto) throws Exception {
+    public void addPrerequisite(Long postId, PrerequisiteDto prerequisiteDto) {
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if(bandPost == null) {
             throw new PostNotFoundException();
@@ -87,11 +88,11 @@ public class BandPrerequisiteService {
                 bandPrerequisiteRepository.save(positionPrerequisite);
                 break;
             default:
-                throw new Exception("Wrong dtype for Prerequisite in Request!");
+                throw new InvalidTypeException();
         }
     }
 
-    public List<PrerequisiteDto> getAllPrerequisiteOfPost(Long bandPostId) throws Exception {
+    public List<PrerequisiteDto> getAllPrerequisiteOfPost(Long bandPostId) {
         BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
         if (bandPost == null) {
             throw new PostNotFoundException();
@@ -115,7 +116,7 @@ public class BandPrerequisiteService {
                     res.add(new PrerequisiteDto((PositionPrerequisite) bandPrerequisite));
                     break;
                 default:
-                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+                    throw new InvalidTypeException();
             }
         }
         return res;
@@ -139,7 +140,7 @@ public class BandPrerequisiteService {
         addPrerequisite(postId, prerequisiteDto);
     }
 
-    public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) throws Exception {
+    public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
@@ -192,7 +193,7 @@ public class BandPrerequisiteService {
                     res.add(new PrerequisiteCheckDto((PositionPrerequisite) bandPrerequisite, check));
                     break;
                 default:
-                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+                    throw new InvalidTypeException();
             }
         }
         return res;
@@ -201,7 +202,7 @@ public class BandPrerequisiteService {
     /**
      * 유저 지원 시 지원 가능한지 검증용 메소드
      */
-    public Boolean canUserApply(String email, Long postId) throws Exception {
+    public Boolean canUserApply(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
@@ -248,7 +249,7 @@ public class BandPrerequisiteService {
                     }
                     break;
                 default:
-                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+                    throw new InvalidTypeException();
             }
             if (!check) {
                 return false;
