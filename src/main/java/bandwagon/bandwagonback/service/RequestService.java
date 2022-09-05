@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.dto.RequestDto;
 import bandwagon.bandwagonback.dto.RequestListDto;
 import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotAuthorizedException;
+import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotFrontmanException;
 import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.RequestNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
@@ -56,7 +57,7 @@ public class RequestService {
     @Transactional
     public void sendInviteRequest(User invitingUser, User invitedUser) throws Exception {
         if (!invitingUser.getBandMember().getIsFrontman()) {
-            throw new Exception("Inviting User is not frontman!");
+            throw new UserNotFrontmanException();
         }
         Band invitingBand = invitingUser.getBandMember().getBand();
         if (invitedUser.getBandMember() != null) {
@@ -87,7 +88,7 @@ public class RequestService {
     }
 
     @Transactional
-    public void acceptApplyRequest(User user, Long requestId) throws Exception {
+    public void acceptApplyRequest(User user, Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
             throw new RequestNotFoundException();
@@ -97,7 +98,7 @@ public class RequestService {
             throw new UserNotOfBandException();
         }
         if (!bandMember.getIsFrontman()) {
-            throw new Exception("Accepting User is not frontman and cannot decline this Request!");
+            throw new UserNotFrontmanException();
         }
         // Accepting logic
         User candidateUser = request.getUser();
@@ -112,7 +113,7 @@ public class RequestService {
     }
 
     @Transactional
-    public void declineApplyRequest(User user, Long requestId) throws Exception {
+    public void declineApplyRequest(User user, Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.APPLY)) {
             throw new RequestNotFoundException();
@@ -122,7 +123,7 @@ public class RequestService {
             throw new UserNotOfBandException();
         }
         if (!bandMember.getIsFrontman()) {
-            throw new Exception("Declining User is not frontman and cannot decline this Request!");
+            throw new UserNotFrontmanException();
         }
         requestRepository.delete(request);
         notificationService.createBandToUser(request.getBand(), request.getUser(), NotificationType.APPLY_DECLINE);
@@ -175,7 +176,7 @@ public class RequestService {
     }
 
     @Transactional
-    public void cancelInviteRequest(User user, Long requestId) throws Exception {
+    public void cancelInviteRequest(User user, Long requestId) {
         Request request = requestRepository.findById(requestId).orElse(null);
         if (request == null || !request.getType().equals(RequestType.INVITE)) {
             throw new RequestNotFoundException();
@@ -185,7 +186,7 @@ public class RequestService {
             throw new UserNotOfBandException();
         }
         if (!bandMember.getIsFrontman()) {
-            throw new Exception("Canceling User is not frontman and cannot decline this Request!");
+            throw new UserNotFrontmanException();
         }
         requestRepository.delete(request);
     }

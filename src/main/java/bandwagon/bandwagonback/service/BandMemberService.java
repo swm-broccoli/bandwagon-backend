@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.service;
 import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.inband.UserNotInBandException;
+import bandwagon.bandwagonback.dto.exception.notauthorized.FrontmanCannotLeaveException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.PositionNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
@@ -39,7 +40,7 @@ public class BandMemberService {
     }
 
     @Transactional
-    public Long addMemberToBand(String email, Long bandId, String candidateEmail) throws Exception {
+    public Long addMemberToBand(String email, Long bandId, String candidateEmail) {
         confirmUserIsFrontman(email, bandId);
         User candidateUser = userRepository.findByEmail(candidateEmail).orElse(null);
         if (candidateUser == null) {
@@ -59,14 +60,14 @@ public class BandMemberService {
     }
 
     @Transactional
-    public void removeMemberFromBand(String email, Long bandId, Long bandMemberId) throws Exception {
+    public void removeMemberFromBand(String email, Long bandId, Long bandMemberId) {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
             throw new UserNotOfBandException();
         }
         if (bandMember.getIsFrontman()) {
-            throw new Exception("프런트맨을(자신을) 탈퇴시킬 수 없습니다!");
+            throw new FrontmanCannotLeaveException();
         }
         Band band = bandMember.getBand();
         User removedMember = bandMember.getMember();
@@ -76,13 +77,13 @@ public class BandMemberService {
     }
 
     @Transactional
-    public void withdrawMemberFromBand(String email, Long bandId) throws Exception {
+    public void withdrawMemberFromBand(String email, Long bandId) {
         BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (bandMember == null) {
             throw new UserNotOfBandException();
         }
         if (bandMember.getIsFrontman()) {
-            throw new Exception("프런트맨이라 탈퇴하실 수 없습니다!");
+            throw new FrontmanCannotLeaveException();
         }
         User withdrawingUser = bandMember.getMember();
         Band band = bandMember.getBand();
@@ -92,7 +93,7 @@ public class BandMemberService {
     }
 
     @Transactional
-    public void addPositionToBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
+    public void addPositionToBandMember(String email, Long bandId, Long bandMemberId, Long positionId) {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
@@ -110,7 +111,7 @@ public class BandMemberService {
     }
 
     @Transactional
-    public void deletePositionFromBandMember(String email, Long bandId, Long bandMemberId, Long positionId) throws Exception {
+    public void deletePositionFromBandMember(String email, Long bandId, Long bandMemberId, Long positionId) {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
@@ -124,7 +125,7 @@ public class BandMemberService {
     }
 
     @Transactional
-    public void changeFrontman(String editerEmail, Long targetBandMemberId, Long bandId) throws Exception {
+    public void changeFrontman(String editerEmail, Long targetBandMemberId, Long bandId) {
         BandMember editingMember = confirmUserIsFrontman(editerEmail, bandId);
         BandMember targetMember = bandMemberRepository.findById(targetBandMemberId).orElse(null);
         if (targetMember == null || !Objects.equals(targetMember.getBand().getId(), bandId)) {
@@ -135,13 +136,13 @@ public class BandMemberService {
     }
 
     @Transactional
-    public BandMember confirmUserIsFrontman(String email, Long bandId) throws Exception {
+    public BandMember confirmUserIsFrontman(String email, Long bandId) {
         BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (member == null) {
             throw new UserNotOfBandException();
         }
         if (!member.getIsFrontman()) {
-            throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
+            throw new UserNotFoundException();
         }
         return member;
     }

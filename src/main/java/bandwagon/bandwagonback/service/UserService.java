@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.notauthorized.FrontmanCannotLeaveException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.SocialAccountNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.UserInfoRepository;
@@ -62,14 +63,14 @@ public class UserService {
     }
 
     @Transactional
-    public void unregister(String email) throws Exception {
+    public void unregister(String email) {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
         }
         if (user.getBandMember() != null && user.getBandMember().getIsFrontman()) {
-            throw new Exception("밴드의 프런트맨입니다! 프런트맨을 넘기시거나 밴드를 해체해 주세요.");
+            throw new FrontmanCannotLeaveException();
         }
         userRepository.delete(user);
     }

@@ -102,7 +102,7 @@ public class BandService {
      * 밴드 삭제
      */
     @Transactional
-    public void disbandBand(String email, Long bandId) throws Exception {
+    public void disbandBand(String email, Long bandId) {
         bandMemberService.confirmUserIsFrontman(email, bandId);
         User user = userRepository.findByEmail(email).orElse(null);
         Band band = bandRepository.findById(bandId).orElse(null);
