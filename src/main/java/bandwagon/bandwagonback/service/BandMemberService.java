@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.PositionNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.PositionRepository;
@@ -60,7 +61,7 @@ public class BandMemberService {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         if (bandMember.getIsFrontman()) {
             throw new Exception("프런트맨을(자신을) 탈퇴시킬 수 없습니다!");
@@ -76,7 +77,7 @@ public class BandMemberService {
     public void withdrawMemberFromBand(String email, Long bandId) throws Exception {
         BandMember bandMember = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (bandMember == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         if (bandMember.getIsFrontman()) {
             throw new Exception("프런트맨이라 탈퇴하실 수 없습니다!");
@@ -93,7 +94,7 @@ public class BandMemberService {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         Position position = positionRepository.findById(positionId).orElse(null);
         if (position == null) {
@@ -111,7 +112,7 @@ public class BandMemberService {
         confirmUserIsFrontman(email, bandId);
         BandMember bandMember = bandMemberRepository.findById(bandMemberId).orElse(null);
         if (bandMember == null || !Objects.equals(bandMember.getBand().getId(), bandId)) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         Position position = positionRepository.findById(positionId).orElse(null);
         if (position == null) {
@@ -125,7 +126,7 @@ public class BandMemberService {
         BandMember editingMember = confirmUserIsFrontman(editerEmail, bandId);
         BandMember targetMember = bandMemberRepository.findById(targetBandMemberId).orElse(null);
         if (targetMember == null || !Objects.equals(targetMember.getBand().getId(), bandId)) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         targetMember.setIsFrontman(true);
         editingMember.setIsFrontman(false);
@@ -135,7 +136,7 @@ public class BandMemberService {
     public BandMember confirmUserIsFrontman(String email, Long bandId) throws Exception {
         BandMember member = bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId);
         if (member == null) {
-            throw new Exception("해당 밴드 - 유저 조합이 존재하지 않습니다!");
+            throw new UserNotOfBandException();
         }
         if (!member.getIsFrontman()) {
             throw new Exception("프런트맨이 아니라 수정할 수 없습니다!");
