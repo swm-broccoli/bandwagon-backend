@@ -5,6 +5,8 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.dto.exception.DuplicateUserException;
+import bandwagon.bandwagonback.dto.exception.InvalidPasswordException;
+import bandwagon.bandwagonback.dto.exception.PasswordCheckFailException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.FrontmanCannotLeaveException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.SocialAccountNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
@@ -43,10 +45,10 @@ public class UserService {
      * 회원가입
      */
     @Transactional
-    public Long join(SignUpRequest request) throws Exception {
+    public Long join(SignUpRequest request) {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             log.error("Password mismatch: Input1 = {}, Input2 = {}", request.getPassword(), request.getPasswordCheck());
-            throw new Exception("비밀번호가 일치하지 않습니다.");
+            throw new PasswordCheckFailException();
         }
         validateDuplicateUser(request.getEmail());
         //password Encrypt
@@ -92,12 +94,12 @@ public class UserService {
     }
 
     @Transactional
-    public void editPassword(User user, UserEditRequest request) throws Exception {
+    public void editPassword(User user, UserEditRequest request) {
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new Exception("비밀번호가 올바르지 않습니다!");
+            throw new InvalidPasswordException();
         }
         if (!request.getNewPassword().equals(request.getNewPasswordCheck())) {
-            throw new Exception("신규 비밀번호를 동일하게 입력해주세요.");
+            throw new PasswordCheckFailException();
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
