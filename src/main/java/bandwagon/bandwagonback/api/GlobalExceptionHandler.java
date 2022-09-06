@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.exception.DuplicateRequestException;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.inband.InBandException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.NotAuthorizedException;
@@ -51,6 +52,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotAuthorizedException.class)
     public ResponseEntity<?> handleNotAuthorizedException(NotAuthorizedException e) {
         log.error("handleNotAuthorizedException", e);
+        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateRequestException.class)
+    public ResponseEntity<?> handleDuplicateRequestException(DuplicateRequestException e) {
+        log.error("handleDuplicateRequestException", e);
         return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 }

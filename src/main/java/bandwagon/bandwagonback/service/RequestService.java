@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.dto.RequestDto;
 import bandwagon.bandwagonback.dto.RequestListDto;
+import bandwagon.bandwagonback.dto.exception.DuplicateRequestException;
 import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotFrontmanException;
@@ -55,7 +56,7 @@ public class RequestService {
     }
 
     @Transactional
-    public void sendInviteRequest(User invitingUser, User invitedUser) throws Exception {
+    public void sendInviteRequest(User invitingUser, User invitedUser) {
         if (!invitingUser.getBandMember().getIsFrontman()) {
             throw new UserNotFrontmanException();
         }
@@ -64,14 +65,14 @@ public class RequestService {
             throw new UserInBandException();
         }
         if (requestRepository.existsByUserAndBandAndType(invitedUser, invitingBand, RequestType.INVITE)) {
-            throw new Exception("Already sent same Invite Request!");
+            throw new DuplicateRequestException();
         }
         createRequest(invitedUser, invitingBand, RequestType.INVITE, null);
         notificationService.createBandToUser(invitingBand, invitedUser, NotificationType.INVITE);
     }
 
     @Transactional
-    public void sendApplyRequest(User applyingUser, Long postId) throws Exception {
+    public void sendApplyRequest(User applyingUser, Long postId) {
         if (applyingUser.getBandMember() != null) {
             throw new UserInBandException();
         }
@@ -81,7 +82,7 @@ public class RequestService {
         }
         Band appliedBand = bandPost.getBand();
         if (requestRepository.existsByUserAndBandPostAndType(applyingUser, bandPost, RequestType.APPLY)) {
-            throw new Exception("Already sent same Apply Request!");
+            throw new DuplicateRequestException();
         }
         createRequest(applyingUser, appliedBand, RequestType.APPLY, bandPost);
         notificationService.createUserToBand(applyingUser, appliedBand, NotificationType.APPLY);
