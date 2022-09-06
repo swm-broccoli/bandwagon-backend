@@ -104,10 +104,10 @@ public class PostService {
         return userPostRepository.findAll(specification, pageRequest);
     }
 
-    public UserPost getUsersPost(User user) throws Exception {
+    public UserPost getUsersPost(User user) {
         UserPost userPost = userPostRepository.findOneByUser(user).orElse(null);
         if (userPost == null) {
-            throw new Exception("User Post does not exist!");
+            throw new PostNotFoundException();
         }
         return userPost;
     }

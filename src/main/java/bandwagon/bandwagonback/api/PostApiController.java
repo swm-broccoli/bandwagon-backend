@@ -3,7 +3,6 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
-import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
@@ -25,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
@@ -221,14 +219,9 @@ public class PostApiController {
     public ResponseEntity<?> getUsersPosts(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try{
-            User user = userService.findOneByEmail(email);
-            UserPost usersPost = postService.getUsersPost(user);
-            return ResponseEntity.ok(UserPostDto.makeUserPostDto(usersPost, user));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User user = userService.findOneByEmail(email);
+        UserPost usersPost = postService.getUsersPost(user);
+        return ResponseEntity.ok(UserPostDto.makeUserPostDto(usersPost, user));
     }
 
     @Operation(description = "유저의 밴드의 구인글 조회")
@@ -238,17 +231,12 @@ public class PostApiController {
                                                 HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User user = userService.findOneByEmail(email);
-            Band usersBand = bandService.getUsersBand(user);
-            PageRequest pageRequest = PageRequest.of(page, size);
-            Page<BandPost> bandsPosts = postService.getBandsPosts(usersBand, pageRequest);
-            BandPostPageDto bandPostPageDto = new BandPostPageDto(bandsPosts.getContent().stream().map(post -> BandPostDto.makeBandPostDto(post, user)).collect(Collectors.toList()), bandsPosts.getNumber(), bandsPosts.getTotalElements(), bandsPosts.getTotalPages());
-            return ResponseEntity.ok(bandPostPageDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User user = userService.findOneByEmail(email);
+        Band usersBand = bandService.getUsersBand(user);
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<BandPost> bandsPosts = postService.getBandsPosts(usersBand, pageRequest);
+        BandPostPageDto bandPostPageDto = new BandPostPageDto(bandsPosts.getContent().stream().map(post -> BandPostDto.makeBandPostDto(post, user)).collect(Collectors.toList()), bandsPosts.getNumber(), bandsPosts.getTotalElements(), bandsPosts.getTotalPages());
+        return ResponseEntity.ok(bandPostPageDto);
     }
 
     @Operation(description = "게시글 좋아요")
