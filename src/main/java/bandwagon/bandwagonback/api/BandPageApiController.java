@@ -54,13 +54,8 @@ public class BandPageApiController {
     public ResponseEntity<?> postBandGig(@PathVariable("band_id") Long bandId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandGigService.saveBandGig(bandId, email, performanceDto);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandGigService.saveBandGig(bandId, email, performanceDto);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 공연 삭제")
@@ -68,13 +63,8 @@ public class BandPageApiController {
     public ResponseEntity<?> deleteBandGig(@PathVariable("band_id") Long bandId, @PathVariable("band_gig_id") Long bandGigId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandGigService.deleteBandGig(bandId, email, bandGigId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandGigService.deleteBandGig(bandId, email, bandGigId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 공연 수정")
@@ -82,13 +72,8 @@ public class BandPageApiController {
     public ResponseEntity<?> editBandGig(@PathVariable("band_id") Long bandId, @PathVariable("band_gig_id") Long bandGigId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandGigService.updateBandGig(bandId, email, bandGigId, performanceDto);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandGigService.updateBandGig(bandId, email, bandGigId, performanceDto);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 연습 추가")
@@ -96,13 +81,8 @@ public class BandPageApiController {
     public ResponseEntity<?> postBandPractice(@PathVariable("band_id") Long bandId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandPracticeService.saveBandPractice(bandId, email, performanceDto);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandPracticeService.saveBandPractice(bandId, email, performanceDto);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 연습 삭제")
@@ -110,13 +90,8 @@ public class BandPageApiController {
     public ResponseEntity<?> deleteBandPractice(@PathVariable("band_id") Long bandId, @PathVariable("band_practice_id") Long bandPracticeId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandPracticeService.deleteBandPractice(bandId, email, bandPracticeId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandPracticeService.deleteBandPractice(bandId, email, bandPracticeId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 연습 수정")
@@ -124,13 +99,8 @@ public class BandPageApiController {
     public ResponseEntity<?> editBandPractice(@PathVariable("band_id") Long bandId, @PathVariable("band_practice_id") Long bandPracticeId, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandPracticeService.updateBandPractice(bandId, email, bandPracticeId, performanceDto);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandPracticeService.updateBandPractice(bandId, email, bandPracticeId, performanceDto);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 선호 장르 추가")
@@ -138,13 +108,8 @@ public class BandPageApiController {
     public ResponseEntity<?> postBandGenre(@PathVariable("band_id") Long bandId, @PathVariable("genre_id") Long genreId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            genreService.addGenreToBand(email, bandId, genreId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        genreService.addGenreToBand(email, bandId, genreId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 선호 장르 제거")
@@ -152,13 +117,8 @@ public class BandPageApiController {
     public ResponseEntity<?> deleteBandGenre(@PathVariable("band_id") Long bandId, @PathVariable("genre_id") Long genreId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            genreService.deleteGenreFromBand(email, bandId, genreId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        genreService.deleteGenreFromBand(email, bandId, genreId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 활동 지역 추가")
@@ -166,13 +126,8 @@ public class BandPageApiController {
     public ResponseEntity<?> postBandArea(@PathVariable("band_id") Long bandId, @PathVariable("area_id") Long areaId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            areaService.addAreaToBand(email, bandId, areaId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        areaService.addAreaToBand(email, bandId, areaId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 활동 지역 제거")
@@ -180,13 +135,8 @@ public class BandPageApiController {
     public ResponseEntity<?> deleteBandArea(@PathVariable("band_id") Long bandId, @PathVariable("area_id") Long areaId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            areaService.deleteAreaFromBand(email, bandId, areaId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        areaService.deleteAreaFromBand(email, bandId, areaId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 활동 요일 추가")
@@ -194,13 +144,8 @@ public class BandPageApiController {
     public ResponseEntity<?> postDayArea(@PathVariable("band_id") Long bandId, @PathVariable("day_id") Long dayId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            dayService.addDayToBand(email, bandId, dayId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        dayService.addDayToBand(email, bandId, dayId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 활동 요일 제거")
@@ -208,13 +153,8 @@ public class BandPageApiController {
     public ResponseEntity<?> deleteDayArea(@PathVariable("band_id") Long bandId, @PathVariable("day_id") Long dayId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            dayService.deleteDayFromBand(email, bandId, dayId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        dayService.deleteDayFromBand(email, bandId, dayId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 사진 추가")

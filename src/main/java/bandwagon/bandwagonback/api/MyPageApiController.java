@@ -42,39 +42,24 @@ public class MyPageApiController {
     @Operation(description = "자기소개 수정")
     @PutMapping("/api/users/{email}/description")
     public ResponseEntity<?> putUserDescription(@PathVariable("email") String email, @RequestBody DescriptionDto descriptionDto, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            userService.editDescription(email, descriptionDto.getDescription());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        userService.editDescription(email, descriptionDto.getDescription());
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "신규 연주기록 생성")
     @PostMapping("/api/users/{email}/performance")
     public ResponseEntity<?> postUserPerformance(@PathVariable("email") String email, @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            userPerformanceService.saveUserPerformance(email, performanceDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        userPerformanceService.saveUserPerformance(email, performanceDto);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "연주기록 삭제")
     @DeleteMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> deleteUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            userPerformanceService.deleteUserPerformance(email, user_performance_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        userPerformanceService.deleteUserPerformance(email, user_performance_id);
         return ResponseEntity.ok().body(null);
     }
 
@@ -82,91 +67,56 @@ public class MyPageApiController {
     @PutMapping("/api/users/{email}/performance/{user_performance_id}")
     public ResponseEntity<?> putUserPerformance(@PathVariable("email") String email, @PathVariable("user_performance_id") Long user_performance_id,
                                                 @RequestBody PerformanceDto performanceDto, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            userPerformanceService.updateUserPerformance(email, user_performance_id, performanceDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        userPerformanceService.updateUserPerformance(email, user_performance_id, performanceDto);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "포지션 추가")
     @PostMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> postPosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            positionService.addPositionToUser(email, position_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        positionService.addPositionToUser(email, position_id);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "포지션 삭제")
     @DeleteMapping("/api/users/{email}/positions/{position_id}")
     public ResponseEntity<?> deletePosition(@PathVariable("email") String email, @PathVariable("position_id") Long position_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            positionService.deletePositionFromUser(email, position_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        positionService.deletePositionFromUser(email, position_id);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "선호 장르 추가")
     @PostMapping("/api/users/{email}/genres/{genre_id}")
     public ResponseEntity<?> postGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            genreService.addGenreToUser(email, genre_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        genreService.addGenreToUser(email, genre_id);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "선호 장르 삭제")
     @DeleteMapping("/api/users/{email}/genres/{genre_id}")
     public ResponseEntity<?> deleteGenre(@PathVariable("email") String email, @PathVariable("genre_id") Long genre_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            genreService.deleteGenreFromUser(email, genre_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        genreService.deleteGenreFromUser(email, genre_id);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "활동 지역 추가")
     @PostMapping("/api/users/{email}/areas/{area_id}")
     public ResponseEntity<?> postArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            areaService.addAreaToUser(email, area_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        areaService.addAreaToUser(email, area_id);
         return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "활동 지역 삭제")
     @DeleteMapping("/api/users/{email}/areas/{area_id}")
     public ResponseEntity<?> deleteArea(@PathVariable("email") String email, @PathVariable("area_id") Long area_id, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeaderAndCheckEmail(email, request);
-            areaService.deleteAreaFromUser(email, area_id);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeaderAndCheckEmail(email, request);
+        areaService.deleteAreaFromUser(email, area_id);
         return ResponseEntity.ok().body(null);
     }
 

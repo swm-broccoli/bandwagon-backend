@@ -65,17 +65,12 @@ public class BandPrerequisiteApiController {
                                                  HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            if (!postService.isPostByBand(postId, bandId)) {
-                throw new PostNotOfBandException();
-            }
-            bandPrerequisiteService.editPrerequisite(postId, prerequisiteId, prerequisiteDto);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        Long bandId = bandMemberService.getBandIdByUserEmail(email);
+        if (!postService.isPostByBand(postId, bandId)) {
+            throw new PostNotOfBandException();
         }
+        bandPrerequisiteService.editPrerequisite(postId, prerequisiteId, prerequisiteDto);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 구인글 - 지원 조건(prerequisite) 삭제")
@@ -83,17 +78,12 @@ public class BandPrerequisiteApiController {
     public ResponseEntity<?> deleteBandPrerequisite(@PathVariable("post_id") Long postId, @PathVariable("prerequisite_id") Long prerequisiteId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            Long bandId = bandMemberService.getBandIdByUserEmail(email);
-            if (!postService.isPostByBand(postId, bandId)) {
-                throw new PostNotOfBandException();
-            }
-            bandPrerequisiteService.deletePrerequisite(postId, prerequisiteId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        Long bandId = bandMemberService.getBandIdByUserEmail(email);
+        if (!postService.isPostByBand(postId, bandId)) {
+            throw new PostNotOfBandException();
         }
+        bandPrerequisiteService.deletePrerequisite(postId, prerequisiteId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 구인글 - 지원 조건 체크")

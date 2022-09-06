@@ -36,19 +36,14 @@ public class RequestApiController {
     public ResponseEntity<?> getInviteRequests(@RequestParam boolean sent, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User user = userService.findOneByEmail(email);
-            if (sent) {
-                Band band = bandService.getUsersBand(user);
-                RequestListDto requestListDto = requestService.getRequestOnBand(band, RequestType.INVITE);
-                return ResponseEntity.ok(requestListDto);
-            } else {
-                RequestListDto requestListDto = requestService.getRequestOnUser(user, RequestType.INVITE);
-                return ResponseEntity.ok(requestListDto);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        User user = userService.findOneByEmail(email);
+        if (sent) {
+            Band band = bandService.getUsersBand(user);
+            RequestListDto requestListDto = requestService.getRequestOnBand(band, RequestType.INVITE);
+            return ResponseEntity.ok(requestListDto);
+        } else {
+            RequestListDto requestListDto = requestService.getRequestOnUser(user, RequestType.INVITE);
+            return ResponseEntity.ok(requestListDto);
         }
     }
 
@@ -57,19 +52,14 @@ public class RequestApiController {
     public ResponseEntity<?> getApplyRequests(@RequestParam boolean sent, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User user = userService.findOneByEmail(email);
-            if (sent) {
-                RequestListDto requestListDto = requestService.getRequestOnUser(user, RequestType.APPLY);
-                return ResponseEntity.ok(requestListDto);
-            } else {
-                Band band = bandService.getUsersBand(user);
-                RequestListDto requestListDto = requestService.getRequestOnBand(band, RequestType.APPLY);
-                return ResponseEntity.ok(requestListDto);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        User user = userService.findOneByEmail(email);
+        if (sent) {
+            RequestListDto requestListDto = requestService.getRequestOnUser(user, RequestType.APPLY);
+            return ResponseEntity.ok(requestListDto);
+        } else {
+            Band band = bandService.getUsersBand(user);
+            RequestListDto requestListDto = requestService.getRequestOnBand(band, RequestType.APPLY);
+            return ResponseEntity.ok(requestListDto);
         }
     }
 
@@ -78,15 +68,10 @@ public class RequestApiController {
     public ResponseEntity<?> sendInviteRequest(@RequestParam Long userId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User invitingUser = userService.findOneByEmail(email);
-            User invitedUser = userService.findOne(userId);
-            requestService.sendInviteRequest(invitingUser, invitedUser);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User invitingUser = userService.findOneByEmail(email);
+        User invitedUser = userService.findOne(userId);
+        requestService.sendInviteRequest(invitingUser, invitedUser);
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "밴드 초대 요청 응답하기")
@@ -94,18 +79,13 @@ public class RequestApiController {
     public ResponseEntity<?> respondInviteRequest(@PathVariable("request_id") Long requestId, @RequestParam boolean accept, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User respondingUser = userService.findOneByEmail(email);
-            if (accept) {
-                requestService.acceptInviteRequest(respondingUser, requestId);
-            } else {
-                requestService.declineInviteRequest(respondingUser, requestId);
-            }
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        User respondingUser = userService.findOneByEmail(email);
+        if (accept) {
+            requestService.acceptInviteRequest(respondingUser, requestId);
+        } else {
+            requestService.declineInviteRequest(respondingUser, requestId);
         }
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "밴드 초대 요청 취소하기")
@@ -113,14 +93,9 @@ public class RequestApiController {
     public ResponseEntity<?> cancelInviteRequest(@PathVariable("request_id") Long requestId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User cancelingUser = userService.findOneByEmail(email);
-            requestService.cancelInviteRequest(cancelingUser, requestId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User cancelingUser = userService.findOneByEmail(email);
+        requestService.cancelInviteRequest(cancelingUser, requestId);
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "밴드 가입 요청 보내기")
@@ -146,18 +121,13 @@ public class RequestApiController {
     public ResponseEntity<?> respondApplyRequest(@PathVariable("request_id") Long requestId, @RequestParam boolean accept, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User respondingUser = userService.findOneByEmail(email);
-            if (accept) {
-                requestService.acceptApplyRequest(respondingUser, requestId);
-            } else {
-                requestService.declineApplyRequest(respondingUser, requestId);
-            }
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        User respondingUser = userService.findOneByEmail(email);
+        if (accept) {
+            requestService.acceptApplyRequest(respondingUser, requestId);
+        } else {
+            requestService.declineApplyRequest(respondingUser, requestId);
         }
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "밴드 가입 요청 취소하기")
@@ -165,14 +135,9 @@ public class RequestApiController {
     public ResponseEntity<?> cancelApplyRequest(@PathVariable("request_id") Long requestId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User cancelingUser = userService.findOneByEmail(email);
-            requestService.cancelApplyRequest(cancelingUser, requestId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        User cancelingUser = userService.findOneByEmail(email);
+        requestService.cancelApplyRequest(cancelingUser, requestId);
+        return ResponseEntity.ok(null);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {

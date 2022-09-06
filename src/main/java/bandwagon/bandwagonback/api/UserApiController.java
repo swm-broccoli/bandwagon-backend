@@ -59,13 +59,8 @@ public class UserApiController {
     public ResponseEntity<?> unregisterUser(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            userService.unregister(email);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        userService.unregister(email);
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "Refresh Token으로 token 재발급")
@@ -90,27 +85,17 @@ public class UserApiController {
     @Operation(description = "회원가입")
     @PostMapping("/api/signup")
     public ResponseEntity<?> signup(@RequestBody SignUpRequest request) {
-        try {
-            log.info("Signup init...");
-            Long id = userService.join(request);
-            log.info("Signup complete: User_id = {}", id);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new SignUpResponse(id));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        log.info("Signup init...");
+        Long id = userService.join(request);
+        log.info("Signup complete: User_id = {}", id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new SignUpResponse(id));
     }
 
     @Operation(description = "이메일 중복 확인")
     @PostMapping("/api/duplicate")
     public ResponseEntity<?> duplicate(@RequestBody DuplicateRequest request) {
-        try {
-            userService.validateDuplicateUser(request.getEmail());
-            return ResponseEntity.ok(new DuplicateResponse(request.getEmail()));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        userService.validateDuplicateUser(request.getEmail());
+        return ResponseEntity.ok(new DuplicateResponse(request.getEmail()));
     }
 
     @Operation(description = "유저 이메일 찾기")
@@ -123,13 +108,8 @@ public class UserApiController {
     @Operation(description = "유저 비밀번호 찾기")
     @PostMapping("/api/find/password")
     public ResponseEntity<?> findUserPassword(@RequestBody FindUserPasswordRequest request) {
-        try {
-            userService.findUserPassword(request);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        userService.findUserPassword(request);
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "유저 기본 정보 조회")
@@ -144,32 +124,28 @@ public class UserApiController {
     @Operation(description = "유저 기본 정보/비밀번호 수정")
     @PutMapping("/api/users")
     public ResponseEntity<?> editUserInfo(@RequestBody UserEditRequest userEditRequest, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            String email = jwtTokenUtil.extractUsername(jwt);
-            UserEditDto userEditDto = userService.editUser(email, userEditRequest);
-            return ResponseEntity.ok(userEditDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        UserEditDto userEditDto = userService.editUser(email, userEditRequest);
+        return ResponseEntity.ok(userEditDto);
     }
 
     @Operation(description = "유저 아바타 변경")
     @PostMapping("/api/users/{email}/avatar")
     public ResponseEntity<?> postUserAvatar(@PathVariable("email") String email, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-            if (!jwtEmail.equals(email)) {
-                throw new JwtAndUrlDifferentException();
-            }
-            String imgUrl =  userService.uploadAvatar(email, multipartFile);
-            return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        if (!jwtEmail.equals(email)) {
+            throw new JwtAndUrlDifferentException();
         }
+        String imgUrl;
+        try {
+            imgUrl =  userService.uploadAvatar(email, multipartFile);
+        } catch (Exception e) {
+            log.error("Error in img upload", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("이미지 업로드 오류"));
+        }
+        return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
     }
 
     @Operation(description = "유저 찜한 게시글 목록")
@@ -178,27 +154,22 @@ public class UserApiController {
                                               @RequestParam(defaultValue = "0") int page,
                                               @RequestParam(defaultValue = "10") int size,
                                               HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            String jwtEmail = jwtTokenUtil.extractUsername(jwt);
-            if (!jwtEmail.equals(email)) {
-                throw new JwtAndUrlDifferentException();
-            }
-            User user = userService.findOneByEmail(email);
-            PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            Page<Post> likedPosts = postService.getLikedPosts(email, pageRequest);
-            LikedPostPageDto likedPostPageDto = new LikedPostPageDto(likedPosts.getContent().stream().map(post -> {
-                if (post.getDtype().equals("User")) {
-                    return UserPostDto.makeUserPostDto((UserPost) post, user);
-                } else {
-                    return BandPostDto.makeBandPostDto((BandPost) post, user);
-                }
-            }).collect(Collectors.toList()), likedPosts.getNumber(), likedPosts.getTotalElements(), likedPosts.getTotalPages());
-            return ResponseEntity.ok(likedPostPageDto);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        String jwt = getJwtFromHeader(request);
+        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+        if (!jwtEmail.equals(email)) {
+            throw new JwtAndUrlDifferentException();
         }
+        User user = userService.findOneByEmail(email);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Post> likedPosts = postService.getLikedPosts(email, pageRequest);
+        LikedPostPageDto likedPostPageDto = new LikedPostPageDto(likedPosts.getContent().stream().map(post -> {
+            if (post.getDtype().equals("User")) {
+                return UserPostDto.makeUserPostDto((UserPost) post, user);
+            } else {
+                return BandPostDto.makeBandPostDto((BandPost) post, user);
+            }
+        }).collect(Collectors.toList()), likedPosts.getNumber(), likedPosts.getTotalElements(), likedPosts.getTotalPages());
+        return ResponseEntity.ok(likedPostPageDto);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {

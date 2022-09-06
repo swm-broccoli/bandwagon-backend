@@ -79,7 +79,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserEditDto editUser(String email, UserEditRequest request) throws Exception {
+    public UserEditDto editUser(String email, UserEditRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {

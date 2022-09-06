@@ -61,22 +61,17 @@ public class PostApiController {
     @Operation(description = "게시글 등록")
     @PostMapping("/api/post")
     public ResponseEntity<?> postPost(@RequestBody PostDto postDto, HttpServletRequest request) {
-        try {
-            String jwt = getJwtFromHeader(request);
-            String email = jwtTokenUtil.extractUsername(jwt);
-            if (postDto.getDtype().equals("Band")) {
-                Long bandId = bandMemberService.getBandIdByUserEmail(email);
-                Long bandPostId = postService.createBandPost(bandId, postDto);
-                return ResponseEntity.ok(new SimpleIdResponse(bandPostId));
-            } else if (postDto.getDtype().equals("User")) {
-                Long userPostId = postService.createUserPost(email, postDto);
-                return ResponseEntity.ok(new SimpleIdResponse(userPostId));
-            } else {
-                throw new InvalidTypeException();
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        String jwt = getJwtFromHeader(request);
+        String email = jwtTokenUtil.extractUsername(jwt);
+        if (postDto.getDtype().equals("Band")) {
+            Long bandId = bandMemberService.getBandIdByUserEmail(email);
+            Long bandPostId = postService.createBandPost(bandId, postDto);
+            return ResponseEntity.ok(new SimpleIdResponse(bandPostId));
+        } else if (postDto.getDtype().equals("User")) {
+            Long userPostId = postService.createUserPost(email, postDto);
+            return ResponseEntity.ok(new SimpleIdResponse(userPostId));
+        } else {
+            throw new InvalidTypeException();
         }
     }
 
