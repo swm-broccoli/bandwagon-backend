@@ -4,6 +4,7 @@ import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.DuplicateUserException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.FrontmanCannotLeaveException;
 import bandwagon.bandwagonback.dto.exception.notauthorized.SocialAccountNotAuthorizedException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
@@ -129,11 +130,11 @@ public class UserService {
     }
 
     // 이메일로 회원 중복 검사
-    public void validateDuplicateUser(String email) throws Exception {
+    public void validateDuplicateUser(String email) {
         Optional<User> foundUser = userRepository.findByEmail(email);
         if (foundUser.isPresent()) {
             log.error("Existing user: User = {}", email);
-            throw new Exception("이미 존재하는 회원입니다");
+            throw new DuplicateUserException();
         }
     }
 
