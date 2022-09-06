@@ -2,12 +2,6 @@ package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.exception.CustomException;
-import bandwagon.bandwagonback.dto.exception.DuplicateRequestException;
-import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
-import bandwagon.bandwagonback.dto.exception.inband.InBandException;
-import bandwagon.bandwagonback.dto.exception.notauthorized.NotAuthorizedException;
-import bandwagon.bandwagonback.dto.exception.notfound.NotFoundException;
-import bandwagon.bandwagonback.dto.exception.notof.NotOfException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
