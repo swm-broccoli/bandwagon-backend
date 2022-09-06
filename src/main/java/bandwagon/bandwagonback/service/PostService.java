@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.LikedPostPageDto;
+import bandwagon.bandwagonback.dto.PopularPostsDto;
 import bandwagon.bandwagonback.dto.PostDto;
 import bandwagon.bandwagonback.dto.UserHasPostException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -101,6 +104,18 @@ public class PostService {
         return userPostRepository.findAll(specification, pageRequest);
     }
 
+    public UserPost getUsersPost(User user) throws Exception {
+        UserPost userPost = userPostRepository.findOneByUser(user).orElse(null);
+        if (userPost == null) {
+            throw new Exception("User Post does not exist!");
+        }
+        return userPost;
+    }
+
+    public Page<BandPost> getBandsPosts(Band band, PageRequest pageRequest) {
+        return bandPostRepository.findAllByBand(band, pageRequest);
+    }
+
     @Transactional
     public void likePost(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
@@ -129,6 +144,11 @@ public class PostService {
 
     public Page<Post> getLikedPosts(String email, PageRequest pageRequest) {
         return postRepository.findAllByLikingUsers_email(email, pageRequest);
+    }
+
+
+    public List<Post> getPopularPosts(PageRequest pageRequest) {
+        return postRepository.findTop3OrderByLikingUsersSize(pageRequest);
     }
 
     public String getPostType(Long postId) {
