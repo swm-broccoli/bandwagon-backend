@@ -2,6 +2,8 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.Position;
 import bandwagon.bandwagonback.domain.User;
+import bandwagon.bandwagonback.dto.exception.notfound.PositionNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.PositionRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +22,14 @@ public class PositionService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void addPositionToUser(String email, Long positionId) throws Exception {
+    public void addPositionToUser(String email, Long positionId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         Position position = positionRepository.findById(positionId).orElse(null);
         if (position == null) {
-            throw new Exception("Position does not exist!");
+            throw new PositionNotFoundException();
         }
         if (user.getPositions().contains(position)) {
             log.info("User already has position: {}", position.getPosition());
@@ -37,14 +39,14 @@ public class PositionService {
     }
 
     @Transactional
-    public void deletePositionFromUser(String email, Long positionId) throws Exception {
+    public void deletePositionFromUser(String email, Long positionId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         Position position = positionRepository.findById(positionId).orElse(null);
         if (position == null) {
-            throw new Exception("Position does not exist!");
+            throw new PositionNotFoundException();
         }
         user.removePosition(position);
     }

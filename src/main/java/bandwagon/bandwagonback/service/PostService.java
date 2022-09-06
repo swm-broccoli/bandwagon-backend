@@ -8,6 +8,10 @@ import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.LikedPostPageDto;
 import bandwagon.bandwagonback.dto.PopularPostsDto;
 import bandwagon.bandwagonback.dto.PostDto;
+import bandwagon.bandwagonback.dto.UserHasPostException;
+import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +39,13 @@ public class PostService {
 
 
     @Transactional
-    public Long createUserPost(String email, PostDto postDto) throws Exception {
+    public Long createUserPost(String email, PostDto postDto) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         if(userPostRepository.existsByUser(user)) {
-            throw new Exception("User already has post!");
+            throw new UserHasPostException();
         }
         UserPost userPost = new UserPost(postDto);
         userPost.setUser(user);
@@ -50,10 +54,10 @@ public class PostService {
     }
 
     @Transactional
-    public Long createBandPost(Long bandId, PostDto postDto) throws Exception {
+    public Long createBandPost(Long bandId, PostDto postDto) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
-            throw new Exception("Band does not exist!");
+            throw new BandNotFoundException();
         }
         BandPost bandPost = new BandPost(postDto);
         band.addPost(bandPost);
@@ -61,27 +65,27 @@ public class PostService {
         return bandPost.getId();
     }
 
-    public PostDto viewPost(Long postId) throws Exception {
+    public PostDto viewPost(Long postId) {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
-            throw new Exception("No Post by that ID");
+            throw new PostNotFoundException();
         }
         return new PostDto(post);
     }
 
-    public PostDto viewPost(Long postId, User user) throws Exception {
+    public PostDto viewPost(Long postId, User user) {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
-            throw new Exception("No Post by that ID");
+            throw new PostNotFoundException();
         }
         return PostDto.makePostDto(post, user);
     }
 
     @Transactional
-    public Long editPost(Long postId, PostDto postDto) throws Exception {
+    public Long editPost(Long postId, PostDto postDto) {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
-            throw new Exception("Post does not exist!");
+            throw new PostNotFoundException();
         }
         post.update(postDto);
         return post.getId();
@@ -113,27 +117,27 @@ public class PostService {
     }
 
     @Transactional
-    public void likePost(String email, Long postId) throws Exception {
+    public void likePost(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
-            throw new Exception("Post does not exist!");
+            throw new PostNotFoundException();
         }
         user.likePost(post);
     }
 
     @Transactional
-    public void unlikePost(String email, Long postId) throws Exception {
+    public void unlikePost(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
-            throw new Exception("Post does not exist!");
+            throw new PostNotFoundException();
         }
         user.unlikePost(post);
     }
@@ -142,30 +146,31 @@ public class PostService {
         return postRepository.findAllByLikingUsers_email(email, pageRequest);
     }
 
+
     public List<Post> getPopularPosts(PageRequest pageRequest) {
         return postRepository.findTop3OrderByLikingUsersSize(pageRequest);
     }
 
-    public String getPostType(Long postId) throws Exception {
+    public String getPostType(Long postId) {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) {
-            throw new Exception("No post by that ID!");
+            throw new PostNotFoundException();
         }
         return post.getDtype();
     }
 
-    public Boolean isPostByUser(Long postId, String email) throws Exception {
+    public Boolean isPostByUser(Long postId, String email) {
         UserPost userPost = userPostRepository.findById(postId).orElse(null);
         if (userPost == null) {
-            throw new Exception("No User post with that ID");
+            throw new PostNotFoundException();
         }
         return userPost.getUser().getEmail().equals(email);
     }
 
-    public Boolean isPostByBand(Long bandPostId, Long bandId) throws Exception {
+    public Boolean isPostByBand(Long bandPostId, Long bandId) {
         BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("No Band post with that ID");
+            throw new PostNotFoundException();
         }
         return bandPost.getBand().getId().equals(bandId);
     }

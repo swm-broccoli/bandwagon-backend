@@ -8,6 +8,9 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.prerequisite.*;
 import bandwagon.bandwagonback.dto.PrerequisiteCheckDto;
 import bandwagon.bandwagonback.dto.PrerequisiteDto;
+import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
+import bandwagon.bandwagonback.dto.exception.notfound.*;
+import bandwagon.bandwagonback.dto.exception.notof.PrerequisiteNotOfBandException;
 import bandwagon.bandwagonback.dto.subdto.AreaForm;
 import bandwagon.bandwagonback.dto.subdto.IdNameForm;
 import bandwagon.bandwagonback.repository.*;
@@ -33,10 +36,10 @@ public class BandPrerequisiteService {
     private final PositionRepository positionRepository;
 
     @Transactional
-    public void addPrerequisite(Long postId, PrerequisiteDto prerequisiteDto) throws Exception {
+    public void addPrerequisite(Long postId, PrerequisiteDto prerequisiteDto) {
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if(bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         switch (prerequisiteDto.getDtype()) {
             case "Age":
@@ -49,7 +52,7 @@ public class BandPrerequisiteService {
                 for (AreaForm areaForm : prerequisiteDto.getAreas()) {
                     Area area = areaRepository.findById(areaForm.getId()).orElse(null);
                     if (area == null) {
-                        throw new Exception("Area does not exist!");
+                        throw new AreaNotFoundException();
                     }
                     areaPrerequisite.addArea(area);
                 }
@@ -66,7 +69,7 @@ public class BandPrerequisiteService {
                 for (IdNameForm idNameForm : prerequisiteDto.getGenres()) {
                     Genre genre = genreRepository.findById(idNameForm.getId()).orElse(null);
                     if (genre == null) {
-                        throw new Exception("Genre does not exist!");
+                        throw new GenreNotFoundException();
                     }
                     genrePrerequisite.addGenre(genre);
                 }
@@ -78,7 +81,7 @@ public class BandPrerequisiteService {
                 for (IdNameForm idNameForm : prerequisiteDto.getPositions()) {
                     Position position = positionRepository.findById(idNameForm.getId()).orElse(null);
                     if (position == null) {
-                        throw new Exception("Position does not exist!");
+                        throw new PositionNotFoundException();
                     }
                     positionPrerequisite.addPosition(position);
                 }
@@ -86,14 +89,14 @@ public class BandPrerequisiteService {
                 bandPrerequisiteRepository.save(positionPrerequisite);
                 break;
             default:
-                throw new Exception("Wrong dtype for Prerequisite in Request!");
+                throw new InvalidTypeException();
         }
     }
 
-    public List<PrerequisiteDto> getAllPrerequisiteOfPost(Long bandPostId) throws Exception {
+    public List<PrerequisiteDto> getAllPrerequisiteOfPost(Long bandPostId) {
         BandPost bandPost = bandPostRepository.findById(bandPostId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         List<PrerequisiteDto> res = new ArrayList<>();
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
@@ -114,38 +117,38 @@ public class BandPrerequisiteService {
                     res.add(new PrerequisiteDto((PositionPrerequisite) bandPrerequisite));
                     break;
                 default:
-                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+                    throw new InvalidTypeException();
             }
         }
         return res;
     }
 
     @Transactional
-    public void deletePrerequisite(Long postId, Long prerequisiteId) throws Exception {
+    public void deletePrerequisite(Long postId, Long prerequisiteId) {
         BandPrerequisite bandPrerequisite = bandPrerequisiteRepository.findById(prerequisiteId).orElse(null);
         if (bandPrerequisite == null) {
-            throw new Exception("Prerequisite doesn't exist!");
+            throw new PrerequisiteNotFoundException();
         }
         if (!bandPrerequisite.getBandPost().getId().equals(postId)) {
-            throw new Exception("User has no permission to this Prerequisite!");
+            throw new PrerequisiteNotOfBandException();
         }
         bandPrerequisiteRepository.deleteById(prerequisiteId);
     }
 
     @Transactional
-    public void editPrerequisite(Long postId, Long prerequisiteId, PrerequisiteDto prerequisiteDto) throws Exception {
+    public void editPrerequisite(Long postId, Long prerequisiteId, PrerequisiteDto prerequisiteDto) {
         deletePrerequisite(postId, prerequisiteId);
         addPrerequisite(postId, prerequisiteDto);
     }
 
-    public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) throws Exception {
+    public List<PrerequisiteCheckDto> checkUserAndReturnForm(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         List<PrerequisiteCheckDto> res = new ArrayList<>();
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
@@ -191,7 +194,7 @@ public class BandPrerequisiteService {
                     res.add(new PrerequisiteCheckDto((PositionPrerequisite) bandPrerequisite, check));
                     break;
                 default:
-                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+                    throw new InvalidTypeException();
             }
         }
         return res;
@@ -200,14 +203,14 @@ public class BandPrerequisiteService {
     /**
      * 유저 지원 시 지원 가능한지 검증용 메소드
      */
-    public Boolean canUserApply(String email, Long postId) throws Exception {
+    public Boolean canUserApply(String email, Long postId) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("User does not exist!");
+            throw new UserNotFoundException();
         }
         BandPost bandPost = bandPostRepository.findById(postId).orElse(null);
         if (bandPost == null) {
-            throw new Exception("Band Post does not Exist!");
+            throw new PostNotFoundException();
         }
         for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
             boolean check = false;
@@ -247,7 +250,7 @@ public class BandPrerequisiteService {
                     }
                     break;
                 default:
-                    throw new Exception("Wrong dtype for Prerequisite in DB!");
+                    throw new InvalidTypeException();
             }
             if (!check) {
                 return false;

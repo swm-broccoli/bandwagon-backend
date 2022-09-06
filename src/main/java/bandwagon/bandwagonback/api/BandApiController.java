@@ -35,12 +35,7 @@ public class BandApiController {
     public ResponseEntity<?> create(@RequestBody BandCreateForm bandCreateForm, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandService.createBand(email, bandCreateForm);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandService.createBand(email, bandCreateForm);
         return ResponseEntity.ok().body(null);
     }
 
@@ -49,13 +44,8 @@ public class BandApiController {
     public ResponseEntity<?> deleteBand(@PathVariable("band_id") Long bandId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandService.disbandBand(email, bandId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandService.disbandBand(email, bandId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 이름 수정")
@@ -63,12 +53,7 @@ public class BandApiController {
     public ResponseEntity<?> editName(@PathVariable("band_id") Long bandId, @RequestBody EditNameForm editNameForm, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandService.editName(email, bandId, editNameForm.getName());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandService.editName(email, bandId, editNameForm.getName());
         return ResponseEntity.ok().body(null);
     }
 
@@ -77,12 +62,7 @@ public class BandApiController {
     public ResponseEntity<?> editDescription(@PathVariable("band_id") Long bandId, @RequestBody EditDescriptionForm editDescriptionForm, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandService.editDescription(email, bandId, editDescriptionForm.getDescription());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandService.editDescription(email, bandId, editDescriptionForm.getDescription());
         return ResponseEntity.ok().body(null);
     }
 
@@ -106,13 +86,8 @@ public class BandApiController {
     public ResponseEntity<?> addMember(@PathVariable("band_id") Long bandId, @RequestBody AddMemberForm addMemberForm, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try{
-            Long newMemberId = bandMemberService.addMemberToBand(email, bandId, addMemberForm.getEmail());
-            return ResponseEntity.ok().body(new SimpleIdResponse(newMemberId));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        Long newMemberId = bandMemberService.addMemberToBand(email, bandId, addMemberForm.getEmail());
+        return ResponseEntity.ok().body(new SimpleIdResponse(newMemberId));
     }
 
     @Operation(description = "밴드 멤버 제거")
@@ -120,13 +95,8 @@ public class BandApiController {
     public ResponseEntity<?> removeMember(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try{
-            bandMemberService.removeMemberFromBand(email, bandId, bandMemberId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandMemberService.removeMemberFromBand(email, bandId, bandMemberId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "프런트맨 변경")
@@ -134,13 +104,8 @@ public class BandApiController {
     public ResponseEntity<?> changeFrontman(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandMemberService.changeFrontman(email, bandMemberId, bandId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandMemberService.changeFrontman(email, bandMemberId, bandId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 멤버 포지션 추가")
@@ -148,13 +113,8 @@ public class BandApiController {
     public ResponseEntity<?> addPositionToMember(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, @PathVariable("position_id") Long positionId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandMemberService.addPositionToBandMember(email, bandId, bandMemberId, positionId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandMemberService.addPositionToBandMember(email, bandId, bandMemberId, positionId);
+        return ResponseEntity.ok().body(null);
     }
     
     @Operation(description = "밴드 멤버 포지션 제거")
@@ -162,13 +122,8 @@ public class BandApiController {
     public ResponseEntity<?> deletePositionFromMember(@PathVariable("band_id") Long bandId, @PathVariable("band_member_id") Long bandMemberId, @PathVariable("position_id") Long positionId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandMemberService.deletePositionFromBandMember(email, bandId, bandMemberId, positionId);
-            return ResponseEntity.ok().body(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandMemberService.deletePositionFromBandMember(email, bandId, bandMemberId, positionId);
+        return ResponseEntity.ok().body(null);
     }
 
     @Operation(description = "밴드 탈퇴(본인이)")
@@ -176,13 +131,8 @@ public class BandApiController {
     public ResponseEntity<?> withdrawFromBand(@PathVariable("band_id") Long bandId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            bandMemberService.withdrawMemberFromBand(email, bandId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-        }
+        bandMemberService.withdrawMemberFromBand(email, bandId);
+        return ResponseEntity.ok(null);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {

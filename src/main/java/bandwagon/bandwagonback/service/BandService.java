@@ -6,7 +6,11 @@ import bandwagon.bandwagonback.domain.NotificationType;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.dto.BandPageDto;
-import bandwagon.bandwagonback.dto.exception.NoBandException;
+import bandwagon.bandwagonback.dto.exception.inband.UserInBandException;
+import bandwagon.bandwagonback.dto.exception.inband.UserNotInBandException;
+import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
+import bandwagon.bandwagonback.dto.exception.notof.UserNotOfBandException;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.BandRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
@@ -19,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 @Slf4j
 @Service
@@ -36,14 +42,14 @@ public class BandService {
     /**
      * 유저의 밴드 반환
      */
-    public Band getUsersBand(User user) throws Exception {
+    public Band getUsersBand(User user) {
         BandMember bandMember = user.getBandMember();
         if (bandMember == null) {
-            throw new Exception("밴드에 가입된 유저가 아닙니다!");
+            throw new UserNotInBandException();
         }
         Band band = bandMember.getBand();
         if (band == null) {
-            throw new Exception("밴드를 찾을 수 없습니다!");
+            throw new BandNotFoundException();
         }
         return band;
     }
@@ -51,14 +57,14 @@ public class BandService {
     /**
      * 로그인 된 유저의 밴드 페이지 조회
      */
-    public BandPageDto getUsersBandPage(String email) throws Exception {
+    public BandPageDto getUsersBandPage(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         BandMember bandMember = user.getBandMember();
         if (bandMember == null) {
-            throw new NoBandException("가입된 밴드가 없습니다.");
+            throw new UserNotInBandException();
         }
         return new BandPageDto(bandMember.getBand(), bandMember.getIsFrontman());
     }
@@ -66,10 +72,10 @@ public class BandService {
     /**
      * 특정 밴드의 밴드 페이지 조회 (for band post)
      */
-    public BandPageDto getOtherBandPage(Long bandId) throws Exception {
+    public BandPageDto getOtherBandPage(Long bandId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if (band == null) {
-            throw new Exception("존재하지 않는 밴드입니다!");
+            throw new BandNotFoundException();
         }
         return new BandPageDto(band, false);
     }
@@ -78,13 +84,13 @@ public class BandService {
      * 밴드 생성
      */
     @Transactional
-    public Long createBand(String email, BandCreateForm bandCreateForm) throws Exception {
+    public Long createBand(String email, BandCreateForm bandCreateForm) {
         User user = userRepository.findByEmail(email).orElse(null);
         if(user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if(user.getBandMember() != null) {
-            throw new Exception("밴드에 이미 가입한 유저입니다!");
+            throw new UserInBandException();
         }
         Band band = new Band(bandCreateForm);
         bandRepository.save(band);
@@ -98,7 +104,7 @@ public class BandService {
      * 밴드 삭제
      */
     @Transactional
-    public void disbandBand(String email, Long bandId) throws Exception {
+    public void disbandBand(String email, Long bandId) {
         bandMemberService.confirmUserIsFrontman(email, bandId);
         User user = userRepository.findByEmail(email).orElse(null);
         Band band = bandRepository.findById(bandId).orElse(null);
@@ -111,7 +117,7 @@ public class BandService {
      * 밴드 이름 변경
      */
     @Transactional
-    public void editName(String email, Long bandId, String newName) throws Exception {
+    public void editName(String email, Long bandId, String newName) {
         Band band = confirmUserInBand(email, bandId);
         band.setName(newName);
     }
@@ -120,7 +126,7 @@ public class BandService {
      * 밴드 소개 변경
      */
     @Transactional
-    public void editDescription(String email, Long bandId, String newDescription) throws Exception {
+    public void editDescription(String email, Long bandId, String newDescription) {
         Band band = confirmUserInBand(email, bandId);
         band.setDescription(newDescription);
     }
@@ -129,7 +135,7 @@ public class BandService {
      * 밴드 아바타 변경
      */
     @Transactional
-    public String uploadAvatar(String email, Long bandId, MultipartFile multipartFile) throws Exception {
+    public String uploadAvatar(String email, Long bandId, MultipartFile multipartFile) throws URISyntaxException, IOException {
         Band band = confirmUserInBand(email, bandId);
         if (band.getAvatarUrl() != null && band.getAvatarUrl().length() != 0) {
             s3Uploader.deleteFromS3(band.getAvatarUrl().replace(File.separatorChar, '/'));
@@ -157,13 +163,13 @@ public class BandService {
     }
 
     @Transactional
-    public Band confirmUserInBand(String email, Long bandId) throws Exception {
+    public Band confirmUserInBand(String email, Long bandId) {
         Band band = bandRepository.findById(bandId).orElse(null);
         if(band == null) {
-            throw new Exception("존재하지 않는 밴드입니다!");
+            throw new BandNotFoundException();
         }
         if (bandMemberRepository.findFirstByMember_emailAndBand_id(email, bandId) == null) {
-            throw new Exception("해당 밴드에 속하지 않은 유저입니다!");
+            throw new UserNotOfBandException();
         }
         return band;
     }

@@ -4,6 +4,12 @@ import bandwagon.bandwagonback.domain.Band;
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.UserInfo;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.DuplicateUserException;
+import bandwagon.bandwagonback.dto.exception.InvalidPasswordException;
+import bandwagon.bandwagonback.dto.exception.PasswordCheckFailException;
+import bandwagon.bandwagonback.dto.exception.notauthorized.FrontmanCannotLeaveException;
+import bandwagon.bandwagonback.dto.exception.notauthorized.SocialAccountNotAuthorizedException;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.UserInfoRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +47,10 @@ public class UserService {
      * 회원가입
      */
     @Transactional
-    public Long join(SignUpRequest request) throws Exception {
+    public Long join(SignUpRequest request) {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             log.error("Password mismatch: Input1 = {}, Input2 = {}", request.getPassword(), request.getPasswordCheck());
-            throw new Exception("비밀번호가 일치하지 않습니다.");
+            throw new PasswordCheckFailException();
         }
         validateDuplicateUser(request.getEmail());
         //password Encrypt
@@ -62,24 +68,24 @@ public class UserService {
     }
 
     @Transactional
-    public void unregister(String email) throws Exception {
+    public void unregister(String email) {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if (user.getBandMember() != null && user.getBandMember().getIsFrontman()) {
-            throw new Exception("밴드의 프런트맨입니다! 프런트맨을 넘기시거나 밴드를 해체해 주세요.");
+            throw new FrontmanCannotLeaveException();
         }
         userRepository.delete(user);
     }
 
     @Transactional
-    public UserEditDto editUser(String email, UserEditRequest request) throws Exception {
+    public UserEditDto editUser(String email, UserEditRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if (request.getOldPassword() != null && !request.getOldPassword().equals("")) {
             editPassword(user, request);
@@ -90,22 +96,22 @@ public class UserService {
     }
 
     @Transactional
-    public void editPassword(User user, UserEditRequest request) throws Exception {
+    public void editPassword(User user, UserEditRequest request) {
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new Exception("비밀번호가 올바르지 않습니다!");
+            throw new InvalidPasswordException();
         }
         if (!request.getNewPassword().equals(request.getNewPasswordCheck())) {
-            throw new Exception("신규 비밀번호를 동일하게 입력해주세요.");
+            throw new PasswordCheckFailException();
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
     @Transactional
-    public void editDescription(String email, String description) throws Exception {
+    public void editDescription(String email, String description) {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         UserInfo userInfo = user.getUserInfo();
         userInfo.setDescription(description);
@@ -116,7 +122,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         UserInfo userInfo = user.getUserInfo();
         if (userInfo.getAvatarUrl() != null && userInfo.getAvatarUrl().length() != 0) {
@@ -128,31 +134,31 @@ public class UserService {
     }
 
     // 이메일로 회원 중복 검사
-    public void validateDuplicateUser(String email) throws Exception {
+    public void validateDuplicateUser(String email) {
         Optional<User> foundUser = userRepository.findByEmail(email);
         if (foundUser.isPresent()) {
             log.error("Existing user: User = {}", email);
-            throw new Exception("이미 존재하는 회원입니다");
+            throw new DuplicateUserException();
         }
     }
 
-    public FindUserEmailDto findUserEmail(FindUserEmailRequest request) throws Exception {
+    public FindUserEmailDto findUserEmail(FindUserEmailRequest request) {
         List<User> users = userRepository.findAllByNameAndBirthday(request.getName(), request.getBirthday());
         if (users.isEmpty()) {
-            throw new Exception("해당 이름과 생일 정보로 가입한 유저가 없습니다!");
+            throw new UserNotFoundException();
         }
         List<String> userEmails = users.stream().map(user -> user.getEmail().replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*")).collect(Collectors.toList());
         return new FindUserEmailDto(userEmails);
     }
 
     @Transactional
-    public void findUserPassword(FindUserPasswordRequest request) throws Exception {
+    public void findUserPassword(FindUserPasswordRequest request) {
         User user = userRepository.findByNameAndEmail(request.getName(), request.getEmail()).orElse(null);
         if (user == null) {
-            throw new Exception("해당 정보의 유저가 존재하지 않습니다!");
+            throw new UserNotFoundException();
         }
         if (user.getIsSocial()) {
-            throw new Exception("소셜 로그인 유저라 비밀번호 변경이 불가합니다!");
+            throw new SocialAccountNotAuthorizedException();
         }
         String newRandomPassword = randomPasswordGen();
         user.setPassword(passwordEncoder.encode(newRandomPassword));
@@ -160,10 +166,10 @@ public class UserService {
         emailService.sendSimpleMessage(user.getEmail(), "[Band:Wagon] 임시 비밀번호 발급", emailText);
     }
 
-    public Band findBand(String email) throws Exception {
+    public Band findBand(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         if (user.getBandMember() != null) {
             return user.getBandMember().getBand();
@@ -179,19 +185,19 @@ public class UserService {
     }
 
     //회원 하나 조회 - table id로
-    public User findOne(Long userId) throws Exception{
+    public User findOne(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         return user;
     }
 
     //회원 하나 조회 - email로
-    public User findOneByEmail(String email) throws Exception {
+    public User findOneByEmail(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new Exception("존재하지 않는 유저입니다!");
+            throw new UserNotFoundException();
         }
         return user;
     }

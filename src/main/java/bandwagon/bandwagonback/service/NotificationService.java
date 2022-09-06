@@ -2,6 +2,7 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.*;
 import bandwagon.bandwagonback.dto.NotificationListDto;
+import bandwagon.bandwagonback.dto.exception.notfound.FrontmanNotFoundException;
 import bandwagon.bandwagonback.dto.subdto.NotificationDto;
 import bandwagon.bandwagonback.repository.BandMemberRepository;
 import bandwagon.bandwagonback.repository.NotificationRepository;
@@ -54,10 +55,10 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createBandToUser(Band band, User receivingUser, NotificationType type) throws Exception {
+    public void createBandToUser(Band band, User receivingUser, NotificationType type) {
         BandMember frontmanBandMember = bandMemberRepository.findByBandAndIsFrontmanTrue(band).orElse(null);
         if (frontmanBandMember == null) {
-            throw new Exception("Can't find Frontman of given band!");
+            throw new FrontmanNotFoundException();
         }
         createNotification(frontmanBandMember.getMember(), receivingUser, type);
     }
