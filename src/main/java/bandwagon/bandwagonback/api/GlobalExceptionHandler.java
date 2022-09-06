@@ -1,6 +1,7 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.dto.ErrorResponse;
+import bandwagon.bandwagonback.dto.exception.CustomException;
 import bandwagon.bandwagonback.dto.exception.DuplicateRequestException;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.inband.InBandException;
@@ -19,15 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handleNotFoundException(NotFoundException e) {
-        log.error("handleNotFoundException", e);
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(NotOfException.class)
-    public ResponseEntity<?> handleNotOfException(NotOfException e) {
-        log.error("handleNotOfException", e);
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleCustomException(CustomException e) {
+        log.error("handleCustomException", e);
         return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 
@@ -35,29 +30,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
         log.error("handleBadCredentialsException", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("비밀번호가 올바르지 않습니다!"));
-    }
-
-    @ExceptionHandler(InBandException.class)
-    public ResponseEntity<?> handleInBandException(InBandException e) {
-        log.error("handleInBandException", e);
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(InvalidTypeException.class)
-    public ResponseEntity<?> handleInvalidTypeException(InvalidTypeException e) {
-        log.error("handleInvalidTypeException", e);
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(NotAuthorizedException.class)
-    public ResponseEntity<?> handleNotAuthorizedException(NotAuthorizedException e) {
-        log.error("handleNotAuthorizedException", e);
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(DuplicateRequestException.class)
-    public ResponseEntity<?> handleDuplicateRequestException(DuplicateRequestException e) {
-        log.error("handleDuplicateRequestException", e);
-        return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
     }
 }
