@@ -1,18 +1,16 @@
 package bandwagon.bandwagonback.api;
 
 import bandwagon.bandwagonback.domain.Band;
-import bandwagon.bandwagonback.domain.NotificationType;
 import bandwagon.bandwagonback.domain.RequestType;
 import bandwagon.bandwagonback.domain.User;
-import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.RequestListDto;
+import bandwagon.bandwagonback.dto.exception.PrerequisiteNotMetException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,17 +101,12 @@ public class RequestApiController {
     public ResponseEntity<?> sendApplyRequest(@RequestParam Long postId, HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
         String email = jwtTokenUtil.extractUsername(jwt);
-        try {
-            User applyingUser = userService.findOneByEmail(email);
-            if (!bandPrerequisiteService.canUserApply(email, postId)) {
-                throw new Exception("User does not meet prerequisites!");
-            }
-            requestService.sendApplyRequest(applyingUser, postId);
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+        User applyingUser = userService.findOneByEmail(email);
+        if (!bandPrerequisiteService.canUserApply(email, postId)) {
+            throw new PrerequisiteNotMetException();
         }
+        requestService.sendApplyRequest(applyingUser, postId);
+        return ResponseEntity.ok(null);
     }
 
     @Operation(description = "밴드 가입 요청 응답하기")
