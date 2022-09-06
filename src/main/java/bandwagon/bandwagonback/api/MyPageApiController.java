@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.dto.DescriptionDto;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.PerformanceDto;
+import bandwagon.bandwagonback.dto.exception.JwtAndUrlDifferentException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -169,12 +170,12 @@ public class MyPageApiController {
         return ResponseEntity.ok().body(null);
     }
 
-    private String getJwtFromHeaderAndCheckEmail(String email, HttpServletRequest request) throws Exception {
+    private String getJwtFromHeaderAndCheckEmail(String email, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         String jwt =  authorizationHeader.substring(7);
         String jwtEmail = jwtTokenUtil.extractUsername(jwt);
         if (!jwtEmail.equals(email)) {
-            throw new Exception("User in token and user in URL is different");
+            throw new JwtAndUrlDifferentException();
         }
         return jwt;
     }

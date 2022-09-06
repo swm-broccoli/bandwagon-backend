@@ -5,6 +5,7 @@ import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.*;
+import bandwagon.bandwagonback.dto.exception.JwtAndUrlDifferentException;
 import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -161,7 +162,7 @@ public class UserApiController {
             String jwt = getJwtFromHeader(request);
             String jwtEmail = jwtTokenUtil.extractUsername(jwt);
             if (!jwtEmail.equals(email)) {
-                throw new Exception("User in token and user in URL is different");
+                throw new JwtAndUrlDifferentException();
             }
             String imgUrl =  userService.uploadAvatar(email, multipartFile);
             return ResponseEntity.ok().body(new ImageResponseDto(imgUrl));
@@ -181,7 +182,7 @@ public class UserApiController {
             String jwt = getJwtFromHeader(request);
             String jwtEmail = jwtTokenUtil.extractUsername(jwt);
             if (!jwtEmail.equals(email)) {
-                throw new Exception("User in token and user in URL is different");
+                throw new JwtAndUrlDifferentException();
             }
             User user = userService.findOneByEmail(email);
             PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
