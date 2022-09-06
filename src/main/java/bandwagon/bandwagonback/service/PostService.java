@@ -7,6 +7,7 @@ import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.domain.post.UserPost;
 import bandwagon.bandwagonback.dto.LikedPostPageDto;
 import bandwagon.bandwagonback.dto.PostDto;
+import bandwagon.bandwagonback.dto.UserHasPostException;
 import bandwagon.bandwagonback.dto.exception.notfound.BandNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.PostNotFoundException;
 import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
@@ -35,13 +36,13 @@ public class PostService {
 
 
     @Transactional
-    public Long createUserPost(String email, PostDto postDto) throws Exception {
+    public Long createUserPost(String email, PostDto postDto) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             throw new UserNotFoundException();
         }
         if(userPostRepository.existsByUser(user)) {
-            throw new Exception("User already has post!");
+            throw new UserHasPostException();
         }
         UserPost userPost = new UserPost(postDto);
         userPost.setUser(user);
