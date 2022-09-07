@@ -6,6 +6,7 @@ import bandwagon.bandwagonback.domain.prerequisite.GenrePrerequisite;
 import bandwagon.bandwagonback.domain.prerequisite.PositionPrerequisite;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.JoinType;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,7 +20,14 @@ public class BandPostSpecification {
         List<Integer> positionIdList = Arrays.asList(positionIds);
         return (root, query, criteriaBuilder) -> {
             query.distinct(true);
-            return criteriaBuilder.treat(root.join("bandPrerequisites"), PositionPrerequisite.class).join("positions").get("id").in(positionIdList);
+            return criteriaBuilder.treat(root.join("bandPrerequisites", JoinType.LEFT), PositionPrerequisite.class).join("positions", JoinType.LEFT).get("id").in(positionIdList);
+        };
+    }
+
+    public static Specification<BandPost> anyPosition() {
+        return (root, query, criteriaBuilder) -> {
+            query.distinct(true);
+            return criteriaBuilder.isNull(criteriaBuilder.treat(root.join("bandPrerequisites", JoinType.LEFT), PositionPrerequisite.class).join("positions", JoinType.LEFT));
         };
     }
 
