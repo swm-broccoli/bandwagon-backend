@@ -23,7 +23,7 @@ public class UserPostDto extends PostDto {
         super(post);
         this.nickname = post.getUser().getNickname();
         this.userAvatarUrl = post.getUser().getUserInfo().getAvatarUrl();
-        this.tagInfo = post.getUser().getPositions().stream().map(IdNameForm::new).collect(Collectors.toList());
+        this.tagInfo = post.getUser().getPositions().stream().map(IdNameForm::new).sorted((a, b) -> (int) (a.getId() - b.getId())).limit(3).collect(Collectors.toList());
     }
 
     public static UserPostDto makeUserPostDto(UserPost post, User user) {

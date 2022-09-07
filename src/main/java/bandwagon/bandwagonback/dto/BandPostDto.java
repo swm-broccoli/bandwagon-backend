@@ -29,7 +29,7 @@ public class BandPostDto extends PostDto{
         this.bandAvatarUrl = post.getBand().getAvatarUrl();
         PositionPrerequisite positionPrereq = (PositionPrerequisite) post.getBandPrerequisites().stream().filter(prereq -> prereq.getDtype().equals("Position")).findFirst().orElse(null);
         if (positionPrereq != null) {
-            this.tagInfo = positionPrereq.getPositions().stream().map(IdNameForm::new).collect(Collectors.toList());
+            this.tagInfo = positionPrereq.getPositions().stream().map(IdNameForm::new).sorted((a, b) -> (int) (a.getId() - b.getId())).limit(3).collect(Collectors.toList());
         } else {
             this.tagInfo = new ArrayList<>();
         }
