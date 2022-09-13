@@ -55,14 +55,14 @@ public class MainPageApiController {
     @Operation(description = "오늘의(랜덤) 포트폴리오 조회")
     @GetMapping("/api/random")
     public ResponseEntity<?> getRandomPortfolio() {
-        HashSet<Object> randomPages = new HashSet<>();
+        HashSet<RandomPageDto> randomPages = new HashSet<>();
         while (randomPages.size() < 3) {
             if (Math.random() <= 0.5) {
                 User randomUser = userService.getRandomUser();
-                randomPages.add(new MyPageDto(randomUser));
+                randomPages.add(new RandomPageDto(randomUser));
             } else {
                 Band randomBand = bandService.getRandomBand();
-                randomPages.add(new BandPageDto(randomBand, false));
+                randomPages.add(new RandomPageDto(randomBand));
             }
         }
         return ResponseEntity.ok(randomPages);
