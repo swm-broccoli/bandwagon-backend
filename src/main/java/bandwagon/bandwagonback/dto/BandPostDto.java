@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class BandPostDto extends PostDto{
     private String bandName;
     private String bandAvatarUrl;
-    //TODO: 나중엔 필요한 테그 정보만 담게 변경
     private List<IdNameForm> tagInfo;
 
     public BandPostDto() {}

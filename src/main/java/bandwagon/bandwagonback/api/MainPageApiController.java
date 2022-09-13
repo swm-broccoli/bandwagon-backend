@@ -50,8 +50,7 @@ public class MainPageApiController {
         PopularPostsDto popularPostsDto = new PopularPostsDto(postDtoList);
         return ResponseEntity.ok(popularPostsDto);
     }
-    
-    //TODO: My/Band Page DTO 로 주지 말고 메인 페이지에 맞는 DTO로 변경 필요
+
     @Operation(description = "오늘의(랜덤) 포트폴리오 조회")
     @GetMapping("/api/random")
     public ResponseEntity<?> getRandomPortfolio() {
