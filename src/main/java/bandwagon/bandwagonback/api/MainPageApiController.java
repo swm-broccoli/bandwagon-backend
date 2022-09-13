@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,12 +55,16 @@ public class MainPageApiController {
     @Operation(description = "오늘의(랜덤) 포트폴리오 조회")
     @GetMapping("/api/random")
     public ResponseEntity<?> getRandomPortfolio() {
-        if (Math.random() <= 0.5) {
-            User randomUser = userService.getRandomUser();
-            return ResponseEntity.ok(new MyPageDto(randomUser));
-        } else {
-            Band randomBand = bandService.getRandomBand();
-            return ResponseEntity.ok(new BandPageDto(randomBand, false));
+        HashSet<Object> randomPages = new HashSet<>();
+        while (randomPages.size() < 3) {
+            if (Math.random() <= 0.5) {
+                User randomUser = userService.getRandomUser();
+                randomPages.add(new MyPageDto(randomUser));
+            } else {
+                Band randomBand = bandService.getRandomBand();
+                randomPages.add(new BandPageDto(randomBand, false));
+            }
         }
+        return ResponseEntity.ok(randomPages);
     }
 }
