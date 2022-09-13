@@ -122,8 +122,11 @@ public class PostApiController {
                                              @RequestParam(required = false) Integer maxAge,
                                              @RequestParam(required = false) String title,
                                              @RequestParam(required = false) Integer[] position,
+                                             @RequestParam(required = false) Boolean anyPosition,
                                              @RequestParam(required = false) Integer[] genre,
+                                             @RequestParam(required = false) Boolean anyGenre,
                                              @RequestParam(required = false) Integer[] area,
+                                             @RequestParam(required = false) Boolean anyArea,
                                              @RequestParam(required = false) Integer[] day,
                                              HttpServletRequest request) {
 
@@ -134,11 +137,20 @@ public class PostApiController {
         if (position != null) {
             specification = specification.and(BandPostSpecification.containsPosition(position));
         }
+        if (anyPosition != null && anyPosition) {
+            specification = specification.or(BandPostSpecification.anyPosition());
+        }
         if (genre != null) {
             specification = specification.and(BandPostSpecification.containsGenre(genre));
         }
+        if (anyGenre != null && anyGenre) {
+            specification = specification.or(BandPostSpecification.anyGenre());
+        }
         if (area != null) {
             specification = specification.and(BandPostSpecification.containsArea(area));
+        }
+        if (anyArea != null && anyArea) {
+            specification = specification.or(BandPostSpecification.anyArea());
         }
         if (day != null) {
             specification = specification.and(BandPostSpecification.containsDay(day));
