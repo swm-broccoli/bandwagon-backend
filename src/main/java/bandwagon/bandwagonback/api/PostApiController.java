@@ -128,7 +128,6 @@ public class PostApiController {
                                              @RequestParam(required = false) Integer[] area,
                                              @RequestParam(required = false) Boolean anyArea,
                                              @RequestParam(required = false) Integer[] day,
-                                             @RequestParam(required = false) Boolean anyDay,
                                              HttpServletRequest request) {
 
         Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
@@ -155,9 +154,6 @@ public class PostApiController {
         }
         if (day != null) {
             specification = specification.and(BandPostSpecification.containsDay(day));
-        }
-        if (anyDay != null && anyDay) {
-            specification = specification.or(BandPostSpecification.anyDay());
         }
         if (minAge != null) {
             specification = specification.and(BandPostSpecification.ageGreaterThan(minAge));
