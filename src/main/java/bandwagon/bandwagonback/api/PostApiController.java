@@ -8,7 +8,6 @@ import bandwagon.bandwagonback.dto.*;
 import bandwagon.bandwagonback.dto.exception.InvalidTypeException;
 import bandwagon.bandwagonback.dto.exception.notof.PostNotOfBandException;
 import bandwagon.bandwagonback.dto.exception.notof.PostNotOfUserException;
-import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.repository.specification.BandPostSpecification;
 import bandwagon.bandwagonback.repository.specification.UserPostSpecification;
 import bandwagon.bandwagonback.service.*;
@@ -21,9 +20,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 @Tag(name = "PostApiController")
@@ -37,18 +37,16 @@ public class PostApiController {
     private final UserService userService;
     private final BandService bandService;
     private final BandMemberService bandMemberService;
-    private final JwtUtil jwtTokenUtil;
 
 
     @Operation(description = "게시글 제목, 본문 조회")
     @GetMapping("/api/post/{post_id}")
-    public ResponseEntity<?> getPost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
+    public ResponseEntity<?> getPost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("post_id") Long postId) {
         PostDto postDto;
-        if (jwt == null) {
+        if (userDetails == null) {
             postDto = postService.viewPost(postId);
         } else {
-            String email = jwtTokenUtil.extractUsername(jwt);
+            String email = userDetails.getUsername();
             User user = userService.findOneByEmail(email);
             postDto = postService.viewPost(postId, user);
         }
@@ -57,9 +55,8 @@ public class PostApiController {
 
     @Operation(description = "게시글 등록")
     @PostMapping("/api/post")
-    public ResponseEntity<?> postPost(@RequestBody PostDto postDto, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> postPost(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PostDto postDto) {
+        String email = userDetails.getUsername();
         if (postDto.getDtype().equals("Band")) {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
             Long bandPostId = postService.createBandPost(bandId, postDto);
@@ -74,9 +71,8 @@ public class PostApiController {
 
     @Operation(description = "게시글 수정")
     @PutMapping("/api/post/{post_id}")
-    public ResponseEntity<?> editPost(@PathVariable("post_id") Long postId, @RequestBody PostDto postDto, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> editPost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("post_id") Long postId, @RequestBody PostDto postDto) {
+        String email = userDetails.getUsername();
         if (postDto.getDtype().equals("Band")) {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
             if (!postService.isPostByBand(postId, bandId)) {
@@ -95,9 +91,8 @@ public class PostApiController {
 
     @Operation(description = "게시글 삭제")
     @DeleteMapping("/api/post/{post_id}")
-    public ResponseEntity<?> deletePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> deletePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("post_id") Long postId) {
+        String email = userDetails.getUsername();
         String dtype = postService.getPostType(postId);
         if (dtype.equals("Band")) {
             Long bandId = bandMemberService.getBandIdByUserEmail(email);
@@ -116,19 +111,20 @@ public class PostApiController {
 
     @Operation(description = "밴드 게시글 검색")
     @GetMapping("/api/band/post")
-    public ResponseEntity<?> searchBandPosts(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size,
-                                             @RequestParam(required = false) Integer minAge,
-                                             @RequestParam(required = false) Integer maxAge,
-                                             @RequestParam(required = false) String title,
-                                             @RequestParam(required = false) Integer[] position,
-                                             @RequestParam(required = false) Boolean anyPosition,
-                                             @RequestParam(required = false) Integer[] genre,
-                                             @RequestParam(required = false) Boolean anyGenre,
-                                             @RequestParam(required = false) Integer[] area,
-                                             @RequestParam(required = false) Boolean anyArea,
-                                             @RequestParam(required = false) Integer[] day,
-                                             HttpServletRequest request) {
+    public ResponseEntity<?> searchBandPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Integer[] position,
+            @RequestParam(required = false) Boolean anyPosition,
+            @RequestParam(required = false) Integer[] genre,
+            @RequestParam(required = false) Boolean anyGenre,
+            @RequestParam(required = false) Integer[] area,
+            @RequestParam(required = false) Boolean anyArea,
+            @RequestParam(required = false) Integer[] day) {
 
         Specification<BandPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
@@ -163,12 +159,11 @@ public class PostApiController {
         }
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<BandPost> bandPosts = postService.searchBandPosts(specification, pageRequest);
-        String jwt = getJwtFromHeader(request);
         BandPostPageDto bandPostPageDto;
-        if (jwt == null) {
+        if (userDetails == null) {
             bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(BandPostDto::new).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
         } else {
-            String email = jwtTokenUtil.extractUsername(jwt);
+            String email = userDetails.getUsername();
             User user = userService.findOneByEmail(email);
             bandPostPageDto = new BandPostPageDto(bandPosts.getContent().stream().map(post -> BandPostDto.makeBandPostDto(post, user)).collect(Collectors.toList()), bandPosts.getNumber(), bandPosts.getTotalElements(), bandPosts.getTotalPages());
         }
@@ -177,16 +172,17 @@ public class PostApiController {
 
     @Operation(description = "유저 게시글 검색")
     @GetMapping("/api/user/post")
-    public ResponseEntity<?> searchUserPosts(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size,
-                                             @RequestParam(required = false) String title,
-                                             @RequestParam(required = false) Boolean gender,
-                                             @RequestParam(required = false) Integer[] position,
-                                             @RequestParam(required = false) Integer[] genre,
-                                             @RequestParam(required = false) Integer[] area,
-                                             @RequestParam(required = false) Integer minAge,
-                                             @RequestParam(required = false) Integer maxAge,
-                                             HttpServletRequest request) {
+    public ResponseEntity<?> searchUserPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Boolean gender,
+            @RequestParam(required = false) Integer[] position,
+            @RequestParam(required = false) Integer[] genre,
+            @RequestParam(required = false) Integer[] area,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge) {
 
         Specification<UserPost> specification = (root, query, criteriaBuilder) -> null;
         if (title != null) {
@@ -213,13 +209,11 @@ public class PostApiController {
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<UserPost> userPosts = postService.searchUserPosts(specification, pageRequest);
-
-        String jwt = getJwtFromHeader(request);
         UserPostPageDto userPostPageDto;
-        if (jwt == null) {
+        if (userDetails == null) {
             userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(UserPostDto::new).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
         } else {
-            String email = jwtTokenUtil.extractUsername(jwt);
+            String email = userDetails.getUsername();
             User user = userService.findOneByEmail(email);
             userPostPageDto = new UserPostPageDto(userPosts.getContent().stream().map(post -> UserPostDto.makeUserPostDto(post, user)).collect(Collectors.toList()), userPosts.getNumber(), userPosts.getTotalElements(), userPosts.getTotalPages());
         }
@@ -228,9 +222,8 @@ public class PostApiController {
 
     @Operation(description = "유저 작성 구직글 조회")
     @GetMapping("/api/my/user/post")
-    public ResponseEntity<?> getUsersPosts(HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> getUsersPosts(@AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
         User user = userService.findOneByEmail(email);
         UserPost usersPost = postService.getUsersPost(user);
         return ResponseEntity.ok(UserPostDto.makeUserPostDto(usersPost, user));
@@ -238,11 +231,10 @@ public class PostApiController {
 
     @Operation(description = "유저의 밴드의 구인글 조회")
     @GetMapping("/api/my/band/post")
-    public ResponseEntity<?> getUsersBandsPosts(@RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size,
-                                                HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> getUsersBandsPosts(@AuthenticationPrincipal UserDetails userDetails,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size) {
+        String email = userDetails.getUsername();
         User user = userService.findOneByEmail(email);
         Band usersBand = bandService.getUsersBand(user);
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -253,28 +245,18 @@ public class PostApiController {
 
     @Operation(description = "게시글 좋아요")
     @PostMapping("/api/post/{post_id}/like")
-    public ResponseEntity<?> likePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> likePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("post_id") Long postId) {
+        String email = userDetails.getUsername();
         postService.likePost(email, postId);
         return ResponseEntity.ok(null);
     }
 
     @Operation(description = "게시글 좋아요 취소")
     @DeleteMapping("/api/post/{post_id}/like")
-    public ResponseEntity<?> unlikePost(@PathVariable("post_id") Long postId, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> unlikePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("post_id") Long postId) {
+        String email = userDetails.getUsername();
         postService.unlikePost(email, postId);
         return ResponseEntity.ok(null);
     }
 
-    private String getJwtFromHeader(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null) {
-            // JWT Auth 필터 안거쳐도 되는 search api에서 로그인 한 유전지, 아닌지 구분을 하기 위해서 null 사용.. 다른 방법 있으면 추후 변경 바람
-            return null;
-        }
-        return authorizationHeader.substring(7);
-    }
 }

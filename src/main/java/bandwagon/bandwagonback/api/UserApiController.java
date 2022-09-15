@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,9 +57,8 @@ public class UserApiController {
 
     @Operation(description = "회원 탈퇴")
     @DeleteMapping("/api/unregister")
-    public ResponseEntity<?> unregisterUser(HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> unregisterUser(@AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
         userService.unregister(email);
         return ResponseEntity.ok(null);
     }
@@ -113,27 +114,24 @@ public class UserApiController {
 
     @Operation(description = "유저 기본 정보 조회")
     @GetMapping("/api/users")
-    public ResponseEntity<?> getUserInfo(HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
         User user = userService.findOneByEmail(email);
         return ResponseEntity.ok(new UserEditDto(user));
     }
 
     @Operation(description = "유저 기본 정보/비밀번호 수정")
     @PutMapping("/api/users")
-    public ResponseEntity<?> editUserInfo(@RequestBody UserEditRequest userEditRequest, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String email = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> editUserInfo(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UserEditRequest userEditRequest) {
+        String email = userDetails.getUsername();
         UserEditDto userEditDto = userService.editUser(email, userEditRequest);
         return ResponseEntity.ok(userEditDto);
     }
 
     @Operation(description = "유저 아바타 변경")
     @PostMapping("/api/users/{email}/avatar")
-    public ResponseEntity<?> postUserAvatar(@PathVariable("email") String email, @RequestParam("image")MultipartFile multipartFile, HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+    public ResponseEntity<?> postUserAvatar(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("email") String email, @RequestParam("image")MultipartFile multipartFile) {
+        String jwtEmail = userDetails.getUsername();
         if (!jwtEmail.equals(email)) {
             throw new JwtAndUrlDifferentException();
         }
@@ -149,12 +147,11 @@ public class UserApiController {
 
     @Operation(description = "유저 찜한 게시글 목록")
     @GetMapping("/api/users/{email}/likes")
-    public ResponseEntity<?> getUserLikePosts(@PathVariable("email") String email,
+    public ResponseEntity<?> getUserLikePosts(@AuthenticationPrincipal UserDetails userDetails,
+                                              @PathVariable("email") String email,
                                               @RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size,
-                                              HttpServletRequest request) {
-        String jwt = getJwtFromHeader(request);
-        String jwtEmail = jwtTokenUtil.extractUsername(jwt);
+                                              @RequestParam(defaultValue = "10") int size) {
+        String jwtEmail = userDetails.getUsername();
         if (!jwtEmail.equals(email)) {
             throw new JwtAndUrlDifferentException();
         }
@@ -171,8 +168,4 @@ public class UserApiController {
         return ResponseEntity.ok(likedPostPageDto);
     }
 
-    private String getJwtFromHeader(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        return authorizationHeader.substring(7);
-    }
 }
