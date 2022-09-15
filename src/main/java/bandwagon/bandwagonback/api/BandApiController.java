@@ -30,7 +30,6 @@ public class BandApiController {
 
     private final BandService bandService;
     private final BandMemberService bandMemberService;
-    private final JwtUtil jwtTokenUtil;
 
     @Operation(description = "밴드 생성")
     @PostMapping("/api/band/create")
