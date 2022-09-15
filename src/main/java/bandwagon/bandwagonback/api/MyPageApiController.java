@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +35,8 @@ public class MyPageApiController {
     @Operation(description = "유저 페이지 불러오기")
     @GetMapping("/api/users/{email}/mypage")
     public ResponseEntity<?> getMyPage(@PathVariable("email") String email, HttpServletRequest request) {
-            User user = userService.findOneByEmail(email);
-            return ResponseEntity.ok().body(new MyPageDto(user));
+        User user = userService.findOneByEmail(email);
+        return ResponseEntity.ok().body(new MyPageDto(user));
     }
 
     @Operation(description = "자기소개 수정")
