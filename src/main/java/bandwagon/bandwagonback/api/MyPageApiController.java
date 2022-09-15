@@ -4,7 +4,6 @@ import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.dto.DescriptionDto;
 import bandwagon.bandwagonback.dto.MyPageDto;
 import bandwagon.bandwagonback.dto.PerformanceDto;
-import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

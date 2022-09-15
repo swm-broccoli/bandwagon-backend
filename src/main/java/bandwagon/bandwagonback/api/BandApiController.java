@@ -4,7 +4,6 @@ import bandwagon.bandwagonback.dto.BandCreateForm;
 import bandwagon.bandwagonback.dto.ErrorResponse;
 import bandwagon.bandwagonback.dto.ImageResponseDto;
 import bandwagon.bandwagonback.dto.SimpleIdResponse;
-import bandwagon.bandwagonback.jwt.JwtUtil;
 import bandwagon.bandwagonback.service.BandMemberService;
 import bandwagon.bandwagonback.service.BandService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 
 @Tag(name = "BandApiController")
 @Slf4j
