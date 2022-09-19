@@ -2,6 +2,10 @@ package bandwagon.bandwagonback.service;
 
 import bandwagon.bandwagonback.domain.User;
 import bandwagon.bandwagonback.domain.post.BandPost;
+import bandwagon.bandwagonback.dto.BandPostDto;
+import bandwagon.bandwagonback.dto.MultiplePostsDto;
+import bandwagon.bandwagonback.dto.PostDto;
+import bandwagon.bandwagonback.dto.exception.notfound.UserNotFoundException;
 import bandwagon.bandwagonback.repository.BandPostRepository;
 import bandwagon.bandwagonback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -44,5 +45,18 @@ public class RecommendationService {
                 i++;
             }
         }
+    }
+
+    public MultiplePostsDto getUsersRecommendations(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        ArrayList<PostDto> posts = new ArrayList<>();
+        for (BandPost bandPost : user.getRecommendedPosts()) {
+            posts.add(new BandPostDto(bandPost));
+        }
+        posts.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+        return new MultiplePostsDto(posts);
     }
 }

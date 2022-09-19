@@ -5,11 +5,11 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PopularPostsDto {
+public class MultiplePostsDto {
 
     private List<PostDto> posts;
 
-    public PopularPostsDto(List<PostDto> posts) {
+    public MultiplePostsDto(List<PostDto> posts) {
         this.posts = posts;
     }
 }
