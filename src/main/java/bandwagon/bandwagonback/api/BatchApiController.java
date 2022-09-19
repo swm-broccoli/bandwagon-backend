@@ -31,7 +31,7 @@ public class BatchApiController {
     @PostMapping("/api/recommendations")
     public ResponseEntity<?> makeRecommendations(HttpServletRequest request) {
         String requestKey = request.getHeader("Authorization");
-        if (!requestKey.equals(SECRET_KEY)) {
+        if (requestKey == null || !requestKey.equals(SECRET_KEY)) {
             throw new UserNotAuthorizedException();
         }
         recommendationService.makeRecommendations();
