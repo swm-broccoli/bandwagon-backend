@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,11 +30,17 @@ public class RecommendationService {
         List<BandPost> allBandPosts = bandPostRepository.findAll();
         for (User user : allUsers) {
             user.resetRecommendation();
-            HashMap<Long, Integer> scoreByPost = new HashMap<>();
+            HashMap<BandPost, Integer> scoreByPost = new HashMap<>();
             // scorebypost에 bandpost별 점수 추가
-
+            for (BandPost bandPost : allBandPosts) {
+                Integer score = bandPrerequisiteService.calculateScore(user, bandPost);
+                scoreByPost.put(bandPost, score);
+            }
+            LinkedList<Map.Entry<BandPost, Integer>> scoreList = new LinkedList<>(scoreByPost.entrySet());
+            scoreList.sort(((o1, o2) -> o2.getValue() - o1.getValue()));
+            int i = 0;
             while(user.getRecommendedPosts().size() < 3) {
-                // scorebypost 정렬 후 top 3개 추가
+                user.addRecommendation(scoreList.get(i).getKey());
             }
         }
     }
