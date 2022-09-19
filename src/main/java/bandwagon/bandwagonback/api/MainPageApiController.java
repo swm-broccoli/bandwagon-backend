@@ -46,8 +46,8 @@ public class MainPageApiController {
                 return new UserPostDto((UserPost) post);
             }
         }).collect(Collectors.toList());
-        PopularPostsDto popularPostsDto = new PopularPostsDto(postDtoList);
-        return ResponseEntity.ok(popularPostsDto);
+        MultiplePostsDto multiplePostsDto = new MultiplePostsDto(postDtoList);
+        return ResponseEntity.ok(multiplePostsDto);
     }
 
     @Operation(description = "오늘의(랜덤) 포트폴리오 조회")
