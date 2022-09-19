@@ -39,8 +39,9 @@ public class RecommendationService {
             LinkedList<Map.Entry<BandPost, Integer>> scoreList = new LinkedList<>(scoreByPost.entrySet());
             scoreList.sort(((o1, o2) -> o2.getValue() - o1.getValue()));
             int i = 0;
-            while(user.getRecommendedPosts().size() < 3) {
+            while(user.getRecommendedPosts().size() < 3 && i < scoreList.size()) {
                 user.addRecommendation(scoreList.get(i).getKey());
+                i++;
             }
         }
     }
