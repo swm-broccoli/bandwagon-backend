@@ -1,5 +1,6 @@
 package bandwagon.bandwagonback.domain;
 
+import bandwagon.bandwagonback.domain.post.BandPost;
 import bandwagon.bandwagonback.domain.post.Post;
 import bandwagon.bandwagonback.dto.OAuthAttributes;
 import bandwagon.bandwagonback.dto.SignUpRequest;
@@ -65,6 +66,12 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Request> requests = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "recommendations",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    private Set<BandPost> recommendedPosts = new HashSet<>();
 
     public User() {
     }
@@ -170,5 +177,14 @@ public class User {
     public void addRequest(Request request) {
         this.getRequests().add(request);
         request.setUser(this);
+    }
+    
+    // 추천 게시글 추가
+    public void addRecommendation(BandPost post) {
+        this.recommendedPosts.add(post);
+    }
+    // 추천 게시글 초기화
+    public void resetRecommendation() {
+        this.recommendedPosts = new HashSet<>();
     }
 }
