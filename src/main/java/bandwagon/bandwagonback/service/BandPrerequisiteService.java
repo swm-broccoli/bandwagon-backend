@@ -258,4 +258,49 @@ public class BandPrerequisiteService {
         }
         return true;
     }
+
+    /**
+     * 밴드 게시글 추천 용 점수 계산
+     */
+    public Integer calculateScore(User user, BandPost bandPost) {
+        Integer score = 0;
+        for (BandPrerequisite bandPrerequisite : bandPost.getBandPrerequisites()) {
+            switch (bandPrerequisite.getDtype()) {
+                case "Age":
+                    if (((AgePrerequisite) bandPrerequisite).getMin() <= user.getUserAge() && ((AgePrerequisite) bandPrerequisite).getMax() >= user.getUserAge()) {
+                        score++;
+                    }
+                    break;
+                case "Area":
+                    for (Area area : ((AreaPrerequisite) bandPrerequisite).getAreas()) {
+                        if (user.getAreas().contains(area)) {
+                            score++;
+                        }
+                    }
+                    break;
+                case "Gender":
+                    if (user.getGender() == ((GenderPrerequisite) bandPrerequisite).getGender()) {
+                        score++;
+                    }
+                    break;
+                case "Genre":
+                    for (Genre genre : ((GenrePrerequisite) bandPrerequisite).getGenres()) {
+                        if (user.getGenres().contains(genre)) {
+                            score++;
+                        }
+                    }
+                    break;
+                case "Position":
+                    for (Position position : ((PositionPrerequisite) bandPrerequisite).getPositions()) {
+                        if (user.getPositions().contains(position)) {
+                            score++;
+                        }
+                    }
+                    break;
+                default:
+                    throw new InvalidTypeException();
+            }
+        }
+        return score;
+    }
 }
