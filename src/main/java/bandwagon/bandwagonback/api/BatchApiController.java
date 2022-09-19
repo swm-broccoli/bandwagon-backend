@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.api;
 import bandwagon.bandwagonback.dto.MultiplePostsDto;
 import bandwagon.bandwagonback.dto.exception.notauthorized.UserNotAuthorizedException;
 import bandwagon.bandwagonback.service.RecommendationService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class BatchApiController {
     // TODO: Change secret to be fetched from env var
     private final String SECRET_KEY = "changetolocalvar";
 
+    @Operation(description = "추천 배치 작업")
     @PostMapping("/api/recommendations")
     public ResponseEntity<?> makeRecommendations(HttpServletRequest request) {
         String requestKey = request.getHeader("Authorization");
@@ -38,6 +40,7 @@ public class BatchApiController {
         return ResponseEntity.ok().body(null);
     }
 
+    @Operation(description = "유저의 추천 게시글 조회")
     @GetMapping("/api/recommendations")
     public ResponseEntity<?> getMyRecommendations(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
