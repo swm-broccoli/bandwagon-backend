@@ -27,33 +27,33 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     
-    - name: Create application-db.yml
-      run: |
-          cd ./src/main/resources
-          touch ./application-db.yml
-          echo "${{ secrets.APPLICATION_DB }}" > ./application-db.yml
-      shell: bash
-      
-    - name: Create application-aws.yml
-      run: |
-          cd ./src/main/resources
-          touch ./application-aws.yml
-          echo "${{ secrets.APPLICATION_AWS }}" > ./application-aws.yml
-      shell: bash
-  
-    - name: Create application-oauth.yml
-      run: |
-          cd ./src/main/resources
-          touch ./application-oauth.yml
-          echo "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.yml
-      shell: bash
-
-    - name: Create application-email.yml
-      run: |
-        cd ./src/main/resources
-        touch ./application-email.yml
-        echo "${{ secrets.APPLICATION_EMAIL }}" > ./application-email.yml
-      shell: bash
+#    - name: Create application-db.yml
+#      run: |
+#          cd ./src/main/resources
+#          touch ./application-db.yml
+#          echo "${{ secrets.APPLICATION_DB }}" > ./application-db.yml
+#      shell: bash
+#
+#    - name: Create application-aws.yml
+#      run: |
+#          cd ./src/main/resources
+#          touch ./application-aws.yml
+#          echo "${{ secrets.APPLICATION_AWS }}" > ./application-aws.yml
+#      shell: bash
+#
+#    - name: Create application-oauth.yml
+#      run: |
+#          cd ./src/main/resources
+#          touch ./application-oauth.yml
+#          echo "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.yml
+#      shell: bash
+#
+#    - name: Create application-email.yml
+#      run: |
+#        cd ./src/main/resources
+#        touch ./application-email.yml
+#        echo "${{ secrets.APPLICATION_EMAIL }}" > ./application-email.yml
+#      shell: bash
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
