@@ -54,13 +54,26 @@ public class MainPageApiController {
     @GetMapping("/api/random")
     public ResponseEntity<?> getRandomPortfolio() {
         HashSet<RandomPageDto> randomPages = new HashSet<>();
+        boolean noUser = false;
+        boolean noBand = false;
         while (randomPages.size() < 3) {
+            if (noUser && noBand) {
+                break;
+            }
             if (Math.random() <= 0.5) {
                 User randomUser = userService.getRandomUser();
-                randomPages.add(new RandomPageDto(randomUser));
+                if (randomUser == null) {
+                    noUser = true;
+                } else {
+                    randomPages.add(new RandomPageDto(randomUser));
+                }
             } else {
                 Band randomBand = bandService.getRandomBand();
-                randomPages.add(new RandomPageDto(randomBand));
+                if (randomBand == null) {
+                    noBand = true;
+                } else {
+                    randomPages.add(new RandomPageDto(randomBand));
+                }
             }
         }
         return ResponseEntity.ok(randomPages);

@@ -16,6 +16,7 @@ public class RandomPageDto {
     public RandomPageDto(User user) {
         this.id = user.getId();
         this.avatarUrl = user.getUserInfo().getAvatarUrl();
+        this.name = user.getName();
         this.description = user.getUserInfo().getDescription();
         this.dtype = "User";
     }
@@ -24,6 +25,7 @@ public class RandomPageDto {
         this.id = band.getId();
         this.avatarUrl = band.getAvatarUrl();
         this.name = band.getName();
+        this.description = band.getDescription();
         this.dtype = "Band";
     }
 }
