@@ -157,6 +157,9 @@ public class BandService {
      */
     public Band getRandomBand() {
         long bandCount = getBandCount();
+        if (bandCount <= 3) {
+            return null;
+        }
         int randomIndex = (int) (Math.random() * bandCount);
         Page<Band> randomBand = bandRepository.findAll(PageRequest.of(randomIndex, 1));
         return randomBand.getContent().get(0);

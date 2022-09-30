@@ -210,6 +210,9 @@ public class UserService {
     //랜덤 유저 조회
     public User getRandomUser() {
         long userCount = getUserCount();
+        if (userCount <= 3) {
+            return null;
+        }
         int randomIndex = (int) (Math.random() * userCount);
         Page<User> randomUser = userRepository.findAll(PageRequest.of(randomIndex, 1));
         return randomUser.getContent().get(0);
