@@ -6,7 +6,7 @@ spring:
           naver:
             client-id: ${NAVER_OAUTH_ID}
             client-secret: ${NAVER_OAUTH_SECRET}
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: ${NAVER_REDIRECT_URL}
             authorization-grant-type: authorization_code
             scope:
               - name
@@ -15,7 +15,7 @@ spring:
             client-name: Naver
           kakao:
             client-id: ${KAKAO_OAUTH_ID}
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: ${KAKAO_REDIRECT_URL}
             authorization-grant-type: authorization_code
             client-authorization-method: POST
             scope:
