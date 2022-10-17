@@ -3,6 +3,7 @@ package bandwagon.bandwagonback.jwt;
 import bandwagon.bandwagonback.dto.UserTokenDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -20,6 +21,9 @@ import java.util.Map;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Autowired
     JwtUtil jwtUtil;
+
+    @Value("${OAUTH_FRONT_URL}")
+    private String oauthFrontUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -48,7 +52,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private String makeRedirectUrl(String email, String accessToken, String refreshToken) {
-        return UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect/?email=" + email + "&accessToken="+accessToken+
+        return UriComponentsBuilder.fromUriString(oauthFrontUrl + "/oauth2/redirect/?email=" + email + "&accessToken="+accessToken+
                         "&refreshToken=" + refreshToken)
                 .build().toUriString();
     }
