@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                 .and()
                 .csrf().disable()
                 .httpBasic().disable()
-                .authorizeRequests().antMatchers("/", "/oauth2/**", "/api/login", "/api/signup", "/api/refresh", "/api/duplicate", "/api/find/*", "/api/band/post", "/api/user/post", "/api/post/popular", "/api/random", "/api/recommendations", "/api/band/{\\d+}/bandpage", "/api/users/{\\.+}/mypage").permitAll()
+                .authorizeRequests().antMatchers("/", "/login/**", "/api/login", "/api/signup", "/api/refresh", "/api/duplicate", "/api/find/*", "/api/band/post", "/api/user/post", "/api/post/popular", "/api/random", "/api/recommendations", "/api/band/{\\d+}/bandpage", "/api/users/{\\.+}/mypage").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().sessionManagement()
