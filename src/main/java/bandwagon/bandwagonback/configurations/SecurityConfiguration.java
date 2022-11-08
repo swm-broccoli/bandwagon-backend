@@ -1,9 +1,6 @@
 package bandwagon.bandwagonback.configurations;
 
-import bandwagon.bandwagonback.jwt.CustomAuthenticationEntryPoint;
-import bandwagon.bandwagonback.jwt.JwtExceptionFilter;
-import bandwagon.bandwagonback.jwt.JwtRequestFilter;
-import bandwagon.bandwagonback.jwt.OAuth2AuthenticationSuccessHandler;
+import bandwagon.bandwagonback.jwt.*;
 import bandwagon.bandwagonback.service.UserOAuth2Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +39,9 @@ public class SecurityConfiguration {
     private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Autowired
+    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+    @Autowired
     private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
 
@@ -67,7 +67,8 @@ public class SecurityConfiguration {
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .oauth2Login().defaultSuccessUrl("/login-success").successHandler(oAuth2AuthenticationSuccessHandler)
+                .oauth2Login().defaultSuccessUrl("/login-success", true).successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
                 .userInfoEndpoint().userService(userOAuth2Service);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(jwtExceptionFilter, JwtRequestFilter.class);
