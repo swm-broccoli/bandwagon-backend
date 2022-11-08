@@ -14,7 +14,7 @@ import java.io.IOException;
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info(request.toString(), exception.toString());
+        exception.printStackTrace();
         super.onAuthenticationFailure(request, response, exception);
     }
 }
