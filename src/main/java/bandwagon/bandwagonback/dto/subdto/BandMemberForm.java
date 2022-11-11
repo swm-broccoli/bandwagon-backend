@@ -15,6 +15,7 @@ public class BandMemberForm {
     private String avatarUrl;
     private Long id;
     private String name;
+    private String nickname;
     private String email;
     private LocalDate birthday;
     private Integer age;
@@ -25,6 +26,7 @@ public class BandMemberForm {
         this.avatarUrl = bandMember.getMember().getUserInfo().getAvatarUrl();
         this.id = bandMember.getId();
         this.name = bandMember.getMember().getName();
+        this.nickname = bandMember.getMember().getNickname();
         this.email = bandMember.getMember().getEmail();
         this.birthday = bandMember.getMember().getBirthday();
         this.age = bandMember.getMember().getUserAge();

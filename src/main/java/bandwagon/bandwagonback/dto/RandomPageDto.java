@@ -11,6 +11,7 @@ public class RandomPageDto {
     private String avatarUrl;
     private String userEmail;
     private String name;
+    private String nickname;
     private String description;
     private String dtype;
 
@@ -19,6 +20,7 @@ public class RandomPageDto {
         this.avatarUrl = user.getUserInfo().getAvatarUrl();
         this.userEmail = user.getEmail();
         this.name = user.getName();
+        this.nickname = user.getNickname();
         this.description = user.getUserInfo().getDescription();
         this.dtype = "User";
     }
@@ -28,6 +30,7 @@ public class RandomPageDto {
         this.avatarUrl = band.getAvatarUrl();
         this.userEmail = null;
         this.name = band.getName();
+        this.nickname = null;
         this.description = band.getDescription();
         this.dtype = "Band";
     }

@@ -18,6 +18,7 @@ public class MyPageDto {
     private Long id;
     private String avatarUrl;
     private String name;
+    private String nickname;
     private LocalDate birthday;
     private Boolean gender;
     private List<IdNameForm> positions = new ArrayList<>();
@@ -30,6 +31,7 @@ public class MyPageDto {
         this.id = user.getId();
         this.avatarUrl = user.getUserInfo().getAvatarUrl();
         this.name = user.getName();
+        this.nickname = user.getNickname();
         this.birthday = user.getBirthday();
         this.gender = user.getGender();
         for(Position position : user.getPositions()) {
